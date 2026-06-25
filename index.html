@@ -571,6 +571,52 @@
         white-space: nowrap;
     }
 
+    .source-snapshot {
+        margin-bottom: 22px;
+    }
+
+    .source-comparison {
+        margin-bottom: 22px;
+    }
+
+    .source-comparison .comparison-chart {
+        height: 320px;
+    }
+
+    .source-toolbar {
+        align-items: flex-end;
+    }
+
+    .source-toolbar .field {
+        display: grid;
+        gap: 6px;
+    }
+
+    .source-toolbar button {
+        border: 0;
+        border-radius: 5px;
+        background: var(--primary);
+        color: #fff;
+        cursor: pointer;
+        font-weight: 800;
+        padding: 11px 16px;
+    }
+
+    .source-toolbar button.secondary {
+        background: #4a5563;
+    }
+
+    .source-toolbar button:hover,
+    .source-toolbar button:focus-visible {
+        background: var(--primary-dark);
+        outline: 2px solid transparent;
+    }
+
+    .source-toolbar button.secondary:hover,
+    .source-toolbar button.secondary:focus-visible {
+        background: #303946;
+    }
+
     .section-comparison {
         margin-top: 22px;
     }
@@ -654,6 +700,7 @@
         <button class="tab-btn" type="button" data-tab="kommundata">Kommundata</button>
         <button class="tab-btn" type="button" data-tab="jobb">Lediga jobb</button>
         <button class="tab-btn" type="button" data-tab="jamforelser">Jämförelser</button>
+        <button class="tab-btn" type="button" data-tab="socialstyrelsen">Socialstyrelsen</button>
     </nav>
 
     <main>
@@ -683,6 +730,48 @@
             </div>
             <div class="grid" data-grid="aldreomsorg"></div>
             <div class="section-comparison" data-comparison-panel="compare-aldreomsorg"></div>
+        </section>
+
+        <section id="socialstyrelsen" class="tab-content" aria-labelledby="Socialstyrelsen">
+            <div class="info">Källa: Socialstyrelsens statistikdatabas för äldreomsorg. Urval: Sävsjö kommun, 65+ år, båda könen, totalt, period 2014-. Senast kontrollerad uppdatering i källan: 2026-06-24, med årsuppgifter till 2025.</div>
+            <div class="grid source-snapshot" id="socialstyrelsen-cards"></div>
+
+            <article class="comparison-card source-comparison">
+                <h3>Jämförelse Socialstyrelsen</h3>
+                <div class="toolbar source-toolbar">
+                    <div class="field">
+                        <label for="socialstyrelsen-compare-indicator">Indikator:</label>
+                        <select id="socialstyrelsen-compare-indicator"></select>
+                    </div>
+                    <div class="field">
+                        <label for="socialstyrelsen-compare-measure">Mått:</label>
+                        <select id="socialstyrelsen-compare-measure">
+                            <option value="2" selected>Andel</option>
+                            <option value="1">Antal</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="socialstyrelsen-compare-target">Jämför med:</label>
+                        <select id="socialstyrelsen-compare-target"></select>
+                    </div>
+                </div>
+                <canvas class="comparison-chart" id="socialstyrelsen-comparison-chart" width="900" height="280"></canvas>
+                <div class="legend" id="socialstyrelsen-comparison-legend"></div>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Område</th>
+                            <th>2025</th>
+                            <th>Förändring från 2024</th>
+                        </tr>
+                    </thead>
+                    <tbody id="socialstyrelsen-comparison-table-body">
+                        <tr><td colspan="3">Laddar...</td></tr>
+                    </tbody>
+                </table>
+                <div class="insight-note">Jämförelsen använder Socialstyrelsens värden för 65+ år, båda könen och totalt. Höglandet summeras för antal och visas som ovägt snitt för andel.</div>
+            </article>
+
         </section>
 
         <section id="halsa" class="tab-content" aria-labelledby="Hälso- och sjukvård">
@@ -814,7 +903,7 @@
         </section>
     </main>
 
-    <p class="source">Källa: Kolada API v3 samt Arbetsförmedlingens Platsbanken och Historical Ads API. Befolkningsuppgifterna kommer från SCB via Kolada. Värdena hämtas vid sidladdning och uppdateras när en enhet väljs.</p>
+    <p class="source">Källa: Kolada API v3, Socialstyrelsens statistikdatabas för äldreomsorg samt Arbetsförmedlingens Platsbanken och Historical Ads API. Befolkningsuppgifterna kommer från SCB via Kolada. Kolada- och jobbdatan hämtas vid sidladdning; Socialstyrelsens värden i fliken är hämtade från statistikdatabasen.</p>
 </div>
 <div class="chart-tooltip" id="chart-tooltip" role="status" aria-live="polite"></div>
 
@@ -824,6 +913,95 @@
     const HISTORICAL_JOBS_URL = "https://historical.api.jobtechdev.se/search";
     const MUNICIPALITY_ID = "0684";
     const START_YEAR = 2018;
+    const SOCIALSTYRELSEN_REGION_ID = "684";
+
+    const socialstyrelsenIndicators = [
+        {
+            id: "1",
+            title: "Dagverksamhet",
+            description: "Personer som har beslut om dagverksamhet",
+            value: 23,
+            previous: 17,
+            share: 0.8,
+            previousShare: 0.6,
+            color: "#2f74a8"
+        },
+        {
+            id: "2",
+            title: "Hemtjänst i ordinärt boende",
+            description: "Personer som har beslut om hemtjänst i ordinärt boende",
+            value: 453,
+            previous: 439,
+            share: 16.2,
+            previousShare: 15.9,
+            color: "#005a9c"
+        },
+        {
+            id: "3",
+            title: "Korttidsvård/korttidsboende",
+            description: "Personer som har beslut om korttidsvård/korttidsboende",
+            value: 59,
+            previous: 54,
+            share: 2.1,
+            previousShare: 2.0,
+            color: "#7a4cb0"
+        },
+        {
+            id: "4",
+            title: "Permanent särskilt boende",
+            description: "Personer som bor i permanent särskilt boende",
+            value: 124,
+            previous: 120,
+            share: 4.4,
+            previousShare: 4.3,
+            color: "#a35c00"
+        },
+        {
+            id: "5",
+            title: "Trygghetslarm",
+            description: "Personer som har beslut om trygghetslarm",
+            value: 423,
+            previous: 402,
+            share: 15.2,
+            previousShare: 14.5,
+            color: "#2a7f62"
+        },
+        {
+            id: "6",
+            title: "Matdistribution",
+            description: "Personer som har beslut om matdistribution",
+            value: 165,
+            previous: 163,
+            share: 5.9,
+            previousShare: 5.9,
+            color: "#c04f15"
+        }
+    ];
+
+    const socialstyrelsenComparisonRegions = [
+        { id: "684", title: "Sävsjö", color: "#005a9c" },
+        { id: "604", title: "Aneby", color: "#a35c00" },
+        { id: "685", title: "Vetlanda", color: "#2a7f62" },
+        { id: "686", title: "Eksjö", color: "#b23a48" },
+        { id: "682", title: "Nässjö", color: "#7a4cb0" },
+        { id: "687", title: "Tranås", color: "#4f6f8f" },
+        { id: "highland", title: "Höglandet", color: "#222222" },
+        { id: "county", title: "Jönköpings län", color: "#c04f15" }
+    ];
+
+    const socialstyrelsenHighlandRegionIds = ["684", "604", "685", "686", "682", "687"];
+
+    const socialstyrelsenComparisonTargets = [
+        { id: "highland", title: "Höglandskommunerna", rowIds: ["684", "604", "685", "686", "682", "687", "highland", "county"] },
+        { id: "county", title: "Jönköpings län", rowIds: ["684", "county"] },
+        { id: "aneby", title: "Aneby", rowIds: ["684", "604", "highland", "county"] },
+        { id: "vetlanda", title: "Vetlanda", rowIds: ["684", "685", "highland", "county"] },
+        { id: "eksjo", title: "Eksjö", rowIds: ["684", "686", "highland", "county"] },
+        { id: "nassjo", title: "Nässjö", rowIds: ["684", "682", "highland", "county"] },
+        { id: "tranas", title: "Tranås", rowIds: ["684", "687", "highland", "county"] }
+    ];
+
+    const socialstyrelsenComparisonData = {"1":{"1":{"2024":{"686":31,"684":17,"685":70,"604":20,"682":46,"county":695,"687":84},"2025":{"604":27,"685":64,"684":23,"county":732,"687":88,"682":52,"686":41}},"2":{"2024":{"686":0.7,"604":1.2,"685":1,"684":0.6,"687":1.8,"682":0.7,"county":0.9},"2025":{"684":0.8,"604":1.6,"686":0.9,"682":0.7,"687":1.8,"685":0.9,"county":0.9}}},"2":{"1":{"2024":{"684":439,"604":258,"686":787,"685":1155,"682":1086,"county":12781,"687":877},"2025":{"682":1072,"685":1231,"686":819,"604":261,"684":453,"687":924,"county":12928}},"2":{"2024":{"684":15.9,"685":16.9,"686":17,"682":15.5,"687":18.5,"county":16.1,"604":15.5},"2025":{"684":16.2,"604":15.5,"685":17.8,"686":17.5,"682":15.1,"687":19.4,"county":16.1}}},"3":{"1":{"2024":{"684":54,"685":167,"686":4,"682":200,"687":94,"county":1776,"604":25},"2025":{"684":59,"604":27,"685":180,"686":54,"682":223,"687":99,"county":1881}},"2":{"2024":{"684":2,"685":2.4,"682":2.9,"687":2,"county":2.2,"686":0.1,"604":1.5},"2025":{"684":2.1,"604":1.6,"685":2.6,"686":1.2,"682":3.2,"687":2.1,"county":2.3}}},"4":{"1":{"2024":{"682":337,"county":4032,"684":120,"686":210,"604":68,"685":383,"687":231},"2025":{"684":124,"604":75,"685":381,"686":238,"682":359,"687":244,"county":4151}},"2":{"2024":{"684":4.3,"604":4.1,"685":5.6,"686":4.5,"682":4.8,"county":5.1,"687":4.9},"2025":{"684":4.4,"604":4.5,"685":5.5,"686":5.1,"682":5.1,"687":5.1,"county":5.2}}},"5":{"1":{"2024":{"684":402,"604":233,"685":990,"686":693,"682":991,"687":785,"county":11393},"2025":{"604":235,"685":1056,"686":723,"682":995,"687":829,"county":11516,"684":423}},"2":{"2024":{"684":14.5,"604":14,"685":14.5,"686":14.9,"682":14.2,"687":16.6,"county":14.4},"2025":{"684":15.2,"604":14,"686":15.5,"682":14.1,"687":17.4,"county":14.3,"685":15.3}}},"6":{"1":{"2024":{"684":163,"604":87,"685":573,"686":300,"682":364,"county":5190,"687":426},"2025":{"685":618,"682":356,"687":445,"county":4820,"684":165,"686":318,"604":88}},"2":{"2024":{"684":5.9,"604":5.2,"685":8.4,"686":6.5,"682":5.2,"687":9,"county":6.5},"2025":{"684":5.9,"682":5,"687":9.3,"604":5.2,"685":9,"686":6.8,"county":6}}}};
 
     const comparisonMunicipalities = [
         { id: "0684", title: "Sävsjö", color: "#005a9c" },
@@ -1253,12 +1431,19 @@
         select.addEventListener("change", () => renderDashboard(select.dataset.unitFilter === "lss" ? "lss" : "aldreomsorg"));
     });
 
+    window.addEventListener("resize", () => {
+        if (document.getElementById("socialstyrelsen")?.classList.contains("active")) {
+            renderSocialstyrelsenComparison();
+        }
+    });
+
     document.getElementById("comparison-select").addEventListener("change", () => renderComparison("main-comparison"));
 
     init();
 
     async function init() {
         renderAllCards();
+        setupSocialstyrelsenTab();
         renderEmbeddedComparisonPanels();
         registerComparisonPanel("main-comparison", {
             selectId: "comparison-select",
@@ -1284,6 +1469,10 @@
         document.querySelectorAll(".tab-content").forEach(tab => {
             tab.classList.toggle("active", tab.id === tabId);
         });
+
+        if (tabId === "socialstyrelsen") {
+            requestAnimationFrame(renderSocialstyrelsenComparison);
+        }
     }
 
     function renderAllCards() {
@@ -1302,6 +1491,200 @@
                 </article>
             `).join("");
         });
+    }
+
+    function setupSocialstyrelsenTab() {
+        renderSocialstyrelsenCards();
+        setupSocialstyrelsenComparisonControls();
+        renderSocialstyrelsenComparison();
+    }
+
+    function setupSocialstyrelsenComparisonControls() {
+        document.getElementById("socialstyrelsen-compare-indicator").innerHTML = socialstyrelsenIndicators
+            .map(indicator => `<option value="${indicator.id}" ${indicator.id === "2" ? "selected" : ""}>${indicator.title}</option>`)
+            .join("");
+        document.getElementById("socialstyrelsen-compare-target").innerHTML = socialstyrelsenComparisonTargets
+            .map(target => `<option value="${target.id}">${target.title}</option>`)
+            .join("");
+
+        ["socialstyrelsen-compare-indicator", "socialstyrelsen-compare-measure", "socialstyrelsen-compare-target"].forEach(id => {
+            document.getElementById(id).addEventListener("change", renderSocialstyrelsenComparison);
+        });
+    }
+
+    function renderSocialstyrelsenComparison() {
+        const indicatorId = document.getElementById("socialstyrelsen-compare-indicator").value;
+        const measureId = document.getElementById("socialstyrelsen-compare-measure").value;
+        const targetId = document.getElementById("socialstyrelsen-compare-target").value;
+        const target = socialstyrelsenComparisonTargets.find(item => item.id === targetId) || socialstyrelsenComparisonTargets[0];
+        const rows = target.rowIds.map(regionId => socialstyrelsenComparisonRow(regionId, indicatorId, measureId)).filter(Boolean);
+
+        drawSocialstyrelsenBarChart(document.getElementById("socialstyrelsen-comparison-chart"), rows, measureId);
+        renderSocialstyrelsenComparisonLegend(rows);
+        renderSocialstyrelsenComparisonTable(rows, measureId);
+    }
+
+    function socialstyrelsenComparisonRow(regionId, indicatorId, measureId) {
+        const region = socialstyrelsenComparisonRegions.find(item => item.id === regionId);
+        if (!region) return null;
+
+        const value = socialstyrelsenComparisonValue(indicatorId, measureId, "2025", regionId);
+        const previous = socialstyrelsenComparisonValue(indicatorId, measureId, "2024", regionId);
+        if (value === null) return null;
+
+        return {
+            ...region,
+            value,
+            previous,
+            change: previous === null ? null : value - previous
+        };
+    }
+
+    function socialstyrelsenComparisonValue(indicatorId, measureId, year, regionId) {
+        if (regionId === "highland") {
+            const values = socialstyrelsenHighlandRegionIds
+                .map(id => socialstyrelsenComparisonValue(indicatorId, measureId, year, id))
+                .filter(value => value !== null);
+
+            if (!values.length) return null;
+            if (measureId === "1") return values.reduce((sum, value) => sum + value, 0);
+            return values.reduce((sum, value) => sum + value, 0) / values.length;
+        }
+
+        const value = socialstyrelsenComparisonData[indicatorId]?.[measureId]?.[year]?.[regionId];
+        return Number.isFinite(value) ? value : null;
+    }
+
+    function drawSocialstyrelsenBarChart(canvas, rows, measureId) {
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        const rect = canvas.getBoundingClientRect();
+        const pixelRatio = window.devicePixelRatio || 1;
+        const width = Math.max(360, Math.round(rect.width || canvas.clientWidth || 900));
+        const height = Math.max(300, Math.round(rect.height || canvas.clientHeight || 320));
+        const pixelWidth = Math.round(width * pixelRatio);
+        const pixelHeight = Math.round(height * pixelRatio);
+
+        if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+            canvas.width = pixelWidth;
+            canvas.height = pixelHeight;
+        }
+
+        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        const padding = 54;
+        const rightPadding = 24;
+        const bottomPadding = 58;
+        const chartWidth = width - padding - rightPadding;
+        const chartHeight = height - padding - bottomPadding;
+        const maxValue = Math.max(1, ...rows.map(row => row.value));
+        const ticks = getYAxisTicks(0, maxValue, measureId === "2" ? "percent" : "number");
+        const yMax = ticks[ticks.length - 1] || maxValue;
+
+        ctx.clearRect(0, 0, width, height);
+        if (!rows.length) return;
+
+        const yFor = value => padding + chartHeight - (value / yMax) * chartHeight;
+
+        ctx.font = "12px Segoe UI, Arial";
+        ctx.textBaseline = "middle";
+        ticks.forEach(tick => {
+            const y = yFor(tick);
+            ctx.strokeStyle = "#e4e8ed";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding, y);
+            ctx.lineTo(padding + chartWidth, y);
+            ctx.stroke();
+
+            ctx.fillStyle = "#666";
+            ctx.textAlign = "right";
+            ctx.fillText(measureId === "2" ? `${tick}%` : tick.toLocaleString("sv-SE"), padding - 8, y);
+        });
+
+        const gap = 16;
+        const slot = chartWidth / rows.length;
+        const barWidth = Math.max(24, Math.min(72, slot - gap));
+
+        rows.forEach((row, index) => {
+            const x = padding + slot * index + (slot - barWidth) / 2;
+            const y = yFor(row.value);
+            const barHeight = padding + chartHeight - y;
+
+            ctx.fillStyle = row.color;
+            ctx.fillRect(x, y, barWidth, barHeight);
+
+            ctx.fillStyle = "#333";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "bottom";
+            ctx.fillText(formatSocialstyrelsenComparisonValue(row.value, measureId), x + barWidth / 2, y - 6);
+
+            ctx.save();
+            ctx.translate(x + barWidth / 2, padding + chartHeight + 12);
+            ctx.rotate(-Math.PI / 5);
+            ctx.textAlign = "right";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "#555";
+            ctx.fillText(row.title, 0, 0);
+            ctx.restore();
+        });
+
+        ctx.strokeStyle = "#d5d5d5";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, padding + chartHeight);
+        ctx.lineTo(padding + chartWidth, padding + chartHeight);
+        ctx.stroke();
+    }
+
+    function renderSocialstyrelsenComparisonLegend(rows) {
+        document.getElementById("socialstyrelsen-comparison-legend").innerHTML = rows.map(row => `
+            <span class="legend-item">
+                <span class="legend-color" style="background:${row.color}"></span>
+                ${row.title}
+            </span>
+        `).join("");
+    }
+
+    function renderSocialstyrelsenComparisonTable(rows, measureId) {
+        document.getElementById("socialstyrelsen-comparison-table-body").innerHTML = rows.map(row => `
+            <tr>
+                <td>${row.title}</td>
+                <td>${formatSocialstyrelsenComparisonValue(row.value, measureId)}</td>
+                <td>${formatSocialstyrelsenComparisonChange(row.change, measureId)}</td>
+            </tr>
+        `).join("");
+    }
+
+    function formatSocialstyrelsenComparisonValue(value, measureId) {
+        return measureId === "2" ? formatPercent(value) : `${formatValue(value, "number")} personer`;
+    }
+
+    function formatSocialstyrelsenComparisonChange(value, measureId) {
+        if (value === null) return "";
+        if (measureId === "2") return `${formatSignedValue(value)} procentenheter`;
+        return `${formatSignedValue(value)} personer`;
+    }
+
+    function renderSocialstyrelsenCards() {
+        const grid = document.getElementById("socialstyrelsen-cards");
+        grid.innerHTML = socialstyrelsenIndicators.map(indicator => {
+            const change = indicator.value - indicator.previous;
+            const shareChange = indicator.share - indicator.previousShare;
+
+            return `
+                <article class="card" style="--card-accent:${indicator.color}">
+                    <h3>${indicator.title}</h3>
+                    <div class="kpi-id">Socialstyrelsen IF äldreomsorg, region ${SOCIALSTYRELSEN_REGION_ID}</div>
+                    <div class="value">${formatValue(indicator.value, "number")}</div>
+                    <div class="delta ${change < 0 ? "negative" : ""}">${formatSignedValue(change)} personer från 2024</div>
+                    <div class="share">Andel 65+: ${formatPercent(indicator.share)} (${formatSignedValue(shareChange)} procentenheter)</div>
+                    <div class="status">${indicator.description}</div>
+                    <canvas class="sparkline" width="320" height="112" aria-hidden="true"></canvas>
+                    <div class="year">Mätår: 2025 (Sävsjö, 65+, båda könen)</div>
+                </article>
+            `;
+        }).join("");
     }
 
     function cardKey(card) {
