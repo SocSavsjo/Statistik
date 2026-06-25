@@ -583,6 +583,29 @@
         height: 320px;
     }
 
+    .source-extra-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px;
+        margin-top: 22px;
+    }
+
+    .source-extra-grid .comparison-card {
+        margin-bottom: 0;
+    }
+
+    .source-extra-grid .source-wide {
+        grid-column: 1 / -1;
+    }
+
+    .source-monthly .comparison-chart {
+        height: 340px;
+    }
+
+    .source-mini-table {
+        margin-top: 12px;
+    }
+
     .source-toolbar {
         align-items: flex-end;
     }
@@ -637,6 +660,14 @@
             padding: 14px;
         }
 
+        .source-extra-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .source-extra-grid .source-wide {
+            grid-column: auto;
+        }
+
         .tab-btn {
             flex: 1 1 100%;
             border-radius: 6px;
@@ -689,7 +720,7 @@
 <div class="container">
     <header>
         <h1>Sävsjö Kommun</h1>
-        <p>Dashboard Kolada</p>
+        <p>Dashboard från: Kolada, Socialstyrelsen, Arbetsförmedlingen och SCB</p>
     </header>
 
     <nav class="tabs" aria-label="Områden">
@@ -751,6 +782,14 @@
                         </select>
                     </div>
                     <div class="field">
+                        <label for="socialstyrelsen-compare-age">Ålder:</label>
+                        <select id="socialstyrelsen-compare-age"></select>
+                    </div>
+                    <div class="field">
+                        <label for="socialstyrelsen-compare-gender">Kön:</label>
+                        <select id="socialstyrelsen-compare-gender"></select>
+                    </div>
+                    <div class="field">
                         <label for="socialstyrelsen-compare-target">Jämför med:</label>
                         <select id="socialstyrelsen-compare-target"></select>
                     </div>
@@ -769,8 +808,76 @@
                         <tr><td colspan="3">Laddar...</td></tr>
                     </tbody>
                 </table>
-                <div class="insight-note">Jämförelsen använder Socialstyrelsens värden för 65+ år, båda könen och totalt. Höglandet summeras för antal och visas som ovägt snitt för andel.</div>
+                <div class="insight-note" id="socialstyrelsen-comparison-note">Höglandet summeras för antal och visas som ovägt snitt för andel.</div>
             </article>
+
+            <div class="source-extra-grid">
+                <article class="comparison-card source-wide">
+                    <h3>Trend Socialstyrelsen</h3>
+                    <div class="toolbar source-toolbar">
+                        <div class="field">
+                            <label for="socialstyrelsen-trend-indicator">Indikator:</label>
+                            <select id="socialstyrelsen-trend-indicator"></select>
+                        </div>
+                        <div class="field">
+                            <label for="socialstyrelsen-trend-measure">Mått:</label>
+                            <select id="socialstyrelsen-trend-measure">
+                                <option value="2" selected>Andel</option>
+                                <option value="1">Antal</option>
+                            </select>
+                        </div>
+                    </div>
+                    <canvas class="comparison-chart" id="socialstyrelsen-trend-chart" width="900" height="280"></canvas>
+                    <div class="legend" id="socialstyrelsen-trend-legend"></div>
+                    <table class="comparison-table source-mini-table">
+                        <thead>
+                            <tr>
+                                <th>År</th>
+                                <th>Värde</th>
+                            </tr>
+                        </thead>
+                        <tbody id="socialstyrelsen-trend-table-body">
+                            <tr><td colspan="2">Laddar...</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="insight-note">Trend för Sävsjö, 65+ år, båda könen och totalt.</div>
+                </article>
+
+                <article class="comparison-card">
+                    <h3>Hemtjänsttimmar per månad</h3>
+                    <canvas class="comparison-chart" id="socialstyrelsen-hours-chart" width="900" height="280"></canvas>
+                    <table class="comparison-table source-mini-table">
+                        <thead>
+                            <tr>
+                                <th>Timmar</th>
+                                <th>2025</th>
+                                <th>Förändring från 2024</th>
+                            </tr>
+                        </thead>
+                        <tbody id="socialstyrelsen-hours-table-body">
+                            <tr><td colspan="3">Laddar...</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="insight-note">Sävsjö, hemtjänst i ordinärt boende, antal personer, 65+ år och båda könen.</div>
+                </article>
+
+                <article class="comparison-card source-wide source-monthly">
+                    <h3>Månadsutveckling hemtjänst</h3>
+                    <canvas class="comparison-chart" id="socialstyrelsen-monthly-chart" width="900" height="280"></canvas>
+                    <table class="comparison-table source-mini-table">
+                        <thead>
+                            <tr>
+                                <th>Månad</th>
+                                <th>Antal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="socialstyrelsen-monthly-table-body">
+                            <tr><td colspan="2">Laddar...</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="insight-note">Senaste tillgängliga månadsrader från Socialstyrelsen för Sävsjö.</div>
+                </article>
+            </div>
 
         </section>
 
@@ -1001,9 +1108,37 @@
         { id: "tranas", title: "Tranås", rowIds: ["684", "687", "highland", "county"] }
     ];
 
-    const socialstyrelsenComparisonData = {"1":{"1":{"2024":{"686":31,"684":17,"685":70,"604":20,"682":46,"county":695,"687":84},"2025":{"604":27,"685":64,"684":23,"county":732,"687":88,"682":52,"686":41}},"2":{"2024":{"686":0.7,"604":1.2,"685":1,"684":0.6,"687":1.8,"682":0.7,"county":0.9},"2025":{"684":0.8,"604":1.6,"686":0.9,"682":0.7,"687":1.8,"685":0.9,"county":0.9}}},"2":{"1":{"2024":{"684":439,"604":258,"686":787,"685":1155,"682":1086,"county":12781,"687":877},"2025":{"682":1072,"685":1231,"686":819,"604":261,"684":453,"687":924,"county":12928}},"2":{"2024":{"684":15.9,"685":16.9,"686":17,"682":15.5,"687":18.5,"county":16.1,"604":15.5},"2025":{"684":16.2,"604":15.5,"685":17.8,"686":17.5,"682":15.1,"687":19.4,"county":16.1}}},"3":{"1":{"2024":{"684":54,"685":167,"686":4,"682":200,"687":94,"county":1776,"604":25},"2025":{"684":59,"604":27,"685":180,"686":54,"682":223,"687":99,"county":1881}},"2":{"2024":{"684":2,"685":2.4,"682":2.9,"687":2,"county":2.2,"686":0.1,"604":1.5},"2025":{"684":2.1,"604":1.6,"685":2.6,"686":1.2,"682":3.2,"687":2.1,"county":2.3}}},"4":{"1":{"2024":{"682":337,"county":4032,"684":120,"686":210,"604":68,"685":383,"687":231},"2025":{"684":124,"604":75,"685":381,"686":238,"682":359,"687":244,"county":4151}},"2":{"2024":{"684":4.3,"604":4.1,"685":5.6,"686":4.5,"682":4.8,"county":5.1,"687":4.9},"2025":{"684":4.4,"604":4.5,"685":5.5,"686":5.1,"682":5.1,"687":5.1,"county":5.2}}},"5":{"1":{"2024":{"684":402,"604":233,"685":990,"686":693,"682":991,"687":785,"county":11393},"2025":{"604":235,"685":1056,"686":723,"682":995,"687":829,"county":11516,"684":423}},"2":{"2024":{"684":14.5,"604":14,"685":14.5,"686":14.9,"682":14.2,"687":16.6,"county":14.4},"2025":{"684":15.2,"604":14,"686":15.5,"682":14.1,"687":17.4,"county":14.3,"685":15.3}}},"6":{"1":{"2024":{"684":163,"604":87,"685":573,"686":300,"682":364,"county":5190,"687":426},"2025":{"685":618,"682":356,"687":445,"county":4820,"684":165,"686":318,"604":88}},"2":{"2024":{"684":5.9,"604":5.2,"685":8.4,"686":6.5,"682":5.2,"687":9,"county":6.5},"2025":{"684":5.9,"682":5,"687":9.3,"604":5.2,"685":9,"686":6.8,"county":6}}}};
+    const socialstyrelsenAgeOptions = [
+        { id: "3", title: "65+" },
+        { id: "1", title: "65-79" },
+        { id: "2", title: "80+" }
+    ];
 
-    const comparisonMunicipalities = [
+    const socialstyrelsenGenderOptions = [
+        { id: "3", title: "B?da k?nen" },
+        { id: "1", title: "M?n" },
+        { id: "2", title: "Kvinnor" }
+    ];
+
+    const socialstyrelsenHourGroups = [
+        { id: "1", title: "0-9 timmar", color: "#2f74a8" },
+        { id: "2", title: "10-25 timmar", color: "#005a9c" },
+        { id: "3", title: "26-49 timmar", color: "#7a4cb0" },
+        { id: "4", title: "50+ timmar", color: "#c04f15" },
+        { id: "5", title: "V?rde saknas", color: "#6b7280" }
+    ];
+
+    const socialstyrelsenMonthNames = {
+        "1": "jan", "2": "feb", "3": "mar", "4": "apr", "5": "maj", "6": "jun",
+        "7": "jul", "8": "aug", "9": "sep", "10": "okt", "11": "nov", "12": "dec"
+    };
+
+    const socialstyrelsenComparisonData = {"1":{"1":{"1":{"1":{"2024":{"687":9,"686":4,"685":13,"684":null,"604":null,"682":10,"county":102},"2025":{"685":13,"684":6,"county":109,"687":6,"604":null,"686":5,"682":12}},"2":{"2024":{"604":null,"682":8,"county":134,"687":8,"686":null,"684":null,"685":19},"2025":{"686":5,"682":5,"685":14,"604":5,"684":5,"687":12,"county":137}},"3":{"2024":{"684":5,"682":18,"604":5,"686":6,"685":32,"687":17,"county":236},"2025":{"686":10,"604":8,"684":11,"685":27,"682":17,"687":18,"county":246}}},"2":{"1":{"2024":{"687":22,"county":197,"686":15,"604":5,"682":13,"685":17,"684":null},"2025":{"604":4,"682":18,"684":4,"685":18,"686":18,"687":26,"county":216}},"2":{"2024":{"604":10,"682":15,"684":9,"685":21,"county":262,"687":45,"686":10},"2025":{"604":15,"682":17,"684":8,"685":19,"686":13,"687":44,"county":270}},"3":{"2024":{"604":15,"682":28,"684":12,"685":38,"686":25,"687":67,"county":459},"2025":{"604":19,"684":12,"685":37,"686":31,"687":70,"county":486,"682":35}}},"3":{"1":{"2024":{"604":7,"682":23,"684":6,"685":30,"686":19,"687":31,"county":299},"2025":{"604":7,"685":31,"686":23,"687":32,"county":325,"682":30,"684":10}},"2":{"2024":{"604":13,"682":23,"684":11,"685":40,"686":12,"687":53,"county":396},"2025":{"604":20,"682":22,"684":13,"686":18,"687":56,"county":407,"685":33}},"3":{"2024":{"604":20,"682":46,"684":17,"685":70,"686":31,"687":84,"county":695},"2025":{"604":27,"682":52,"684":23,"685":64,"687":88,"county":732,"686":41}}}},"2":{"1":{"1":{"2024":{"682":0.4,"684":0.3,"685":0.5,"686":0.2,"687":0.6,"county":0.4,"604":0.3},"2025":{"604":0.5,"682":0.5,"684":0.6,"685":0.5,"686":0.3,"687":0.4,"county":0.4}},"2":{"2024":{"684":0.2,"685":0.8,"686":0.1,"687":0.5,"county":0.5,"604":0.5,"682":0.3},"2025":{"604":0.8,"682":0.2,"684":0.5,"685":0.6,"687":0.8,"686":0.3,"county":0.5}},"3":{"2024":{"604":0.4,"685":0.7,"686":0.2,"687":0.5,"county":0.4,"682":0.4,"684":0.3},"2025":{"604":0.6,"682":0.3,"684":0.6,"686":0.3,"685":0.6,"687":0.6,"county":0.4}}},"2":{"1":{"2024":{"604":2.7,"687":3.4,"county":2,"682":1.5,"685":1.9,"686":2.7,"684":0.9},"2025":{"604":2,"682":1.9,"684":1.1,"685":2,"686":3,"687":3.8,"county":2}},"2":{"2024":{"604":4.1,"682":1.3,"684":1.9,"county":1.9,"685":1.8,"686":1.3,"687":4.9},"2025":{"604":6.2,"682":1.5,"684":1.6,"685":1.5,"686":1.6,"687":4.6,"county":1.9}},"3":{"2024":{"604":3.5,"682":1.4,"684":1.4,"685":1.8,"686":1.9,"687":4.3,"county":1.9},"2025":{"682":1.6,"684":1.4,"685":1.7,"686":2.2,"687":4.3,"county":1.9,"604":4.3}}},"3":{"1":{"2024":{"604":0.8,"682":0.7,"684":0.4,"685":0.9,"686":0.9,"687":1.4,"county":0.8},"2025":{"604":0.8,"684":0.7,"685":0.9,"686":1,"687":1.4,"county":0.9,"682":0.9}},"2":{"2024":{"604":1.6,"682":0.6,"684":0.8,"685":1.1,"686":0.5,"687":2.1,"county":0.9},"2025":{"604":2.4,"682":0.6,"685":0.9,"686":0.7,"687":2.2,"county":1,"684":0.9}},"3":{"2024":{"604":1.2,"682":0.7,"684":0.6,"685":1,"686":0.7,"687":1.8,"county":0.9},"2025":{"604":1.6,"684":0.8,"685":0.9,"686":0.9,"687":1.8,"county":0.9,"682":0.7}}}}},"2":{"1":{"1":{"1":{"2024":{"604":40,"682":139,"684":50,"685":143,"686":89,"687":95,"county":1554},"2025":{"604":34,"682":140,"684":57,"686":87,"687":97,"county":1492,"685":153}},"2":{"2024":{"604":44,"682":175,"684":59,"686":120,"county":1939,"685":187,"687":113},"2025":{"604":40,"682":171,"684":55,"685":193,"686":127,"county":1874,"687":114}},"3":{"2024":{"604":84,"682":314,"684":109,"685":330,"686":209,"687":208,"county":3493},"2025":{"604":74,"682":311,"684":112,"685":346,"686":214,"county":3366,"687":211}}},"2":{"1":{"2024":{"604":63,"682":263,"684":103,"685":282,"686":200,"687":229,"county":3135},"2025":{"682":276,"684":101,"685":309,"686":205,"687":248,"604":67,"county":3274}},"2":{"2024":{"604":111,"682":509,"684":227,"685":543,"686":378,"687":440,"county":6153},"2025":{"604":120,"682":485,"684":240,"686":400,"county":6288,"685":576,"687":465}},"3":{"2024":{"604":174,"682":772,"684":330,"685":825,"686":578,"687":669,"county":9288},"2025":{"604":187,"682":761,"684":341,"685":885,"686":605,"687":713,"county":9562}}},"3":{"1":{"2024":{"684":153,"685":425,"686":289,"687":324,"county":4689,"604":103,"682":402},"2025":{"604":101,"682":416,"684":158,"685":462,"686":292,"687":345,"county":4766}},"2":{"2024":{"604":155,"684":286,"686":498,"687":553,"county":8092,"682":684,"685":730},"2025":{"604":160,"682":656,"684":295,"685":769,"686":527,"687":579,"county":8162}},"3":{"2024":{"604":258,"682":1086,"685":1155,"686":787,"687":877,"county":12781,"684":439},"2025":{"604":261,"682":1072,"684":453,"685":1231,"686":819,"687":924,"county":12928}}}},"2":{"1":{"1":{"2024":{"604":6.2,"684":4.9,"685":6,"686":5.4,"687":6.1,"county":5.6,"682":5.5},"2025":{"604":5.4,"682":5.6,"684":5.7,"685":6.4,"686":5.4,"687":6.3,"county":5.4}},"2":{"2024":{"604":7.5,"682":7.1,"684":6.4,"685":7.9,"686":7.2,"county":6.9,"687":7},"2025":{"604":6.6,"684":5.9,"685":8.2,"686":7.8,"687":7.2,"county":6.7,"682":7}},"3":{"2024":{"604":6.8,"682":6.3,"685":6.9,"686":6.3,"687":6.6,"684":5.6,"county":6.3},"2025":{"604":6,"682":6.3,"684":5.8,"685":7.3,"686":6.6,"687":6.7,"county":6.1}}},"2":{"1":{"2024":{"604":33.5,"682":29.4,"684":29.4,"685":31.9,"county":31.6,"686":35.5,"687":35.5},"2025":{"604":32.7,"684":27.7,"685":33.5,"686":33.8,"687":35.8,"county":30.8,"682":28.7}},"2":{"2024":{"604":45.1,"682":45.1,"684":47.5,"685":45.5,"686":48.2,"687":48.1,"county":44.7},"2025":{"682":41.7,"685":46.1,"686":48.8,"687":48.8,"county":43.9,"604":49.6,"684":48.9}},"3":{"2024":{"682":38.2,"684":39.9,"685":39.7,"686":42.9,"687":42.9,"county":39.2,"604":40.1},"2025":{"604":41.8,"686":42.4,"687":43.3,"county":38.3,"685":40.7,"682":35.8,"684":39.8}}},"3":{"1":{"2024":{"604":12.4,"682":11.8,"684":11.2,"686":13.1,"687":14.7,"county":12.5,"685":12.9},"2025":{"604":12,"682":12,"685":14,"686":13.1,"687":15.4,"county":12.5,"684":11.5}},"2":{"2024":{"604":18.6,"682":19.1,"684":20.4,"685":20.5,"686":20.4,"county":19.4,"687":21.9},"2025":{"604":18.9,"682":18.2,"684":20.8,"686":21.4,"687":22.8,"county":19.3,"685":21.4}},"3":{"2024":{"604":15.5,"682":15.5,"684":15.9,"685":16.9,"686":17,"687":18.5,"county":16.1},"2025":{"604":15.5,"684":16.2,"685":17.8,"686":17.5,"687":19.4,"county":16.1,"682":15.1}}}}},"3":{"1":{"1":{"1":{"2024":{"604":6,"682":35,"685":17,"686":0,"687":15,"county":264,"684":4},"2025":{"604":4,"682":34,"684":8,"685":27,"686":5,"687":15,"county":265}},"2":{"2024":{"604":null,"684":8,"686":0,"687":13,"county":248,"682":24,"685":28},"2025":{"604":null,"682":33,"684":6,"685":29,"686":10,"687":11,"county":257}},"3":{"2024":{"682":59,"684":12,"685":45,"687":28,"county":512,"604":8,"686":0},"2025":{"604":7,"682":67,"684":14,"685":56,"686":15,"687":26,"county":522}}},"2":{"1":{"2024":{"604":10,"682":58,"685":56,"686":null,"684":20,"687":29,"county":563},"2025":{"604":10,"682":76,"684":22,"685":51,"686":19,"687":42,"county":611}},"2":{"2024":{"604":7,"682":83,"685":66,"686":null,"county":701,"684":22,"687":37},"2025":{"604":10,"682":80,"684":23,"685":73,"686":20,"687":31,"county":748}},"3":{"2024":{"604":17,"682":141,"684":42,"685":122,"687":66,"county":1264,"686":4},"2025":{"604":20,"682":156,"684":45,"685":124,"686":39,"687":73,"county":1359}}},"3":{"1":{"2024":{"604":16,"682":93,"686":null,"687":44,"684":24,"685":73,"county":827},"2025":{"604":14,"684":30,"685":78,"686":24,"687":57,"county":876,"682":110}},"2":{"2024":{"604":9,"682":107,"684":30,"685":94,"county":949,"687":50,"686":null},"2025":{"604":13,"685":102,"687":42,"county":1005,"684":29,"682":113,"686":30}},"3":{"2024":{"604":25,"682":200,"684":54,"685":167,"686":4,"687":94,"county":1776},"2025":{"604":27,"684":59,"685":180,"686":54,"county":1881,"682":223,"687":99}}}},"2":{"1":{"1":{"2024":{"604":0.9,"682":1.4,"684":0.4,"685":0.7,"686":0,"687":1,"county":1},"2025":{"682":1.4,"684":0.8,"686":0.3,"687":1,"604":0.6,"685":1.1,"county":1}},"2":{"2024":{"604":0.3,"682":1,"684":0.9,"685":1.2,"686":0,"687":0.8,"county":0.9},"2025":{"682":1.3,"685":1.2,"county":0.9,"604":0.5,"684":0.6,"686":0.6,"687":0.7}},"3":{"2024":{"682":1.2,"684":0.6,"685":0.9,"686":0,"687":0.9,"county":0.9,"604":0.7},"2025":{"604":0.6,"682":1.4,"687":0.8,"county":0.9,"684":0.7,"685":1.2,"686":0.5}}},"2":{"1":{"2024":{"604":5.3,"682":6.5,"684":5.7,"685":6.3,"686":0.5,"687":4.5,"county":5.7},"2025":{"604":4.9,"682":7.9,"684":6,"686":3.1,"county":5.8,"685":5.5,"687":6.1}},"2":{"2024":{"604":2.8,"682":7.4,"684":4.6,"685":5.5,"687":4,"county":5.1,"686":0.1},"2025":{"604":4.1,"682":6.9,"684":4.7,"685":5.8,"686":2.4,"687":3.3,"county":5.2}},"3":{"2024":{"604":3.9,"682":7,"684":5.1,"685":5.9,"county":5.3,"686":0.3,"687":4.2},"2025":{"604":4.5,"682":7.3,"684":5.3,"685":5.7,"686":2.7,"687":4.4,"county":5.4}}},"3":{"1":{"2024":{"604":1.9,"682":2.7,"684":1.8,"685":2.2,"687":2,"county":2.2,"686":0.1},"2025":{"604":1.7,"682":3.2,"684":2.2,"685":2.4,"686":1.1,"687":2.6,"county":2.3}},"2":{"2024":{"604":1.1,"682":3,"685":2.6,"686":0,"687":2,"county":2.3,"684":2.1},"2025":{"604":1.5,"682":3.1,"684":2,"686":1.2,"687":1.7,"county":2.4,"685":2.8}},"3":{"2024":{"604":1.5,"682":2.9,"685":2.4,"686":0.1,"687":2,"county":2.2,"684":2},"2025":{"604":1.6,"684":2.1,"685":2.6,"686":1.2,"687":2.1,"county":2.3,"682":3.2}}}}},"4":{"1":{"1":{"1":{"2024":{"604":10,"682":45,"684":7,"686":21,"687":29,"685":40,"county":422},"2025":{"682":48,"684":10,"685":37,"686":22,"687":29,"county":414,"604":10}},"2":{"2024":{"604":8,"682":42,"684":6,"686":20,"687":24,"685":45,"county":389},"2025":{"682":47,"685":50,"686":21,"687":25,"county":411,"684":null,"604":7}},"3":{"2024":{"604":18,"682":87,"685":85,"686":41,"687":53,"county":811,"684":13},"2025":{"604":17,"684":13,"685":87,"687":54,"county":825,"682":95,"686":43}}},"2":{"1":{"2024":{"604":18,"682":80,"684":35,"685":107,"687":55,"county":992,"686":47},"2025":{"604":19,"682":88,"685":101,"687":58,"686":63,"county":1075,"684":44}},"2":{"2024":{"604":32,"682":170,"684":72,"685":191,"686":122,"county":2229,"687":123},"2025":{"604":39,"682":176,"684":67,"685":193,"687":132,"county":2251,"686":132}},"3":{"2024":{"604":50,"682":250,"684":107,"685":298,"686":169,"687":178,"county":3221},"2025":{"682":264,"687":190,"604":58,"685":294,"686":195,"county":3326,"684":111}}},"3":{"1":{"2024":{"604":28,"682":125,"684":42,"685":147,"686":68,"687":84,"county":1414},"2025":{"604":29,"682":136,"685":138,"686":85,"county":1489,"684":54,"687":87}},"2":{"2024":{"604":40,"684":78,"685":236,"686":142,"county":2618,"682":212,"687":147},"2025":{"604":46,"682":223,"686":153,"687":157,"684":70,"685":243,"county":2662}},"3":{"2024":{"604":68,"682":337,"684":120,"686":210,"687":231,"county":4032,"685":383},"2025":{"604":75,"682":359,"684":124,"685":381,"687":244,"county":4151,"686":238}}}},"2":{"1":{"1":{"2024":{"604":1.6,"684":0.7,"686":1.3,"county":1.5,"685":1.7,"687":1.9,"682":1.8},"2025":{"604":1.6,"682":1.9,"684":1,"685":1.6,"686":1.4,"687":1.9,"county":1.5}},"2":{"2024":{"604":1.4,"682":1.7,"684":0.6,"685":1.9,"686":1.2,"county":1.4,"687":1.5},"2025":{"604":1.2,"682":1.9,"684":0.3,"685":2.1,"686":1.3,"687":1.6,"county":1.5}},"3":{"2024":{"604":1.5,"686":1.2,"687":1.7,"682":1.8,"684":0.7,"685":1.8,"county":1.5},"2025":{"604":1.4,"682":1.9,"684":0.7,"685":1.8,"686":1.3,"687":1.7,"county":1.5}}},"2":{"1":{"2024":{"604":9.6,"682":8.9,"684":10,"687":8.5,"county":10,"686":8.3,"685":12.1},"2025":{"604":9.3,"682":9.2,"684":12.1,"685":10.9,"686":10.4,"687":8.4,"county":10.1}},"2":{"2024":{"604":13,"682":15.1,"684":15.1,"685":16,"687":13.4,"686":15.6,"county":16.2},"2025":{"604":16.1,"682":15.1,"684":13.6,"685":15.4,"686":16.1,"687":13.9,"county":15.7}},"3":{"2024":{"604":11.5,"682":12.4,"684":12.9,"685":14.3,"686":12.5,"687":11.4,"county":13.6},"2025":{"604":13,"682":12.4,"684":13,"685":13.5,"686":13.7,"687":11.5,"county":13.3}}},"3":{"1":{"2024":{"682":3.7,"684":3.1,"685":4.5,"686":3.1,"687":3.8,"county":3.8,"604":3.4},"2025":{"686":3.8,"687":3.9,"county":3.9,"685":4.2,"604":3.5,"682":3.9,"684":3.9}},"2":{"2024":{"604":4.8,"682":5.9,"684":5.6,"686":5.8,"687":5.8,"county":6.3,"685":6.6},"2025":{"604":5.4,"682":6.2,"684":4.9,"686":6.2,"685":6.8,"687":6.2,"county":6.3}},"3":{"2024":{"604":4.1,"682":4.8,"684":4.3,"685":5.6,"686":4.5,"687":4.9,"county":5.1},"2025":{"604":4.5,"682":5.1,"684":4.4,"685":5.5,"687":5.1,"686":5.1,"county":5.2}}}}},"5":{"1":{"1":{"1":{"2024":{"682":119,"684":42,"685":108,"686":66,"687":73,"county":1248,"604":37},"2025":{"684":52,"685":118,"687":77,"604":31,"682":124,"686":66,"county":1207}},"2":{"2024":{"604":36,"682":152,"684":53,"685":151,"686":99,"687":95,"county":1645},"2025":{"684":51,"685":161,"687":98,"county":1575,"686":108,"604":35,"682":152}},"3":{"2024":{"682":271,"685":259,"686":165,"687":168,"county":2893,"604":73,"684":95},"2025":{"604":66,"682":276,"684":103,"685":279,"686":174,"687":175,"county":2782}}},"2":{"1":{"2024":{"684":93,"686":175,"687":198,"county":2694,"604":52,"682":236,"685":228},"2025":{"604":55,"682":250,"684":91,"687":215,"685":247,"686":172,"county":2827}},"2":{"2024":{"604":108,"682":484,"684":214,"685":503,"686":353,"687":419,"county":5806},"2025":{"682":469,"685":530,"686":377,"county":5907,"604":114,"684":229,"687":439}},"3":{"2024":{"604":160,"682":720,"684":307,"685":731,"686":528,"687":617,"county":8500},"2025":{"604":169,"682":719,"684":320,"687":654,"686":549,"685":777,"county":8734}}},"3":{"1":{"2024":{"604":89,"684":135,"685":336,"686":241,"687":271,"county":3942,"682":355},"2025":{"604":86,"682":374,"684":143,"685":365,"687":292,"686":238,"county":4034}},"2":{"2024":{"604":144,"684":267,"686":452,"687":514,"county":7451,"682":636,"685":654},"2025":{"604":149,"682":621,"684":280,"685":691,"686":485,"687":537,"county":7482}},"3":{"2024":{"604":233,"682":991,"684":402,"685":990,"687":785,"county":11393,"686":693},"2025":{"604":235,"682":995,"684":423,"685":1056,"686":723,"687":829,"county":11516}}}},"2":{"1":{"1":{"2024":{"604":5.8,"684":4.2,"685":4.5,"686":4,"687":4.7,"682":4.7,"county":4.5},"2025":{"604":4.9,"682":5,"684":5.2,"685":4.9,"686":4.1,"687":5,"county":4.4}},"2":{"2024":{"604":6.1,"682":6.2,"684":5.7,"686":6,"county":5.9,"687":5.9,"685":6.4},"2025":{"604":5.8,"682":6.2,"685":6.9,"686":6.6,"687":6.2,"county":5.6,"684":5.5}},"3":{"2024":{"604":5.9,"682":5.5,"684":4.9,"685":5.4,"686":5,"687":5.3,"county":5.2},"2025":{"604":5.3,"682":5.6,"684":5.3,"686":5.4,"687":5.6,"685":null,"county":null}}},"2":{"1":{"2024":{"604":27.7,"682":26.4,"684":26.6,"686":31.1,"687":30.7,"county":27.1,"685":25.8},"2025":{"604":26.8,"682":26,"684":24.9,"685":26.8,"687":31,"686":28.4,"county":26.6}},"2":{"2024":{"604":43.9,"682":42.9,"684":44.8,"685":42.1,"687":45.8,"county":42.2,"686":45},"2025":{"604":47.1,"682":40.3,"685":42.4,"686":46,"687":46.1,"684":46.6,"county":41.3}},"3":{"2024":{"604":36.9,"682":35.6,"685":35.2,"686":39.2,"687":39.6,"684":37.1,"county":35.9},"2025":{"604":37.8,"682":33.9,"684":37.4,"685":35.8,"686":38.5,"687":39.7,"county":35}}},"3":{"1":{"2024":{"682":10.4,"684":9.9,"685":10.2,"county":10.5,"604":10.7,"686":11,"687":null},"2025":{"687":13.1,"county":10.6,"682":10.8,"685":11,"686":10.7,"604":null,"684":null}},"2":{"2024":{"604":17.3,"682":17.8,"684":19,"686":18.5,"685":18.4,"687":20.3,"county":17.8},"2025":{"604":17.6,"682":17.2,"684":19.7,"685":19.2,"686":19.7,"687":21.2,"county":17.7}},"3":{"2024":{"604":14,"682":14.2,"684":14.5,"685":14.5,"686":14.9,"687":16.6,"county":14.4},"2025":{"684":15.2,"685":15.3,"686":15.5,"687":17.4,"county":14.3,"682":14.1,"604":14}}}}},"6":{"1":{"1":{"1":{"2024":{"604":10,"682":48,"684":14,"686":26,"687":46,"county":582,"685":68},"2025":{"604":9,"682":47,"684":15,"686":32,"687":47,"685":78,"county":509}},"2":{"2024":{"682":49,"684":13,"685":81,"686":30,"687":42,"604":13,"county":636},"2025":{"604":12,"682":47,"684":18,"685":75,"686":40,"county":566,"687":51}},"3":{"2024":{"604":23,"682":97,"685":149,"686":56,"687":88,"county":1218,"684":27},"2025":{"604":21,"682":94,"685":153,"686":72,"county":1075,"684":33,"687":98}}},"2":{"1":{"2024":{"684":42,"686":84,"687":116,"county":1350,"604":27,"685":138,"682":91},"2025":{"604":22,"682":105,"684":39,"686":79,"county":1305,"687":123,"685":159}},"2":{"2024":{"604":37,"684":94,"685":286,"687":222,"county":2622,"682":176,"686":160},"2025":{"604":45,"682":157,"684":93,"685":306,"686":167,"687":224,"county":2440}},"3":{"2024":{"604":64,"682":267,"684":136,"686":244,"687":338,"county":3972,"685":424},"2025":{"604":67,"682":262,"684":132,"685":465,"686":246,"687":347,"county":3745}}},"3":{"1":{"2024":{"604":37,"682":139,"685":206,"684":56,"686":110,"687":162,"county":1932},"2025":{"604":31,"682":152,"684":54,"685":237,"686":111,"687":170,"county":1814}},"2":{"2024":{"682":225,"684":107,"685":367,"686":190,"687":264,"county":3258,"604":50},"2025":{"682":204,"685":381,"686":207,"687":275,"county":3006,"604":57,"684":111}},"3":{"2024":{"604":87,"682":364,"684":163,"685":573,"686":300,"687":426,"county":5190},"2025":{"682":356,"684":165,"685":618,"687":445,"county":4820,"604":88,"686":318}}}},"2":{"1":{"1":{"2024":{"604":1.6,"682":1.9,"684":1.4,"685":2.8,"686":1.6,"county":2.1,"687":3},"2025":{"604":1.4,"682":1.9,"684":1.5,"685":3.3,"county":1.9,"687":3,"686":2}},"2":{"2024":{"604":2.2,"682":2,"684":1.4,"686":1.8,"687":2.6,"685":3.4,"county":2.3},"2025":{"604":2,"682":1.9,"684":1.9,"685":3.2,"686":2.4,"687":3.2,"county":2}},"3":{"2024":{"604":1.9,"682":2,"684":1.4,"686":1.7,"county":2.2,"687":2.8,"685":3.1},"2025":{"604":1.7,"682":1.9,"684":1.7,"685":3.2,"686":2.2,"687":3.1,"county":1.9}}},"2":{"1":{"2024":{"604":14.4,"682":10.2,"685":15.6,"686":14.9,"687":18,"684":12,"county":13.6},"2025":{"604":10.7,"682":10.9,"684":10.7,"685":17.2,"686":13,"687":17.7,"county":12.3}},"2":{"2024":{"604":15,"684":19.7,"687":24.3,"county":19,"685":24,"682":15.6,"686":20.4},"2025":{"604":18.6,"682":13.5,"684":18.9,"685":24.5,"686":20.4,"687":23.5,"county":17}},"3":{"2024":{"604":14.7,"682":13.2,"686":18.1,"687":21.7,"684":16.4,"685":20.4,"county":16.8},"2025":{"682":12.3,"684":15.4,"685":21.4,"686":17.3,"687":21.1,"county":15,"604":15}}},"3":{"1":{"2024":{"604":4.5,"682":4.1,"684":4.1,"685":6.3,"686":5,"687":7.4,"county":5.1},"2025":{"604":3.7,"682":4.4,"685":7.2,"684":3.9,"687":7.6,"county":4.8,"686":5}},"2":{"2024":{"604":6,"682":6.3,"684":7.6,"685":10.3,"686":7.8,"687":10.4,"county":7.8},"2025":{"604":6.7,"682":5.6,"684":7.8,"686":8.4,"687":10.8,"685":10.6,"county":7.1}},"3":{"2024":{"604":5.2,"682":5.2,"684":5.9,"685":8.4,"686":6.5,"687":9,"county":6.5},"2025":{"604":5.2,"682":5,"684":5.9,"685":9,"686":6.8,"687":9.3,"county":6}}}}}};
+    const socialstyrelsenTrendData = {"1":{"1":{"2014":28,"2016":21,"2017":23,"2015":24,"2020":21,"2021":25,"2019":16,"2018":16,"2022":20,"2023":17,"2024":17,"2025":23},"2":{"2014":1.1,"2015":0.9,"2016":0.8,"2017":0.9,"2018":0.6,"2019":0.6,"2020":0.8,"2022":0.7,"2023":0.6,"2024":0.6,"2025":0.8,"2021":0.9}},"2":{"1":{"2014":241,"2015":259,"2018":307,"2019":309,"2020":313,"2021":436,"2022":439,"2023":449,"2024":439,"2016":251,"2025":453,"2017":267},"2":{"2014":9.5,"2015":10,"2016":9.5,"2017":10,"2018":11.4,"2019":11.3,"2021":15.8,"2022":15.9,"2023":16.2,"2024":15.9,"2025":16.2,"2020":11.4}},"3":{"1":{"2014":104,"2015":84,"2016":81,"2018":88,"2019":53,"2020":57,"2021":69,"2024":54,"2025":59,"2022":53,"2023":34,"2017":84},"2":{"2014":4.1,"2015":3.2,"2016":3.1,"2017":3.1,"2018":3.3,"2019":1.9,"2021":2.5,"2022":1.9,"2023":1.2,"2024":2,"2020":2.1,"2025":2.1}},"4":{"1":{"2014":165,"2015":161,"2017":158,"2018":151,"2019":155,"2021":138,"2022":136,"2023":126,"2024":120,"2025":124,"2020":143,"2016":157},"2":{"2014":6.5,"2015":6.2,"2016":5.9,"2018":5.6,"2019":5.7,"2020":5.2,"2021":5,"2023":4.6,"2025":4.4,"2017":5.9,"2024":4.3,"2022":4.9}},"5":{"1":{"2014":300,"2015":355,"2016":351,"2017":373,"2018":405,"2019":395,"2021":399,"2022":393,"2023":405,"2024":402,"2025":423,"2020":397},"2":{"2015":13.7,"2017":13.9,"2018":15,"2019":14.4,"2020":14.4,"2021":14.5,"2022":14.2,"2023":14.7,"2025":15.2,"2014":11.8,"2016":13.3,"2024":14.5}},"6":{"1":{"2014":123,"2015":111,"2016":112,"2017":99,"2018":127,"2021":174,"2023":177,"2024":163,"2025":165,"2019":122,"2020":136,"2022":180},"2":{"2014":4.9,"2016":4.2,"2017":3.7,"2018":4.7,"2019":4.5,"2020":4.9,"2022":6.5,"2023":6.4,"2024":5.9,"2025":5.9,"2015":4.3,"2021":6.3}}};
+    const socialstyrelsenHomeCareHoursData = {"2024":{"1":316,"2":114,"3":82,"5":0,"4":83},"2025":{"1":319,"2":120,"3":78,"4":87,"5":0}};
+    const socialstyrelsenMonthlyData = {"2025":{"2":347,"3":349,"4":349,"5":344,"6":353,"7":348,"8":351,"1":349,"11":356,"10":356,"12":357,"9":353},"2026":{"1":365,"2":373,"3":370,"4":364,"8":null,"9":null,"11":null,"12":null,"5":null,"6":null,"7":null,"10":null}};
+
+        const comparisonMunicipalities = [
         { id: "0684", title: "Sävsjö", color: "#005a9c" },
         { id: "0685", title: "Vetlanda", color: "#2a7f62" },
         { id: "0604", title: "Aneby", color: "#a35c00" },
@@ -1433,7 +1568,7 @@
 
     window.addEventListener("resize", () => {
         if (document.getElementById("socialstyrelsen")?.classList.contains("active")) {
-            renderSocialstyrelsenComparison();
+            renderSocialstyrelsenVisuals();
         }
     });
 
@@ -1471,7 +1606,7 @@
         });
 
         if (tabId === "socialstyrelsen") {
-            requestAnimationFrame(renderSocialstyrelsenComparison);
+            requestAnimationFrame(renderSocialstyrelsenVisuals);
         }
     }
 
@@ -1496,40 +1631,63 @@
     function setupSocialstyrelsenTab() {
         renderSocialstyrelsenCards();
         setupSocialstyrelsenComparisonControls();
-        renderSocialstyrelsenComparison();
+        renderSocialstyrelsenVisuals();
     }
 
     function setupSocialstyrelsenComparisonControls() {
         document.getElementById("socialstyrelsen-compare-indicator").innerHTML = socialstyrelsenIndicators
             .map(indicator => `<option value="${indicator.id}" ${indicator.id === "2" ? "selected" : ""}>${indicator.title}</option>`)
             .join("");
+        document.getElementById("socialstyrelsen-compare-age").innerHTML = socialstyrelsenAgeOptions
+            .map(option => `<option value="${option.id}">${option.title}</option>`)
+            .join("");
+        document.getElementById("socialstyrelsen-compare-gender").innerHTML = socialstyrelsenGenderOptions
+            .map(option => `<option value="${option.id}">${option.title}</option>`)
+            .join("");
         document.getElementById("socialstyrelsen-compare-target").innerHTML = socialstyrelsenComparisonTargets
             .map(target => `<option value="${target.id}">${target.title}</option>`)
             .join("");
+        document.getElementById("socialstyrelsen-trend-indicator").innerHTML = socialstyrelsenIndicators
+            .map(indicator => `<option value="${indicator.id}" ${indicator.id === "2" ? "selected" : ""}>${indicator.title}</option>`)
+            .join("");
 
-        ["socialstyrelsen-compare-indicator", "socialstyrelsen-compare-measure", "socialstyrelsen-compare-target"].forEach(id => {
+        ["socialstyrelsen-compare-indicator", "socialstyrelsen-compare-measure", "socialstyrelsen-compare-age", "socialstyrelsen-compare-gender", "socialstyrelsen-compare-target"].forEach(id => {
             document.getElementById(id).addEventListener("change", renderSocialstyrelsenComparison);
         });
+        ["socialstyrelsen-trend-indicator", "socialstyrelsen-trend-measure"].forEach(id => {
+            document.getElementById(id).addEventListener("change", renderSocialstyrelsenTrend);
+        });
+    }
+
+    function renderSocialstyrelsenVisuals() {
+        renderSocialstyrelsenComparison();
+        renderSocialstyrelsenTrend();
+        renderSocialstyrelsenHomeCareHours();
+        renderSocialstyrelsenMonthly();
     }
 
     function renderSocialstyrelsenComparison() {
         const indicatorId = document.getElementById("socialstyrelsen-compare-indicator").value;
         const measureId = document.getElementById("socialstyrelsen-compare-measure").value;
+        const ageId = document.getElementById("socialstyrelsen-compare-age").value;
+        const genderId = document.getElementById("socialstyrelsen-compare-gender").value;
         const targetId = document.getElementById("socialstyrelsen-compare-target").value;
         const target = socialstyrelsenComparisonTargets.find(item => item.id === targetId) || socialstyrelsenComparisonTargets[0];
-        const rows = target.rowIds.map(regionId => socialstyrelsenComparisonRow(regionId, indicatorId, measureId)).filter(Boolean);
+        const rows = target.rowIds.map(regionId => socialstyrelsenComparisonRow(regionId, indicatorId, measureId, ageId, genderId)).filter(Boolean);
 
         drawSocialstyrelsenBarChart(document.getElementById("socialstyrelsen-comparison-chart"), rows, measureId);
         renderSocialstyrelsenComparisonLegend(rows);
         renderSocialstyrelsenComparisonTable(rows, measureId);
+        document.getElementById("socialstyrelsen-comparison-note").textContent =
+            `Urval: ${socialstyrelsenOptionLabel(socialstyrelsenAgeOptions, ageId)}, ${socialstyrelsenOptionLabel(socialstyrelsenGenderOptions, genderId)}, totalt. Höglandet summeras för antal och visas som ovägt snitt för andel.`;
     }
 
-    function socialstyrelsenComparisonRow(regionId, indicatorId, measureId) {
+    function socialstyrelsenComparisonRow(regionId, indicatorId, measureId, ageId, genderId) {
         const region = socialstyrelsenComparisonRegions.find(item => item.id === regionId);
         if (!region) return null;
 
-        const value = socialstyrelsenComparisonValue(indicatorId, measureId, "2025", regionId);
-        const previous = socialstyrelsenComparisonValue(indicatorId, measureId, "2024", regionId);
+        const value = socialstyrelsenComparisonValue(indicatorId, measureId, ageId, genderId, "2025", regionId);
+        const previous = socialstyrelsenComparisonValue(indicatorId, measureId, ageId, genderId, "2024", regionId);
         if (value === null) return null;
 
         return {
@@ -1540,10 +1698,10 @@
         };
     }
 
-    function socialstyrelsenComparisonValue(indicatorId, measureId, year, regionId) {
+    function socialstyrelsenComparisonValue(indicatorId, measureId, ageId, genderId, year, regionId) {
         if (regionId === "highland") {
             const values = socialstyrelsenHighlandRegionIds
-                .map(id => socialstyrelsenComparisonValue(indicatorId, measureId, year, id))
+                .map(id => socialstyrelsenComparisonValue(indicatorId, measureId, ageId, genderId, year, id))
                 .filter(value => value !== null);
 
             if (!values.length) return null;
@@ -1551,7 +1709,7 @@
             return values.reduce((sum, value) => sum + value, 0) / values.length;
         }
 
-        const value = socialstyrelsenComparisonData[indicatorId]?.[measureId]?.[year]?.[regionId];
+        const value = socialstyrelsenComparisonData[indicatorId]?.[measureId]?.[ageId]?.[genderId]?.[year]?.[regionId];
         return Number.isFinite(value) ? value : null;
     }
 
@@ -1647,16 +1805,17 @@
     }
 
     function renderSocialstyrelsenComparisonTable(rows, measureId) {
-        document.getElementById("socialstyrelsen-comparison-table-body").innerHTML = rows.map(row => `
+        document.getElementById("socialstyrelsen-comparison-table-body").innerHTML = rows.length ? rows.map(row => `
             <tr>
                 <td>${row.title}</td>
                 <td>${formatSocialstyrelsenComparisonValue(row.value, measureId)}</td>
                 <td>${formatSocialstyrelsenComparisonChange(row.change, measureId)}</td>
             </tr>
-        `).join("");
+        `).join("") : `<tr><td colspan="3">Inga värden för valt urval.</td></tr>`;
     }
 
     function formatSocialstyrelsenComparisonValue(value, measureId) {
+        if (value === null || !Number.isFinite(value)) return "Saknas";
         return measureId === "2" ? formatPercent(value) : `${formatValue(value, "number")} personer`;
     }
 
@@ -1664,6 +1823,177 @@
         if (value === null) return "";
         if (measureId === "2") return `${formatSignedValue(value)} procentenheter`;
         return `${formatSignedValue(value)} personer`;
+    }
+
+    function renderSocialstyrelsenTrend() {
+        const indicatorId = document.getElementById("socialstyrelsen-trend-indicator").value;
+        const measureId = document.getElementById("socialstyrelsen-trend-measure").value;
+        const indicator = socialstyrelsenIndicators.find(item => item.id === indicatorId) || socialstyrelsenIndicators[1];
+        const points = Object.entries(socialstyrelsenTrendData[indicatorId]?.[measureId] || {})
+            .map(([year, value]) => ({ period: Number(year), title: year, value }))
+            .filter(point => Number.isFinite(point.value))
+            .sort((a, b) => a.period - b.period);
+
+        drawSocialstyrelsenLineChart(document.getElementById("socialstyrelsen-trend-chart"), points, measureId, indicator.color);
+        document.getElementById("socialstyrelsen-trend-legend").innerHTML = `
+            <span class="legend-item">
+                <span class="legend-color" style="background:${indicator.color}"></span>
+                Sävsjö
+            </span>
+        `;
+        document.getElementById("socialstyrelsen-trend-table-body").innerHTML = points.length ? points
+            .slice()
+            .reverse()
+            .map(point => `
+                <tr>
+                    <td>${point.title}</td>
+                    <td>${formatSocialstyrelsenComparisonValue(point.value, measureId)}</td>
+                </tr>
+            `).join("") : `<tr><td colspan="2">Inga värden för valt urval.</td></tr>`;
+    }
+
+    function renderSocialstyrelsenHomeCareHours() {
+        const rows = socialstyrelsenHourGroups.map(group => {
+            const value = socialstyrelsenHomeCareHoursData["2025"]?.[group.id];
+            const previous = socialstyrelsenHomeCareHoursData["2024"]?.[group.id];
+            return {
+                ...group,
+                value,
+                previous,
+                change: Number.isFinite(value) && Number.isFinite(previous) ? value - previous : null
+            };
+        }).filter(row => Number.isFinite(row.value));
+
+        drawSocialstyrelsenBarChart(document.getElementById("socialstyrelsen-hours-chart"), rows, "1");
+        document.getElementById("socialstyrelsen-hours-table-body").innerHTML = rows.length ? rows.map(row => `
+            <tr>
+                <td>${row.title}</td>
+                <td>${formatSocialstyrelsenComparisonValue(row.value, "1")}</td>
+                <td>${formatSocialstyrelsenComparisonChange(row.change, "1")}</td>
+            </tr>
+        `).join("") : `<tr><td colspan="3">Inga värden för hemtjänsttimmar.</td></tr>`;
+    }
+
+    function renderSocialstyrelsenMonthly() {
+        const rows = Object.entries(socialstyrelsenMonthlyData)
+            .flatMap(([year, months]) => Object.entries(months).map(([month, value]) => ({
+                period: Number(year) * 100 + Number(month),
+                title: `${socialstyrelsenMonthNames[month]} ${String(year).slice(2)}`,
+                value,
+                color: "#005a9c"
+            })))
+            .filter(row => Number.isFinite(row.value))
+            .sort((a, b) => a.period - b.period)
+            .slice(-12);
+
+        drawSocialstyrelsenBarChart(document.getElementById("socialstyrelsen-monthly-chart"), rows, "1");
+        document.getElementById("socialstyrelsen-monthly-table-body").innerHTML = rows.length ? rows
+            .slice()
+            .reverse()
+            .map(row => `
+                <tr>
+                    <td>${row.title}</td>
+                    <td>${formatSocialstyrelsenComparisonValue(row.value, "1")}</td>
+                </tr>
+            `).join("") : `<tr><td colspan="2">Inga månadsrader tillgängliga.</td></tr>`;
+    }
+
+    function drawSocialstyrelsenLineChart(canvas, points, measureId, color) {
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        const rect = canvas.getBoundingClientRect();
+        const pixelRatio = window.devicePixelRatio || 1;
+        const width = Math.max(360, Math.round(rect.width || canvas.clientWidth || 900));
+        const height = Math.max(260, Math.round(rect.height || canvas.clientHeight || 280));
+        const pixelWidth = Math.round(width * pixelRatio);
+        const pixelHeight = Math.round(height * pixelRatio);
+
+        if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+            canvas.width = pixelWidth;
+            canvas.height = pixelHeight;
+        }
+
+        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+        if (!points.length) return;
+
+        const padding = 54;
+        const rightPadding = 24;
+        const bottomPadding = 46;
+        const chartWidth = width - padding - rightPadding;
+        const chartHeight = height - padding - bottomPadding;
+        const values = points.map(point => point.value);
+        const minValue = Math.min(...values);
+        const maxValue = Math.max(...values);
+        const ticks = getYAxisTicks(Math.max(0, minValue), maxValue, measureId === "2" ? "percent" : "number");
+        const yMax = ticks[ticks.length - 1] || maxValue;
+        const yMin = measureId === "2" ? 0 : Math.max(0, ticks[0] || 0);
+        const xFor = index => padding + (points.length === 1 ? chartWidth / 2 : (chartWidth / (points.length - 1)) * index);
+        const yFor = value => padding + chartHeight - ((value - yMin) / Math.max(1, yMax - yMin)) * chartHeight;
+
+        ctx.font = "12px Segoe UI, Arial";
+        ticks.forEach(tick => {
+            const y = yFor(tick);
+            ctx.strokeStyle = "#e4e8ed";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding, y);
+            ctx.lineTo(padding + chartWidth, y);
+            ctx.stroke();
+
+            ctx.fillStyle = "#666";
+            ctx.textAlign = "right";
+            ctx.textBaseline = "middle";
+            ctx.fillText(measureId === "2" ? `${tick}%` : tick.toLocaleString("sv-SE"), padding - 8, y);
+        });
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        points.forEach((point, index) => {
+            const x = xFor(index);
+            const y = yFor(point.value);
+            if (index === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        points.forEach((point, index) => {
+            const x = xFor(index);
+            const y = yFor(point.value);
+            ctx.fillStyle = "#fff";
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            if (index === 0 || index === points.length - 1 || index % 2 === 0) {
+                ctx.fillStyle = "#555";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "top";
+                ctx.fillText(point.title, x, padding + chartHeight + 12);
+            }
+        });
+
+        const latest = points[points.length - 1];
+        ctx.fillStyle = "#333";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+        ctx.fillText(formatSocialstyrelsenComparisonValue(latest.value, measureId), xFor(points.length - 1), yFor(latest.value) - 10);
+
+        ctx.strokeStyle = "#d5d5d5";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, padding + chartHeight);
+        ctx.lineTo(padding + chartWidth, padding + chartHeight);
+        ctx.stroke();
+    }
+
+    function socialstyrelsenOptionLabel(options, id) {
+        return options.find(option => option.id === id)?.title || "";
     }
 
     function renderSocialstyrelsenCards() {
