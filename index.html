@@ -732,6 +732,8 @@
         <button class="tab-btn" type="button" data-tab="jobb">Lediga jobb</button>
         <button class="tab-btn" type="button" data-tab="jamforelser">Jämförelser</button>
         <button class="tab-btn" type="button" data-tab="socialstyrelsen">Socialstyrelsen</button>
+        <button class="tab-btn" type="button" data-tab="sos-hsl">SoS hälso-/sjukvård</button>
+        <button class="tab-btn" type="button" data-tab="sos-ekb">SoS ekonomiskt bistånd</button>
     </nav>
 
     <main>
@@ -881,6 +883,74 @@
 
         </section>
 
+        <section id="sos-hsl" class="tab-content" aria-labelledby="SoS hälso-/sjukvård">
+            <div class="info">Källa: Socialstyrelsens statistikdatabas för kommunal hälso- och sjukvård (KVÅ). Urval: Sävsjö kommun, båda könen, alla yrkesgrupper, årsuppgifter till 2025. Senast kontrollerad uppdatering i källan: 2026-06-11.</div>
+            <div class="grid source-snapshot" id="sos-hsl-cards"></div>
+
+            <article class="comparison-card source-comparison">
+                <h3>Jämförelse Socialstyrelsen, kommunal hälso- och sjukvård</h3>
+                <div class="toolbar source-toolbar">
+                    <div class="field">
+                        <label for="sos-hsl-compare-indicator">Urval:</label>
+                        <select id="sos-hsl-compare-indicator"></select>
+                    </div>
+                    <div class="field">
+                        <label for="sos-hsl-compare-target">Jämför med:</label>
+                        <select id="sos-hsl-compare-target"></select>
+                    </div>
+                </div>
+                <canvas class="comparison-chart" id="sos-hsl-comparison-chart" width="900" height="280"></canvas>
+                <div class="legend" id="sos-hsl-comparison-legend"></div>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Område</th>
+                            <th>2025</th>
+                            <th>Förändring från 2024</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sos-hsl-comparison-table-body">
+                        <tr><td colspan="3">Laddar...</td></tr>
+                    </tbody>
+                </table>
+                <div class="insight-note">Måttet är antal patienter. Höglandet summeras av kommunvärdena.</div>
+            </article>
+        </section>
+
+        <section id="sos-ekb" class="tab-content" aria-labelledby="SoS ekonomiskt bistånd">
+            <div class="info">Källa: Socialstyrelsens statistikdatabas för ekonomiskt bistånd. Urval: Sävsjö kommun, årsuppgifter till 2025. Senast kontrollerad uppdatering i källan: 2026-06-11.</div>
+            <div class="grid source-snapshot" id="sos-ekb-cards"></div>
+
+            <article class="comparison-card source-comparison">
+                <h3>Jämförelse Socialstyrelsen, ekonomiskt bistånd</h3>
+                <div class="toolbar source-toolbar">
+                    <div class="field">
+                        <label for="sos-ekb-compare-indicator">Mått:</label>
+                        <select id="sos-ekb-compare-indicator"></select>
+                    </div>
+                    <div class="field">
+                        <label for="sos-ekb-compare-target">Jämför med:</label>
+                        <select id="sos-ekb-compare-target"></select>
+                    </div>
+                </div>
+                <canvas class="comparison-chart" id="sos-ekb-comparison-chart" width="900" height="280"></canvas>
+                <div class="legend" id="sos-ekb-comparison-legend"></div>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Område</th>
+                            <th>2025</th>
+                            <th>Förändring från 2024</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sos-ekb-comparison-table-body">
+                        <tr><td colspan="3">Laddar...</td></tr>
+                    </tbody>
+                </table>
+                <div class="insight-note">Höglandet summeras av kommunvärdena. Utbetalt bistånd redovisas i tusental kronor.</div>
+            </article>
+        </section>
+
         <section id="halsa" class="tab-content" aria-labelledby="Hälso- och sjukvård">
             <div class="info">Detta område visas på kommunnivå.</div>
             <div class="grid" data-grid="halsa"></div>
@@ -1010,7 +1080,7 @@
         </section>
     </main>
 
-    <p class="source">Källa: Kolada API v3, Socialstyrelsens statistikdatabas för äldreomsorg samt Arbetsförmedlingens Platsbanken och Historical Ads API. Befolkningsuppgifterna kommer från SCB via Kolada. Kolada- och jobbdatan hämtas vid sidladdning; Socialstyrelsens värden i fliken är hämtade från statistikdatabasen.</p>
+    <p class="source">Källa: Kolada API v3, Socialstyrelsens statistikdatabaser samt Arbetsförmedlingens Platsbanken och Historical Ads API. Befolkningsuppgifterna kommer från SCB via Kolada. Kolada- och jobbdatan hämtas vid sidladdning; Socialstyrelsens värden i flikarna är hämtade från statistikdatabaserna.</p>
 </div>
 <div class="chart-tooltip" id="chart-tooltip" role="status" aria-live="polite"></div>
 
@@ -1138,7 +1208,12 @@
     const socialstyrelsenHomeCareHoursData = {"2024":{"1":316,"2":114,"3":82,"5":0,"4":83},"2025":{"1":319,"2":120,"3":78,"4":87,"5":0}};
     const socialstyrelsenMonthlyData = {"2025":{"2":347,"3":349,"4":349,"5":344,"6":353,"7":348,"8":351,"1":349,"11":356,"10":356,"12":357,"9":353},"2026":{"1":365,"2":373,"3":370,"4":364,"8":null,"9":null,"11":null,"12":null,"5":null,"6":null,"7":null,"10":null}};
 
-        const comparisonMunicipalities = [
+    const sosHslIndicators = [{"id":"all","title":"Samtliga patienter","description":"Patienter med minst en KVÅ-kod","age":["1","2","3","4"],"gender":"3","ygrp":"0","ind":"TOT","ind2":"i_TOT_1","format":"number","color":"#005a9c"},{"id":"age-18-64","title":"18-64 år","description":"Patienter med minst en KVÅ-kod","age":["2"],"gender":"3","ygrp":"0","ind":"TOT","ind2":"i_TOT_1","format":"number","color":"#2f74a8"},{"id":"age-65-79","title":"65-79 år","description":"Patienter med minst en KVÅ-kod","age":["3"],"gender":"3","ygrp":"0","ind":"TOT","ind2":"i_TOT_1","format":"number","color":"#2a7f62"},{"id":"age-80","title":"80+ år","description":"Patienter med minst en KVÅ-kod","age":["4"],"gender":"3","ygrp":"0","ind":"TOT","ind2":"i_TOT_1","format":"number","color":"#7a4cb0"}];
+    const sosHslComparisonData = {"all":{"2024":{"604":397,"684":684,"682":1698,"685":1832,"687":1194,"686":1044,"county":19469},"2025":{"682":1778,"684":703,"685":1807,"686":1068,"687":1244,"county":19904,"604":407}},"age-18-64":{"2024":{"604":81,"682":320,"685":309,"684":135,"686":135,"county":3126,"687":192},"2025":{"604":82,"684":150,"685":298,"686":158,"687":154,"county":3190,"682":343}},"age-65-79":{"2024":{"604":113,"682":496,"684":161,"685":484,"686":282,"687":293,"county":5221},"2025":{"684":156,"685":487,"687":300,"county":5166,"686":273,"604":113,"682":500}},"age-80":{"2024":{"604":192,"682":879,"684":379,"685":1020,"686":618,"687":702,"county":10968},"2025":{"682":924,"684":389,"686":626,"687":783,"county":11385,"685":1005,"604":206}}};
+    const sosEkbIndicators = [{"id":"paid-excl","title":"Utbetalt bistånd","description":"Exklusive introduktionsersättning","matt":"2","format":"thousandCurrency","color":"#005a9c"},{"id":"recipients","title":"Biståndsmottagare","description":"Antal mottagare inklusive barn","matt":"4","format":"number","color":"#2a7f62"},{"id":"households","title":"Biståndshushåll","description":"Antal hushåll","matt":"5","format":"number","color":"#7a4cb0"},{"id":"adult-recipients","title":"Mottagare 18+","description":"Antal biståndsmottagare 18 år och äldre","matt":"6","format":"number","color":"#c04f15"}];
+    const sosEkbComparisonData = {"paid-excl":{"2025":{"684":15670,"686":27647,"682":62589,"685":32788,"604":5217,"county":369722,"687":28346},"2024":{"686":25268,"682":57530,"604":5494,"684":16697,"county":335763,"687":26807,"685":30822}},"recipients":{"2024":{"682":1002,"685":586,"684":348,"686":454,"604":131,"687":502,"county":6319},"2025":{"682":1011,"604":130,"684":306,"686":438,"county":6560,"687":455,"685":551}},"households":{"2024":{"604":109,"682":790,"684":276,"685":457,"county":5207,"687":420,"686":371},"2025":{"682":802,"604":108,"684":238,"687":384,"county":5420,"686":361,"685":439}},"adult-recipients":{"2024":{"684":348,"685":586,"686":454,"687":502,"county":6319,"604":131,"682":1002},"2025":{"604":130,"682":1011,"684":306,"685":551,"686":438,"687":455,"county":6560}}};
+
+    const comparisonMunicipalities = [
         { id: "0684", title: "Sävsjö", color: "#005a9c" },
         { id: "0685", title: "Vetlanda", color: "#2a7f62" },
         { id: "0604", title: "Aneby", color: "#a35c00" },
@@ -1570,15 +1645,22 @@
         if (document.getElementById("socialstyrelsen")?.classList.contains("active")) {
             renderSocialstyrelsenVisuals();
         }
+        if (document.getElementById("sos-hsl")?.classList.contains("active")) {
+            renderSosSourceComparison("sos-hsl");
+        }
+        if (document.getElementById("sos-ekb")?.classList.contains("active")) {
+            renderSosSourceComparison("sos-ekb");
+        }
     });
 
     document.getElementById("comparison-select").addEventListener("change", () => renderComparison("main-comparison"));
 
-    init();
+    window.setTimeout(init, 0);
 
     async function init() {
         renderAllCards();
         setupSocialstyrelsenTab();
+        setupSocialstyrelsenMoreTabs();
         renderEmbeddedComparisonPanels();
         registerComparisonPanel("main-comparison", {
             selectId: "comparison-select",
@@ -1607,6 +1689,9 @@
 
         if (tabId === "socialstyrelsen") {
             requestAnimationFrame(renderSocialstyrelsenVisuals);
+        }
+        if (tabId === "sos-hsl" || tabId === "sos-ekb") {
+            requestAnimationFrame(() => renderSosSourceComparison(tabId));
         }
     }
 
@@ -2015,6 +2100,226 @@
                 </article>
             `;
         }).join("");
+    }
+
+    const sosSourceConfigs = {
+        "sos-hsl": {
+            indicators: sosHslIndicators,
+            data: sosHslComparisonData,
+            cardsId: "sos-hsl-cards",
+            indicatorSelectId: "sos-hsl-compare-indicator",
+            targetSelectId: "sos-hsl-compare-target",
+            chartId: "sos-hsl-comparison-chart",
+            legendId: "sos-hsl-comparison-legend",
+            tableBodyId: "sos-hsl-comparison-table-body",
+            sourceLabel: "kommunal hälso- och sjukvård"
+        },
+        "sos-ekb": {
+            indicators: sosEkbIndicators,
+            data: sosEkbComparisonData,
+            cardsId: "sos-ekb-cards",
+            indicatorSelectId: "sos-ekb-compare-indicator",
+            targetSelectId: "sos-ekb-compare-target",
+            chartId: "sos-ekb-comparison-chart",
+            legendId: "sos-ekb-comparison-legend",
+            tableBodyId: "sos-ekb-comparison-table-body",
+            sourceLabel: "ekonomiskt bistånd"
+        }
+    };
+
+    function setupSocialstyrelsenMoreTabs() {
+        Object.keys(sosSourceConfigs).forEach(sourceId => {
+            const config = sosSourceConfigs[sourceId];
+            renderSosSourceCards(sourceId);
+            document.getElementById(config.indicatorSelectId).innerHTML = config.indicators
+                .map((indicator, index) => `<option value="${indicator.id}" ${index === 0 ? "selected" : ""}>${indicator.title}</option>`)
+                .join("");
+            document.getElementById(config.targetSelectId).innerHTML = socialstyrelsenComparisonTargets
+                .map(target => `<option value="${target.id}">${target.title}</option>`)
+                .join("");
+            [config.indicatorSelectId, config.targetSelectId].forEach(id => {
+                document.getElementById(id).addEventListener("change", () => renderSosSourceComparison(sourceId));
+            });
+            renderSosSourceComparison(sourceId);
+        });
+    }
+
+    function renderSosSourceCards(sourceId) {
+        const config = sosSourceConfigs[sourceId];
+        const grid = document.getElementById(config.cardsId);
+        grid.innerHTML = config.indicators.map(indicator => {
+            const value = sosSourceValue(config, indicator, "2025", "684");
+            const previous = sosSourceValue(config, indicator, "2024", "684");
+            const change = Number.isFinite(value) && Number.isFinite(previous) ? value - previous : null;
+
+            return `
+                <article class="card" style="--card-accent:${indicator.color}">
+                    <h3>${indicator.title}</h3>
+                    <div class="kpi-id">Socialstyrelsen ${config.sourceLabel}, region ${SOCIALSTYRELSEN_REGION_ID}</div>
+                    <div class="value">${formatSosSourceValue(value, indicator, sourceId)}</div>
+                    <div class="delta ${change < 0 ? "negative" : ""}">${formatSosSourceChange(change, indicator, sourceId)} från 2024</div>
+                    <div class="status">${indicator.description}</div>
+                    <canvas class="sparkline" width="320" height="112" aria-hidden="true"></canvas>
+                    <div class="year">Mätår: 2025 (Sävsjö)</div>
+                </article>
+            `;
+        }).join("");
+    }
+
+    function renderSosSourceComparison(sourceId) {
+        const config = sosSourceConfigs[sourceId];
+        const indicatorId = document.getElementById(config.indicatorSelectId).value;
+        const targetId = document.getElementById(config.targetSelectId).value;
+        const indicator = config.indicators.find(item => item.id === indicatorId) || config.indicators[0];
+        const target = socialstyrelsenComparisonTargets.find(item => item.id === targetId) || socialstyrelsenComparisonTargets[0];
+        const rows = target.rowIds.map(regionId => sosSourceComparisonRow(config, indicator, sourceId, regionId)).filter(Boolean);
+
+        drawSosSourceBarChart(document.getElementById(config.chartId), rows, sourceId);
+        document.getElementById(config.legendId).innerHTML = rows.map(row => `
+            <span class="legend-item">
+                <span class="legend-color" style="background:${row.color}"></span>
+                ${row.title}
+            </span>
+        `).join("");
+        document.getElementById(config.tableBodyId).innerHTML = rows.length ? rows.map(row => `
+            <tr>
+                <td>${row.title}</td>
+                <td>${formatSosSourceValue(row.value, indicator, sourceId)}</td>
+                <td>${formatSosSourceChange(row.change, indicator, sourceId)}</td>
+            </tr>
+        `).join("") : `<tr><td colspan="3">Inga värden för valt urval.</td></tr>`;
+    }
+
+    function sosSourceComparisonRow(config, indicator, sourceId, regionId) {
+        const region = socialstyrelsenComparisonRegions.find(item => item.id === regionId);
+        if (!region) return null;
+
+        const value = sosSourceValue(config, indicator, "2025", regionId);
+        const previous = sosSourceValue(config, indicator, "2024", regionId);
+        if (value === null) return null;
+
+        return {
+            ...region,
+            indicator,
+            sourceId,
+            value,
+            previous,
+            change: previous === null ? null : value - previous
+        };
+    }
+
+    function sosSourceValue(config, indicator, year, regionId) {
+        if (regionId === "highland") {
+            const values = socialstyrelsenHighlandRegionIds
+                .map(id => sosSourceValue(config, indicator, year, id))
+                .filter(value => value !== null);
+            if (!values.length) return null;
+            return values.reduce((sum, value) => sum + value, 0);
+        }
+
+        const value = config.data[indicator.id]?.[year]?.[regionId];
+        return Number.isFinite(value) ? value : null;
+    }
+
+    function formatSosSourceValue(value, indicator, sourceId) {
+        if (value === null || !Number.isFinite(value)) return "Saknas";
+        const rounded = Math.round(value);
+        if (indicator.format === "thousandCurrency") return `${rounded.toLocaleString("sv-SE")} tkr`;
+        if (sourceId === "sos-hsl") return `${rounded.toLocaleString("sv-SE")} patienter`;
+        if (indicator.id === "households") return `${rounded.toLocaleString("sv-SE")} hushåll`;
+        return `${rounded.toLocaleString("sv-SE")} personer`;
+    }
+
+    function formatSosSourceChange(value, indicator, sourceId) {
+        if (value === null || !Number.isFinite(value)) return "";
+        const rounded = Math.round(value);
+        const prefix = rounded > 0 ? "+" : rounded < 0 ? "−" : "";
+        const absolute = Math.abs(rounded).toLocaleString("sv-SE");
+        if (indicator.format === "thousandCurrency") return `${prefix}${absolute} tkr`;
+        if (sourceId === "sos-hsl") return `${prefix}${absolute} patienter`;
+        if (indicator.id === "households") return `${prefix}${absolute} hushåll`;
+        return `${prefix}${absolute} personer`;
+    }
+
+    function drawSosSourceBarChart(canvas, rows, sourceId) {
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        const rect = canvas.getBoundingClientRect();
+        const pixelRatio = window.devicePixelRatio || 1;
+        const width = Math.max(360, Math.round(rect.width || canvas.clientWidth || 900));
+        const height = Math.max(300, Math.round(rect.height || canvas.clientHeight || 320));
+        const pixelWidth = Math.round(width * pixelRatio);
+        const pixelHeight = Math.round(height * pixelRatio);
+
+        if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+            canvas.width = pixelWidth;
+            canvas.height = pixelHeight;
+        }
+
+        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        ctx.clearRect(0, 0, width, height);
+        if (!rows.length) return;
+
+        const padding = 54;
+        const rightPadding = 24;
+        const bottomPadding = 58;
+        const chartWidth = width - padding - rightPadding;
+        const chartHeight = height - padding - bottomPadding;
+        const maxValue = Math.max(1, ...rows.map(row => row.value));
+        const ticks = getYAxisTicks(0, maxValue, "number");
+        const yMax = ticks[ticks.length - 1] || maxValue;
+        const yFor = value => padding + chartHeight - (value / yMax) * chartHeight;
+
+        ctx.font = "12px Segoe UI, Arial";
+        ctx.textBaseline = "middle";
+        ticks.forEach(tick => {
+            const y = yFor(tick);
+            ctx.strokeStyle = "#e4e8ed";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding, y);
+            ctx.lineTo(padding + chartWidth, y);
+            ctx.stroke();
+
+            ctx.fillStyle = "#666";
+            ctx.textAlign = "right";
+            ctx.fillText(tick.toLocaleString("sv-SE"), padding - 8, y);
+        });
+
+        const gap = 16;
+        const slot = chartWidth / rows.length;
+        const barWidth = Math.max(24, Math.min(72, slot - gap));
+
+        rows.forEach((row, index) => {
+            const x = padding + slot * index + (slot - barWidth) / 2;
+            const y = yFor(row.value);
+            const barHeight = padding + chartHeight - y;
+
+            ctx.fillStyle = row.color;
+            ctx.fillRect(x, y, barWidth, barHeight);
+
+            ctx.fillStyle = "#333";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "bottom";
+            ctx.fillText(formatSosSourceValue(row.value, row.indicator, sourceId), x + barWidth / 2, y - 6);
+
+            ctx.save();
+            ctx.translate(x + barWidth / 2, padding + chartHeight + 12);
+            ctx.rotate(-Math.PI / 5);
+            ctx.textAlign = "right";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "#555";
+            ctx.fillText(row.title, 0, 0);
+            ctx.restore();
+        });
+
+        ctx.strokeStyle = "#d5d5d5";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, padding + chartHeight);
+        ctx.lineTo(padding + chartWidth, padding + chartHeight);
+        ctx.stroke();
     }
 
     function cardKey(card) {
