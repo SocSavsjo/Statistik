@@ -49,6 +49,32 @@
         color: var(--muted);
     }
 
+    .municipality-picker {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 16px;
+        padding: 10px 14px;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .municipality-picker label {
+        font-weight: 700;
+        color: var(--primary-dark);
+    }
+
+    .municipality-picker select {
+        min-width: 190px;
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: #fff;
+        font: inherit;
+    }
+
     .tabs {
         display: flex;
         flex-wrap: wrap;
@@ -719,8 +745,12 @@
 <body>
 <div class="container">
     <header>
-        <h1>Sävsjö Kommun</h1>
+        <h1><span id="main-municipality-title">Sävsjö</span> Kommun</h1>
         <p>Dashboard från: Kolada, Socialstyrelsen, Arbetsförmedlingen, Brå, Migrationsverket, Försäkringskassan och SCB</p>
+        <div class="municipality-picker">
+            <label for="municipality-select">Huvudkommun</label>
+            <select id="municipality-select" aria-label="Välj huvudkommun"></select>
+        </div>
     </header>
 
     <nav class="tabs" aria-label="Områden">
@@ -770,7 +800,7 @@
         </section>
 
         <section id="socialstyrelsen" class="tab-content" aria-labelledby="Socialstyrelsen">
-            <div class="info">Källa: Socialstyrelsens statistikdatabas för äldreomsorg. Urval: Sävsjö kommun, 65+ år, båda könen, totalt, period 2014-. Senast kontrollerad uppdatering i källan: 2026-06-24, med årsuppgifter till 2025.</div>
+            <div class="info">Källa: Socialstyrelsens statistikdatabas för äldreomsorg. Huvudkorten och jämförelserna följer vald huvudkommun när värden finns i filen. Trend-, tim- och månadsdiagrammen är snapshot för Sävsjö.</div>
             <div class="grid source-snapshot" id="socialstyrelsen-cards"></div>
 
             <article class="comparison-card source-comparison">
@@ -846,7 +876,7 @@
                             <tr><td colspan="2">Laddar...</td></tr>
                         </tbody>
                     </table>
-                    <div class="insight-note">Trend för Sävsjö, 65+ år, båda könen och totalt.</div>
+                    <div class="insight-note">Snapshot för Sävsjö, 65+ år, båda könen och totalt.</div>
                 </article>
 
                 <article class="comparison-card">
@@ -888,7 +918,7 @@
         </section>
 
         <section id="sos-hsl" class="tab-content" aria-labelledby="SoS hälso-/sjukvård">
-            <div class="info">Källa: Socialstyrelsens statistikdatabas för kommunal hälso- och sjukvård (KVÅ). Urval: Sävsjö kommun, båda könen, alla yrkesgrupper, årsuppgifter till 2025. Senast kontrollerad uppdatering i källan: 2026-06-11.</div>
+            <div class="info">Källa: Socialstyrelsens statistikdatabas för kommunal hälso- och sjukvård (KVÅ). Urvalet följer vald huvudkommun när värden finns i filen. Senast kontrollerad uppdatering i källan: 2026-06-11.</div>
             <div class="grid source-snapshot" id="sos-hsl-cards"></div>
 
             <article class="comparison-card source-comparison">
@@ -922,7 +952,7 @@
         </section>
 
         <section id="sos-ekb" class="tab-content" aria-labelledby="SoS ekonomiskt bistånd">
-            <div class="info">Källa: Socialstyrelsens statistikdatabas för ekonomiskt bistånd. Urval: Sävsjö kommun, årsuppgifter till 2025. Senast kontrollerad uppdatering i källan: 2026-06-11.</div>
+            <div class="info">Källa: Socialstyrelsens statistikdatabas för ekonomiskt bistånd. Urvalet följer vald huvudkommun när värden finns i filen. Senast kontrollerad uppdatering i källan: 2026-06-11.</div>
             <div class="grid source-snapshot" id="sos-ekb-cards"></div>
 
             <article class="comparison-card source-comparison">
@@ -1005,7 +1035,7 @@
             <div class="info">Aktuella platsannonser hämtas från Arbetsförmedlingens Platsbanken. Historiken visar publicerade annonser per år.</div>
             <div class="grid job-cards">
                 <article class="card" style="--card-accent:#005a9c">
-                    <h3>Lediga annonser i Sävsjö</h3>
+                    <h3>Lediga annonser i <span data-main-municipality>Sävsjö</span></h3>
                     <div class="kpi-id">Platsbanken just nu</div>
                     <div class="value" id="jobs-savsjo-ads">Laddar...</div>
                     <div class="delta" id="jobs-savsjo-ads-note"></div>
@@ -1013,7 +1043,7 @@
                     <div class="year" id="jobs-savsjo-year"></div>
                 </article>
                 <article class="card" style="--card-accent:#2a7f62">
-                    <h3>Lediga tjänster i Sävsjö</h3>
+                    <h3>Lediga tjänster i <span data-main-municipality>Sävsjö</span></h3>
                     <div class="kpi-id">Antal platser i annonserna</div>
                     <div class="value" id="jobs-savsjo-positions">Laddar...</div>
                     <div class="delta" id="jobs-savsjo-positions-note"></div>
@@ -1046,11 +1076,11 @@
                     <div class="insight-note" id="jobs-trend-note">Laddar historik...</div>
                 </article>
                 <article class="comparison-card">
-                    <h3>Vanligaste yrkena i Sävsjö just nu</h3>
+                    <h3>Vanligaste yrkena i <span data-main-municipality>Sävsjö</span> just nu</h3>
                     <div class="job-list" id="jobs-top-occupations">Laddar...</div>
                 </article>
                 <article class="comparison-card">
-                    <h3>Senaste annonserna i Sävsjö</h3>
+                    <h3>Senaste annonserna i <span data-main-municipality>Sävsjö</span></h3>
                     <div class="job-list" id="jobs-latest-ads">Laddar...</div>
                 </article>
             </div>
@@ -1067,7 +1097,7 @@
                 </div>
                 <div class="grid job-cards">
                     <article class="card" style="--card-accent:#005a9c">
-                        <h3>Sävsjö kommun</h3>
+                        <h3><span data-main-municipality-full>Sävsjö kommun</span></h3>
                         <div class="kpi-id">Andel inskrivna arbetslösa</div>
                         <div class="value" id="af-savsjo-share">-</div>
                         <div class="delta neutral" id="af-savsjo-note"></div>
@@ -1112,7 +1142,7 @@
                 <h3>Anmälda brott 2025</h3>
                 <div class="grid job-cards">
                     <article class="card" style="--card-accent:#005a9c">
-                        <h3>Sävsjö kommun</h3>
+                        <h3><span data-main-municipality-full>Sävsjö kommun</span></h3>
                         <div class="kpi-id">Totalt antal anmälda brott</div>
                         <div class="value" id="bra-savsjo-total">-</div>
                         <div class="delta neutral" id="bra-savsjo-share-note">Brå, kommunstatistik</div>
@@ -1134,11 +1164,11 @@
                     <thead>
                         <tr>
                             <th>Brottstyp</th>
-                            <th>Sävsjö</th>
+                            <th><span data-main-municipality>Sävsjö</span></th>
                             <th>Höglandet</th>
                             <th>Jönköpings län</th>
-                            <th>Sävsjö av Höglandet</th>
-                            <th>Sävsjö av länet</th>
+                            <th><span data-main-municipality>Sävsjö</span> av Höglandet</th>
+                            <th><span data-main-municipality>Sävsjö</span> av länet</th>
                         </tr>
                     </thead>
                     <tbody id="bra-crime-table-body">
@@ -1153,7 +1183,7 @@
                             <th>Aneby</th>
                             <th>Eksjö</th>
                             <th>Nässjö</th>
-                            <th>Sävsjö</th>
+                            <th><span data-main-municipality>Sävsjö</span></th>
                             <th>Tranås</th>
                             <th>Vetlanda</th>
                         </tr>
@@ -1174,7 +1204,7 @@
                     <thead>
                         <tr>
                             <th>År</th>
-                            <th>Sävsjö</th>
+                            <th><span data-main-municipality>Sävsjö</span></th>
                             <th>Höglandet</th>
                             <th>Jönköpings län</th>
                         </tr>
@@ -1197,7 +1227,7 @@
                 <h3>Kommunmottagna 2025</h3>
                 <div class="grid job-cards">
                     <article class="card" style="--card-accent:#005a9c">
-                        <h3>Sävsjö kommun</h3>
+                        <h3><span data-main-municipality-full>Sävsjö kommun</span></h3>
                         <div class="kpi-id">Kommunmottagna 2025</div>
                         <div class="value" id="migration-savsjo-total">-</div>
                         <div class="delta neutral" id="migration-savsjo-note"></div>
@@ -1236,7 +1266,7 @@
                     <thead>
                         <tr>
                             <th>Kategori</th>
-                            <th>Sävsjö</th>
+                            <th><span data-main-municipality>Sävsjö</span></th>
                             <th>Höglandet</th>
                             <th>Jönköpings län</th>
                         </tr>
@@ -1251,7 +1281,7 @@
                     <thead>
                         <tr>
                             <th>Grupp</th>
-                            <th>Sävsjö</th>
+                            <th><span data-main-municipality>Sävsjö</span></th>
                             <th>Höglandet</th>
                             <th>Jönköpings län</th>
                         </tr>
@@ -1275,7 +1305,7 @@
                 <h3>Försäkringskassan</h3>
                 <div class="job-kpi-grid">
                     <div class="job-kpi-card">
-                        <div class="kpi-title">Sävsjö kommun</div>
+                        <div class="kpi-title" data-main-municipality-full>Sävsjö kommun</div>
                         <div class="kpi-id" id="fk-savsjo-label">VAB nettodagar</div>
                         <div class="value" id="fk-savsjo-total">-</div>
                         <div class="delta neutral" id="fk-savsjo-note"></div>
@@ -1310,16 +1340,16 @@
                     </tbody>
                 </table>
 
-                <h3>Sävsjö mot Höglandet och länet</h3>
+                <h3><span data-main-municipality>Sävsjö</span> mot Höglandet och länet</h3>
                 <table class="comparison-table">
                     <thead>
                         <tr>
                             <th>Mått</th>
-                            <th>Sävsjö</th>
+                            <th><span data-main-municipality>Sävsjö</span></th>
                             <th>Höglandet</th>
                             <th>Jönköpings län</th>
-                            <th>Sävsjö av Höglandet</th>
-                            <th>Sävsjö av länet</th>
+                            <th><span data-main-municipality>Sävsjö</span> av Höglandet</th>
+                            <th><span data-main-municipality>Sävsjö</span> av länet</th>
                         </tr>
                     </thead>
                     <tbody id="fk-share-table-body">
@@ -1382,9 +1412,9 @@
     const API_BASE = "https://api.kolada.se/v3";
     const JOB_SEARCH_URL = "https://platsbanken-api.arbetsformedlingen.se/jobs/v1/search";
     const HISTORICAL_JOBS_URL = "https://historical.api.jobtechdev.se/search";
-    const MUNICIPALITY_ID = "0684";
+    const DEFAULT_MUNICIPALITY_ID = "0684";
+    let selectedMunicipalityId = DEFAULT_MUNICIPALITY_ID;
     const START_YEAR = 2018;
-    const SOCIALSTYRELSEN_REGION_ID = "684";
 
     const socialstyrelsenIndicators = [
         {
@@ -1546,29 +1576,67 @@
         { id: "0685", title: "Vetlanda", concept: "xJqx_SLC_415" }
     ];
 
-    const jobAreas = [
-        {
-            id: "savsjo",
-            title: "Sävsjö",
-            color: "#005a9c",
-            filters: [{ type: "municipality", value: "L1cX_MjM_y8W" }],
-            historicalParams: [{ key: "municipality", value: "0684" }]
-        },
-        {
-            id: "highland",
-            title: "Höglandet",
-            color: "#222222",
-            filters: jobMunicipalities.map(municipality => ({ type: "municipality", value: municipality.concept })),
-            historicalParams: jobMunicipalities.map(municipality => ({ key: "municipality", value: municipality.id }))
-        },
-        {
-            id: "county",
-            title: "Jönköpings län",
-            color: "#c04f15",
-            filters: [{ type: "region", value: "MtbE_xWT_eMi" }],
-            historicalParams: [{ key: "region", value: "MtbE_xWT_eMi" }]
+    function currentMunicipality() {
+        return jobMunicipalities.find(municipality => municipality.id === selectedMunicipalityId)
+            || jobMunicipalities.find(municipality => municipality.id === DEFAULT_MUNICIPALITY_ID);
+    }
+
+    function currentMunicipalityName() {
+        return currentMunicipality().title;
+    }
+
+    function currentSocialstyrelsenRegionId() {
+        return String(Number(selectedMunicipalityId));
+    }
+
+    function currentSocialstyrelsenRegion() {
+        return socialstyrelsenComparisonRegions.find(region => region.id === currentSocialstyrelsenRegionId())
+            || socialstyrelsenComparisonRegions.find(region => region.id === String(Number(DEFAULT_MUNICIPALITY_ID)));
+    }
+
+    function socialstyrelsenTargetRowIds(target) {
+        const currentId = currentSocialstyrelsenRegionId();
+        if (target.id === "highland") {
+            return [...new Set([currentId, ...socialstyrelsenHighlandRegionIds.filter(id => id !== currentId), "highland", "county"])];
         }
-    ];
+        if (target.id === "county") {
+            return [currentId, "county"];
+        }
+        return [...new Set([currentId, ...target.rowIds.filter(id => id !== currentId && id !== "684")])];
+    }
+
+    function getJobAreas() {
+        const selected = currentMunicipality();
+        return [
+            {
+                id: "main",
+                title: selected.title,
+                color: "#005a9c",
+                filters: [{ type: "municipality", value: selected.concept }],
+                historicalParams: [{ key: "municipality", value: selected.id }]
+            },
+            {
+                id: "highland",
+                title: "Höglandet",
+                color: "#222222",
+                filters: jobMunicipalities.map(municipality => ({ type: "municipality", value: municipality.concept })),
+                historicalParams: jobMunicipalities.map(municipality => ({ key: "municipality", value: municipality.id }))
+            },
+            {
+                id: "county",
+                title: "Jönköpings län",
+                color: "#c04f15",
+                filters: [{ type: "region", value: "MtbE_xWT_eMi" }],
+                historicalParams: [{ key: "region", value: "MtbE_xWT_eMi" }]
+            }
+        ];
+    }
+
+    function getComparisonMunicipalities() {
+        const selected = comparisonMunicipalities.find(municipality => municipality.id === selectedMunicipalityId);
+        const others = comparisonMunicipalities.filter(municipality => municipality.id !== selectedMunicipalityId);
+        return selected ? [selected, ...others] : comparisonMunicipalities;
+    }
 
 
     const fkData = {"source":"Försäkringskassan statistikdatabas, öppna API","snapshotDate":"2026-06-30","highlandMunicipalities":[{"key":"0604","name":"Aneby"},{"key":"0686","name":"Eksjö"},{"key":"0682","name":"Nässjö"},{"key":"0684","name":"Sävsjö"},{"key":"0687","name":"Tranås"},{"key":"0685","name":"Vetlanda"}],"vab":{"year":2025,"label":"VAB / tillfällig föräldrapenning","savsjo":{"key":"0684","name":"Sävsjö","recipients":1054,"netDays":7666,"amountKsek":8920},"highland":{"recipients":9842,"netDays":70523,"amountKsek":82063},"county":{"recipients":33114,"netDays":241026,"amountKsek":283388},"municipalities":[{"key":"0604","name":"Aneby","recipients":678,"netDays":4332,"amountKsek":5177},{"key":"0686","name":"Eksjö","recipients":1515,"netDays":10151,"amountKsek":11889},{"key":"0682","name":"Nässjö","recipients":2745,"netDays":19834,"amountKsek":23175},{"key":"0684","name":"Sävsjö","recipients":1054,"netDays":7666,"amountKsek":8920},{"key":"0687","name":"Tranås","recipients":1527,"netDays":11918,"amountKsek":13765},{"key":"0685","name":"Vetlanda","recipients":2323,"netDays":16622,"amountKsek":19137}]},"sicknessActivity":{"period":"2026-05","label":"Sjuk- och aktivitetsersättning","savsjo":{"key":"0684","name":"Sävsjö","recipients":324,"amountKsek":4330},"highland":{"recipients":3400,"amountKsek":44892},"county":{"recipients":10360,"amountKsek":137696},"municipalities":[{"key":"0604","name":"Aneby","recipients":194,"amountKsek":2667},{"key":"0686","name":"Eksjö","recipients":550,"amountKsek":7082},{"key":"0682","name":"Nässjö","recipients":968,"amountKsek":13054},{"key":"0684","name":"Sävsjö","recipients":324,"amountKsek":4330},{"key":"0687","name":"Tranås","recipients":595,"amountKsek":7929},{"key":"0685","name":"Vetlanda","recipients":769,"amountKsek":9830}]},"sickPayCounty":{"year":2025,"label":"Sjukpenning och rehabiliteringspenning","recipients":21716,"netDays":2071234,"amountKsek":1470853}};
@@ -1594,16 +1662,18 @@
             ? `${((part / whole) * 100).toLocaleString("sv-SE", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`
             : "-";
         const amount = value => Number.isFinite(value) ? `${formatValue(value, "number")} tkr` : "-";
+        const mainVab = fkData.vab.municipalities.find(item => item.key === selectedMunicipalityId) || fkData.vab.savsjo;
+        const mainSa = fkData.sicknessActivity.municipalities.find(item => item.key === selectedMunicipalityId) || fkData.sicknessActivity.savsjo;
 
-        document.getElementById("fk-savsjo-total").textContent = number(fkData.vab.savsjo.netDays);
+        document.getElementById("fk-savsjo-total").textContent = number(mainVab.netDays);
         document.getElementById("fk-highland-total").textContent = number(fkData.vab.highland.netDays);
         document.getElementById("fk-county-total").textContent = number(fkData.vab.county.netDays);
         document.getElementById("fk-savsjo-note").textContent =
-            `${number(fkData.vab.savsjo.recipients)} mottagare, ${amount(fkData.vab.savsjo.amountKsek)}`;
+            `${number(mainVab.recipients)} mottagare, ${amount(mainVab.amountKsek)}`;
         document.getElementById("fk-highland-note").textContent =
-            `Sävsjö ${share(fkData.vab.savsjo.netDays, fkData.vab.highland.netDays)} av Höglandet`;
+            `${currentMunicipalityName()} ${share(mainVab.netDays, fkData.vab.highland.netDays)} av Höglandet`;
         document.getElementById("fk-county-note").textContent =
-            `Sävsjö ${share(fkData.vab.savsjo.netDays, fkData.vab.county.netDays)} av länet`;
+            `${currentMunicipalityName()} ${share(mainVab.netDays, fkData.vab.county.netDays)} av länet`;
 
         document.getElementById("fk-municipality-table-body").innerHTML = fkData.vab.municipalities.map(municipality => {
             const sa = fkData.sicknessActivity.municipalities.find(item => item.key === municipality.key) || {};
@@ -1621,25 +1691,25 @@
         const rows = [
             {
                 label: `VAB nettodagar ${fkData.vab.year}`,
-                savsjo: fkData.vab.savsjo.netDays,
+                savsjo: mainVab.netDays,
                 highland: fkData.vab.highland.netDays,
                 county: fkData.vab.county.netDays
             },
             {
                 label: `VAB mottagare ${fkData.vab.year}`,
-                savsjo: fkData.vab.savsjo.recipients,
+                savsjo: mainVab.recipients,
                 highland: fkData.vab.highland.recipients,
                 county: fkData.vab.county.recipients
             },
             {
                 label: `Sjuk-/aktivitetsersättning mottagare ${fkData.sicknessActivity.period}`,
-                savsjo: fkData.sicknessActivity.savsjo.recipients,
+                savsjo: mainSa.recipients,
                 highland: fkData.sicknessActivity.highland.recipients,
                 county: fkData.sicknessActivity.county.recipients
             },
             {
                 label: `Sjuk-/aktivitetsersättning utbetalt ${fkData.sicknessActivity.period}, tkr`,
-                savsjo: fkData.sicknessActivity.savsjo.amountKsek,
+                savsjo: mainSa.amountKsek,
                 highland: fkData.sicknessActivity.highland.amountKsek,
                 county: fkData.sicknessActivity.county.amountKsek
             }
@@ -1675,16 +1745,19 @@
         const share = (part, whole) => Number.isFinite(part) && Number.isFinite(whole) && whole > 0
             ? `${((part / whole) * 100).toLocaleString("sv-SE", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`
             : "-";
+        const mainMigration = migrationData.municipalities.find(item => item.label === currentMunicipalityName())
+            || migrationData.municipalities.find(item => item.label === "Sävsjö")
+            || { total: null, protected: null, resident: null };
 
-        document.getElementById("migration-savsjo-total").textContent = number(migrationData.areas.savsjo.total);
+        document.getElementById("migration-savsjo-total").textContent = number(mainMigration.total);
         document.getElementById("migration-highland-total").textContent = number(migrationData.areas.highland.total);
         document.getElementById("migration-county-total").textContent = number(migrationData.areas.county.total);
         document.getElementById("migration-savsjo-note").textContent =
-            `${number(migrationData.areas.savsjo.protected)} med tillfälligt skydd, ${number(migrationData.areas.savsjo.resident)} bosatta senaste 24 mån`;
+            `${number(mainMigration.protected)} med tillfälligt skydd, ${number(mainMigration.resident)} bosatta senaste 24 mån`;
         document.getElementById("migration-highland-note").textContent =
-            `${number(migrationData.areas.highland.protected)} med tillfälligt skydd, Sävsjö ${share(migrationData.areas.savsjo.total, migrationData.areas.highland.total)} av Höglandet`;
+            `${number(migrationData.areas.highland.protected)} med tillfälligt skydd, ${currentMunicipalityName()} ${share(mainMigration.total, migrationData.areas.highland.total)} av Höglandet`;
         document.getElementById("migration-county-note").textContent =
-            `${number(migrationData.areas.county.protected)} med tillfälligt skydd, Sävsjö ${share(migrationData.areas.savsjo.total, migrationData.areas.county.total)} av länet`;
+            `${number(migrationData.areas.county.protected)} med tillfälligt skydd, ${currentMunicipalityName()} ${share(mainMigration.total, migrationData.areas.county.total)} av länet`;
 
         document.getElementById("migration-municipality-table-body").innerHTML = migrationData.municipalities.map(row => `
             <tr>
@@ -1719,10 +1792,10 @@
 
         const series = [
             {
-                id: "savsjo",
-                title: "Sävsjö",
+                id: "main",
+                title: currentMunicipalityName(),
                 color: "#005a9c",
-                values: migrationData.monthly.map(row => ({ period: afMonthToChartPeriod(row.period), periodLabel: row.period, value: row.savsjo }))
+                values: migrationData.monthly.map(row => ({ period: afMonthToChartPeriod(row.period), periodLabel: row.period, value: selectedMunicipalityId === DEFAULT_MUNICIPALITY_ID ? row.savsjo : null }))
             },
             {
                 id: "highland",
@@ -1755,20 +1828,23 @@
         const share = (part, whole) => Number.isFinite(part) && Number.isFinite(whole) && whole > 0
             ? `${((part / whole) * 100).toLocaleString("sv-SE", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`
             : "-";
-        document.getElementById("bra-savsjo-total").textContent = number(braCrimeData.areas.savsjo.total);
+        const mainTotal = braCrimeData.municipalities.find(item => item.label === currentMunicipalityName())?.total ?? braCrimeData.areas.savsjo.total;
+        const crimeValue = row => row.municipalities.find(item => item.label === currentMunicipalityName())?.value ?? row.savsjo;
+
+        document.getElementById("bra-savsjo-total").textContent = number(mainTotal);
         document.getElementById("bra-highland-total").textContent = number(braCrimeData.areas.highland.total);
         document.getElementById("bra-county-total").textContent = number(braCrimeData.areas.county.total);
         document.getElementById("bra-savsjo-share-note").textContent =
-            `${share(braCrimeData.areas.savsjo.total, braCrimeData.areas.highland.total)} av Höglandet, ${share(braCrimeData.areas.savsjo.total, braCrimeData.areas.county.total)} av länet`;
+            `${share(mainTotal, braCrimeData.areas.highland.total)} av Höglandet, ${share(mainTotal, braCrimeData.areas.county.total)} av länet`;
 
         document.getElementById("bra-crime-table-body").innerHTML = braCrimeData.top15.map(row => `
             <tr>
                 <td>${row.label}</td>
-                <td>${number(row.savsjo)}</td>
+                <td>${number(crimeValue(row))}</td>
                 <td>${number(row.highland)}</td>
                 <td>${number(row.county)}</td>
-                <td>${share(row.savsjo, row.highland)}</td>
-                <td>${share(row.savsjo, row.county)}</td>
+                <td>${share(crimeValue(row), row.highland)}</td>
+                <td>${share(crimeValue(row), row.county)}</td>
             </tr>
         `).join("");
 
@@ -1794,7 +1870,7 @@
         }
 
         document.getElementById("bra-crime-note").textContent =
-            `${braCrimeData.source}. Snapshot: ${braCrimeData.snapshotDate}. Topp 15 är sorterad efter Sävsjös antal. Länsvärdet är summerat från kommunerna i Jönköpings län.`;
+            `${braCrimeData.source}. Snapshot: ${braCrimeData.snapshotDate}. Topp 15 är sorterad efter ursprungsurvalet. Länsvärdet är summerat från kommunerna i Jönköpings län.`;
     }
 
     function renderBraCrimeTrend() {
@@ -1806,16 +1882,21 @@
         const change = (value, previous) => Number.isFinite(value) && Number.isFinite(previous) && previous > 0
             ? ((value - previous) / previous) * 100
             : null;
+        const mainTotal = braCrimeData.municipalities.find(item => item.label === currentMunicipalityName())?.total ?? braCrimeData.areas.savsjo.total;
 
         document.getElementById("bra-trend-table-body").innerHTML = braCrimeData.trend.map((row, index) => {
             const previous = braCrimeData.trend[index - 1];
+            const mainValue = row.year === braCrimeData.year ? mainTotal : (selectedMunicipalityId === DEFAULT_MUNICIPALITY_ID ? row.savsjo : null);
+            const previousMainValue = previous
+                ? (previous.year === braCrimeData.year ? mainTotal : (selectedMunicipalityId === DEFAULT_MUNICIPALITY_ID ? previous.savsjo : null))
+                : null;
             const values = mode === "change"
                 ? [
-                    percent(previous ? change(row.savsjo, previous.savsjo) : null),
+                    percent(previous ? change(mainValue, previousMainValue) : null),
                     percent(previous ? change(row.highland, previous.highland) : null),
                     percent(previous ? change(row.county, previous.county) : null)
                 ]
-                : [number(row.savsjo), number(row.highland), number(row.county)];
+                : [number(mainValue), number(row.highland), number(row.county)];
             return `
                 <tr>
                     <td>${row.year}</td>
@@ -1828,10 +1909,13 @@
 
         const series = [
             {
-                id: "savsjo",
-                title: "Sävsjö",
+                id: "main",
+                title: currentMunicipalityName(),
                 color: "#005a9c",
-                values: braCrimeData.trend.map(row => ({ period: row.year, value: row.savsjo }))
+                values: braCrimeData.trend.map(row => ({
+                    period: row.year,
+                    value: row.year === braCrimeData.year ? mainTotal : (selectedMunicipalityId === DEFAULT_MUNICIPALITY_ID ? row.savsjo : null)
+                }))
             },
             {
                 id: "highland",
@@ -1898,14 +1982,14 @@
 
         const period = select.value || periods[periods.length - 1];
         const rows = afUnemploymentRows(period);
-        const savsjo = rows.find(row => row.type === "savsjo");
+        const main = rows.find(row => row.label === currentMunicipalityName());
         const highlandRows = rows.filter(row => row.type === "savsjo" || row.type === "highland");
         const county = rows.find(row => row.type === "county");
         const highlandShare = afWeightedShare(highlandRows);
         const highlandCount = highlandRows.reduce((sum, row) => sum + (row.count || 0), 0);
 
-        document.getElementById("af-savsjo-share").textContent = savsjo ? savsjo.shareText : "-";
-        document.getElementById("af-savsjo-note").textContent = savsjo && Number.isFinite(savsjo.count) ? `${formatValue(savsjo.count, "number")} personer` : "Andel av registerbaserad arbetskraft";
+        document.getElementById("af-savsjo-share").textContent = main ? main.shareText : "-";
+        document.getElementById("af-savsjo-note").textContent = main && Number.isFinite(main.count) ? `${formatValue(main.count, "number")} personer` : "Andel av registerbaserad arbetskraft";
         document.getElementById("af-highland-share").textContent = afPercent(highlandShare);
         document.getElementById("af-highland-note").textContent = Number.isFinite(highlandCount) && highlandCount > 0 ? `${formatValue(highlandCount, "number")} personer` : "Genomsnitt för höglandskommunerna";
         document.getElementById("af-county-share").textContent = county ? county.shareText : "-";
@@ -1913,11 +1997,11 @@
 
         const series = [
             {
-                id: "savsjo",
-                title: "Sävsjö",
+                id: "main",
+                title: currentMunicipalityName(),
                 color: "#005a9c",
                 values: periods.map(item => {
-                    const row = afUnemploymentData.rows.find(entry => entry.period === item && entry.type === "savsjo");
+                    const row = afUnemploymentData.rows.find(entry => entry.period === item && entry.label === currentMunicipalityName());
                     return { period: afMonthToChartPeriod(item), periodLabel: item, value: row ? row.share * 100 : null };
                 })
             },
@@ -1956,7 +2040,7 @@
             </tr>
         `).join("");
         document.getElementById("af-unemployment-note").textContent =
-            `${afUnemploymentData.source}. Hårdkodad snapshot: ${afUnemploymentData.snapshotDate}. Tabellen följer ordningen Sävsjö, Höglandet och länet.`;
+            `${afUnemploymentData.source}. Hårdkodad snapshot: ${afUnemploymentData.snapshotDate}. Tabellen följer vald kommun, Höglandet och länet.`;
     }
 
 
@@ -2342,6 +2426,7 @@
     window.setTimeout(init, 0);
 
     async function init() {
+        setupMunicipalitySelector();
         renderAllCards();
         setupSocialstyrelsenTab();
         setupSocialstyrelsenMoreTabs();
@@ -2355,8 +2440,19 @@
             kpis: comparisonKpis
         });
         renderComparisonOptions("main-comparison");
+        await refreshDashboard();
+    }
+
+    async function refreshDashboard() {
+        updateMunicipalityLabels();
         await loadUnits();
         await Promise.all(Object.keys(dashboards).map(renderDashboard));
+        renderSocialstyrelsenCards();
+        renderSocialstyrelsenVisuals();
+        Object.keys(sosSourceConfigs).forEach(sourceId => {
+            renderSosSourceCards(sourceId);
+            renderSosSourceComparison(sourceId);
+        });
         await renderKommundataInsights();
         renderJobsDashboard();
         afRenderUnemploymentDashboard();
@@ -2364,6 +2460,31 @@
         renderMigrationDashboard();
         renderFkDashboard();
         await Promise.all([...comparisonPanels.keys()].map(renderComparison));
+    }
+
+    function setupMunicipalitySelector() {
+        const select = document.getElementById("municipality-select");
+        select.innerHTML = jobMunicipalities
+            .map(municipality => `<option value="${municipality.id}">${municipality.title}</option>`)
+            .join("");
+        select.value = selectedMunicipalityId;
+        select.addEventListener("change", async () => {
+            selectedMunicipalityId = select.value || DEFAULT_MUNICIPALITY_ID;
+            renderAllCards();
+            await refreshDashboard();
+        });
+    }
+
+    function updateMunicipalityLabels() {
+        const name = currentMunicipalityName();
+        document.title = `${name} Kommun - Socialförvaltning Dashboard`;
+        document.getElementById("main-municipality-title").textContent = name;
+        document.querySelectorAll("[data-main-municipality]").forEach(element => {
+            element.textContent = name;
+        });
+        document.querySelectorAll("[data-main-municipality-full]").forEach(element => {
+            element.textContent = `${name} kommun`;
+        });
     }
 
     function activateTab(tabId) {
@@ -2446,7 +2567,7 @@
         const genderId = document.getElementById("socialstyrelsen-compare-gender").value;
         const targetId = document.getElementById("socialstyrelsen-compare-target").value;
         const target = socialstyrelsenComparisonTargets.find(item => item.id === targetId) || socialstyrelsenComparisonTargets[0];
-        const rows = target.rowIds.map(regionId => socialstyrelsenComparisonRow(regionId, indicatorId, measureId, ageId, genderId)).filter(Boolean);
+        const rows = socialstyrelsenTargetRowIds(target).map(regionId => socialstyrelsenComparisonRow(regionId, indicatorId, measureId, ageId, genderId)).filter(Boolean);
 
         drawSocialstyrelsenBarChart(document.getElementById("socialstyrelsen-comparison-chart"), rows, measureId);
         renderSocialstyrelsenComparisonLegend(rows);
@@ -2611,7 +2732,7 @@
         document.getElementById("socialstyrelsen-trend-legend").innerHTML = `
             <span class="legend-item">
                 <span class="legend-color" style="background:${indicator.color}"></span>
-                Sävsjö
+                Sävsjö snapshot
             </span>
         `;
         document.getElementById("socialstyrelsen-trend-table-body").innerHTML = points.length ? points
@@ -2772,19 +2893,24 @@
     function renderSocialstyrelsenCards() {
         const grid = document.getElementById("socialstyrelsen-cards");
         grid.innerHTML = socialstyrelsenIndicators.map(indicator => {
-            const change = indicator.value - indicator.previous;
-            const shareChange = indicator.share - indicator.previousShare;
+            const regionId = currentSocialstyrelsenRegionId();
+            const value = socialstyrelsenComparisonValue(indicator.id, "1", "3", "3", "2025", regionId);
+            const previous = socialstyrelsenComparisonValue(indicator.id, "1", "3", "3", "2024", regionId);
+            const shareValue = socialstyrelsenComparisonValue(indicator.id, "2", "3", "3", "2025", regionId);
+            const previousShare = socialstyrelsenComparisonValue(indicator.id, "2", "3", "3", "2024", regionId);
+            const change = Number.isFinite(value) && Number.isFinite(previous) ? value - previous : null;
+            const shareChange = Number.isFinite(shareValue) && Number.isFinite(previousShare) ? shareValue - previousShare : null;
 
             return `
                 <article class="card" style="--card-accent:${indicator.color}">
                     <h3>${indicator.title}</h3>
-                    <div class="kpi-id">Socialstyrelsen IF äldreomsorg, region ${SOCIALSTYRELSEN_REGION_ID}</div>
-                    <div class="value">${formatValue(indicator.value, "number")}</div>
-                    <div class="delta ${change < 0 ? "negative" : ""}">${formatSignedValue(change)} personer från 2024</div>
-                    <div class="share">Andel 65+: ${formatPercent(indicator.share)} (${formatSignedValue(shareChange)} procentenheter)</div>
+                    <div class="kpi-id">Socialstyrelsen IF äldreomsorg, region ${currentSocialstyrelsenRegionId()}</div>
+                    <div class="value">${Number.isFinite(value) ? formatValue(value, "number") : "Saknas"}</div>
+                    <div class="delta ${change < 0 ? "negative" : ""}">${change === null ? "" : `${formatSignedValue(change)} personer från 2024`}</div>
+                    <div class="share">Andel 65+: ${Number.isFinite(shareValue) ? formatPercent(shareValue) : "Saknas"}${shareChange === null ? "" : ` (${formatSignedValue(shareChange)} procentenheter)`}</div>
                     <div class="status">${indicator.description}</div>
                     <canvas class="sparkline" width="320" height="112" aria-hidden="true"></canvas>
-                    <div class="year">Mätår: 2025 (Sävsjö, 65+, båda könen)</div>
+                    <div class="year">Mätår: 2025 (${currentMunicipalityName()}, 65+, båda könen)</div>
                 </article>
             `;
         }).join("");
@@ -2836,19 +2962,20 @@
         const config = sosSourceConfigs[sourceId];
         const grid = document.getElementById(config.cardsId);
         grid.innerHTML = config.indicators.map(indicator => {
-            const value = sosSourceValue(config, indicator, "2025", "684");
-            const previous = sosSourceValue(config, indicator, "2024", "684");
+            const regionId = currentSocialstyrelsenRegionId();
+            const value = sosSourceValue(config, indicator, "2025", regionId);
+            const previous = sosSourceValue(config, indicator, "2024", regionId);
             const change = Number.isFinite(value) && Number.isFinite(previous) ? value - previous : null;
 
             return `
                 <article class="card" style="--card-accent:${indicator.color}">
                     <h3>${indicator.title}</h3>
-                    <div class="kpi-id">Socialstyrelsen ${config.sourceLabel}, region ${SOCIALSTYRELSEN_REGION_ID}</div>
+                    <div class="kpi-id">Socialstyrelsen ${config.sourceLabel}, region ${currentSocialstyrelsenRegionId()}</div>
                     <div class="value">${formatSosSourceValue(value, indicator, sourceId)}</div>
                     <div class="delta ${change < 0 ? "negative" : ""}">${formatSosSourceChange(change, indicator, sourceId)} från 2024</div>
                     <div class="status">${indicator.description}</div>
                     <canvas class="sparkline" width="320" height="112" aria-hidden="true"></canvas>
-                    <div class="year">Mätår: 2025 (Sävsjö)</div>
+                    <div class="year">Mätår: 2025 (${currentMunicipalityName()})</div>
                 </article>
             `;
         }).join("");
@@ -2860,7 +2987,7 @@
         const targetId = document.getElementById(config.targetSelectId).value;
         const indicator = config.indicators.find(item => item.id === indicatorId) || config.indicators[0];
         const target = socialstyrelsenComparisonTargets.find(item => item.id === targetId) || socialstyrelsenComparisonTargets[0];
-        const rows = target.rowIds.map(regionId => sosSourceComparisonRow(config, indicator, sourceId, regionId)).filter(Boolean);
+        const rows = socialstyrelsenTargetRowIds(target).map(regionId => sosSourceComparisonRow(config, indicator, sourceId, regionId)).filter(Boolean);
 
         drawSosSourceBarChart(document.getElementById(config.chartId), rows, sourceId);
         document.getElementById(config.legendId).innerHTML = rows.map(row => `
@@ -3087,7 +3214,7 @@
 
     async function loadUnits() {
         try {
-            const data = await fetchJson(`${API_BASE}/ou?municipality=${MUNICIPALITY_ID}`);
+            const data = await fetchJson(`${API_BASE}/ou?municipality=${selectedMunicipalityId}`);
             const units = data.values || [];
             populateUnitSelect("lss-select", units, unitGroups.lss);
             populateUnitSelect("elder-select", units, unitGroups.elder);
@@ -3099,6 +3226,7 @@
 
     function populateUnitSelect(selectId, units, prefixes) {
         const select = document.getElementById(selectId);
+        select.innerHTML = `<option value="">Hela ${currentMunicipalityName()} kommun</option>`;
         const filtered = units
             .filter(unit => prefixes.some(prefix => unit.id.startsWith(prefix)))
             .sort((a, b) => a.title.localeCompare(b.title, "sv"));
@@ -3139,7 +3267,7 @@
             const useOuData = cardConfig.unit && ouId;
             const path = useOuData
                 ? `/oudata/kpi/${cardConfig.id}/ou/${ouId}`
-                : `/data/municipality/${MUNICIPALITY_ID}/kpi/${cardConfig.id}`;
+                : `/data/municipality/${selectedMunicipalityId}/kpi/${cardConfig.id}`;
             const data = await fetchJson(`${API_BASE}${path}`);
             const series = valuesByYear(data.values || [], cardConfig.gender || "T");
             const latest = latestValidValue(series);
@@ -3151,7 +3279,7 @@
 
             setCardValue(card, latest, cardConfig, useOuData, series);
             await setCardShare(card, latest, cardConfig);
-            drawLineChart(card.querySelector(".sparkline"), [{ title: "Sävsjö", color: cardColor(cardConfig), values: series }], cardConfig.format, false, "", true);
+            drawLineChart(card.querySelector(".sparkline"), [{ title: currentMunicipalityName(), color: cardColor(cardConfig), values: series }], cardConfig.format, false, "", true);
         } catch (error) {
             setCardError(card);
         }
@@ -3207,16 +3335,17 @@
         setJobsLoading();
 
         try {
+            const jobAreas = getJobAreas();
             const [currentResults, historicalResults] = await Promise.all([
-                Promise.all(jobAreas.map(async area => [area.id, await fetchJobSearch(area.filters, area.id === "savsjo" ? 100 : 0)])),
+                Promise.all(jobAreas.map(async area => [area.id, await fetchJobSearch(area.filters, area.id === "main" ? 100 : 0)])),
                 Promise.all(jobAreas.map(async area => [area.id, await fetchJobTrend(area)]))
             ]);
             const currentByArea = new Map(currentResults);
             const historicalByArea = new Map(historicalResults);
-            const savsjoCurrent = currentByArea.get("savsjo");
+            const mainCurrent = currentByArea.get("main");
             const highlandCurrent = currentByArea.get("highland");
             const countyCurrent = currentByArea.get("county");
-            const savsjoTrend = historicalByArea.get("savsjo");
+            const mainTrend = historicalByArea.get("main");
             const highlandTrend = historicalByArea.get("highland");
             const countyTrend = historicalByArea.get("county");
 
@@ -3225,9 +3354,9 @@
                 noteId: "jobs-savsjo-ads-note",
                 yearId: "jobs-savsjo-year",
                 canvasId: "jobs-savsjo-spark",
-                value: savsjoCurrent.numberOfAds,
-                note: `${formatValue(savsjoCurrent.positions, "number")} tjänster i annonserna`,
-                trend: savsjoTrend.ads,
+                value: mainCurrent.numberOfAds,
+                note: `${formatValue(mainCurrent.positions, "number")} tjänster i annonserna`,
+                trend: mainTrend.ads,
                 color: "#005a9c"
             });
             setJobCard({
@@ -3235,9 +3364,9 @@
                 noteId: "jobs-savsjo-positions-note",
                 yearId: "jobs-savsjo-positions-year",
                 canvasId: "jobs-savsjo-positions-spark",
-                value: savsjoCurrent.positions,
-                note: `${formatValue(savsjoCurrent.numberOfAds, "number")} annonser just nu`,
-                trend: savsjoTrend.positions,
+                value: mainCurrent.positions,
+                note: `${formatValue(mainCurrent.numberOfAds, "number")} annonser just nu`,
+                trend: mainTrend.positions,
                 color: "#2a7f62"
             });
             setJobCard({
@@ -3262,15 +3391,15 @@
             });
 
             const trendRows = [
-                { id: "savsjo", title: "Sävsjö", color: "#005a9c", values: savsjoTrend.ads },
+                { id: "main", title: currentMunicipalityName(), color: "#005a9c", values: mainTrend.ads },
                 { id: "highland", title: "Höglandet", color: "#222222", values: highlandTrend.ads, dash: [8, 5] },
                 { id: "county", title: "Jönköpings län", color: "#c04f15", values: countyTrend.ads, dash: [3, 4] }
             ];
             drawLineChart(document.getElementById("jobs-trend-chart"), trendRows, "number", true);
             renderJobsTrendLegend(trendRows);
             document.getElementById("jobs-trend-note").textContent = `Historiken visar publicerade annonser per år. ${new Date().getFullYear()} visas hittills.`;
-            renderTopOccupations(savsjoCurrent.ads || []);
-            renderLatestAds(savsjoCurrent.ads || []);
+            renderTopOccupations(mainCurrent.ads || []);
+            renderLatestAds(mainCurrent.ads || []);
         } catch (error) {
             setJobsError();
         }
@@ -3421,12 +3550,12 @@
     }
 
     async function latestKpiPoint(kpiId, gender = "T") {
-        const data = await fetchJson(`${API_BASE}/data/municipality/${MUNICIPALITY_ID}/kpi/${kpiId}`);
+        const data = await fetchJson(`${API_BASE}/data/municipality/${selectedMunicipalityId}/kpi/${kpiId}`);
         return latestValidValue(valuesByYear(data.values || [], gender));
     }
 
     async function latestGenderPoint(kpiId) {
-        const data = await fetchJson(`${API_BASE}/data/municipality/${MUNICIPALITY_ID}/kpi/${kpiId}`);
+        const data = await fetchJson(`${API_BASE}/data/municipality/${selectedMunicipalityId}/kpi/${kpiId}`);
         const rows = (data.values || []).slice().sort((a, b) => Number(b.period) - Number(a.period));
 
         for (const row of rows) {
@@ -3625,7 +3754,7 @@
         }
 
         try {
-            const data = await fetchJson(`${API_BASE}/data/municipality/${MUNICIPALITY_ID}/kpi/N01951`);
+            const data = await fetchJson(`${API_BASE}/data/municipality/${selectedMunicipalityId}/kpi/N01951`);
             const totalForYear = valuesByYear(data.values || [], "T").find(point => point.period === latest.period)
                 || latestValidValue(valuesByYear(data.values || [], "T"));
 
@@ -3738,15 +3867,16 @@
         tbody.innerHTML = `<tr><td colspan="4">Laddar...</td></tr>`;
 
         try {
+            const municipalities = getComparisonMunicipalities();
             const allMunicipalityIds = [...new Set([
-                ...comparisonMunicipalities.map(municipality => municipality.id),
+                ...municipalities.map(municipality => municipality.id),
                 ...jonkopingCountyMunicipalities.map(municipality => municipality.id)
             ])];
             const seriesByMunicipality = new Map(await Promise.all(allMunicipalityIds.map(async municipalityId => {
                 const data = await fetchJson(`${API_BASE}/data/municipality/${municipalityId}/kpi/${kpi.id}`);
                 return [municipalityId, valuesByYear(data.values || [], kpi.gender || "T")];
             })));
-            const rows = comparisonMunicipalities.map(municipality => ({
+            const rows = municipalities.map(municipality => ({
                 ...municipality,
                 values: seriesByMunicipality.get(municipality.id) || []
             }));
