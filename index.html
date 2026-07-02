@@ -766,6 +766,7 @@
         <button class="tab-btn" type="button" data-tab="forsakringskassan">Försäkringskassan</button>
         <button class="tab-btn" type="button" data-tab="jamforelser">Jämförelser</button>
         <button class="tab-btn" type="button" data-tab="socialstyrelsen">SoS Äldreomsorg</button>
+        <button class="tab-btn" type="button" data-tab="sos-lss">SoS LSS</button>
         <button class="tab-btn" type="button" data-tab="sos-hsl">SoS hälso-/sjukvård</button>
         <button class="tab-btn" type="button" data-tab="sos-ekb">SoS ekonomiskt bistånd</button>
     </nav>
@@ -915,6 +916,40 @@
                 </article>
             </div>
 
+        </section>
+
+        <section id="sos-lss" class="tab-content" aria-labelledby="SoS LSS">
+            <div class="info">Källa: Socialstyrelsens Excelbilaga till Statistik om insatser enligt lagen om stöd och service till vissa funktionshindrade 2025. Urvalet följer vald huvudkommun när värden finns i filen. Senast kontrollerad uppdatering i källan: 2026-04-09.</div>
+            <div class="grid source-snapshot" id="sos-lss-cards"></div>
+
+            <article class="comparison-card source-comparison">
+                <h3>Jämförelse Socialstyrelsen, LSS</h3>
+                <div class="toolbar source-toolbar">
+                    <div class="field">
+                        <label for="sos-lss-compare-indicator">Mått:</label>
+                        <select id="sos-lss-compare-indicator"></select>
+                    </div>
+                    <div class="field">
+                        <label for="sos-lss-compare-target">Jämför med:</label>
+                        <select id="sos-lss-compare-target"></select>
+                    </div>
+                </div>
+                <canvas class="comparison-chart" id="sos-lss-comparison-chart" width="900" height="280"></canvas>
+                <div class="legend" id="sos-lss-comparison-legend"></div>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Område</th>
+                            <th>2025</th>
+                            <th>Förändring från 2024</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sos-lss-comparison-table-body">
+                        <tr><td colspan="3">Laddar...</td></tr>
+                    </tbody>
+                </table>
+                <div class="insight-note">Höglandet summeras av kommunvärdena. Sekretessmarkerade celler i Excelbilagan visas som saknas.</div>
+            </article>
         </section>
 
         <section id="sos-hsl" class="tab-content" aria-labelledby="SoS hälso-/sjukvård">
@@ -1536,6 +1571,8 @@
     const sosHslComparisonData = {"all":{"2024":{"604":397,"684":684,"682":1698,"685":1832,"687":1194,"686":1044,"county":19469},"2025":{"682":1778,"684":703,"685":1807,"686":1068,"687":1244,"county":19904,"604":407}},"age-18-64":{"2024":{"604":81,"682":320,"685":309,"684":135,"686":135,"county":3126,"687":192},"2025":{"604":82,"684":150,"685":298,"686":158,"687":154,"county":3190,"682":343}},"age-65-79":{"2024":{"604":113,"682":496,"684":161,"685":484,"686":282,"687":293,"county":5221},"2025":{"684":156,"685":487,"687":300,"county":5166,"686":273,"604":113,"682":500}},"age-80":{"2024":{"604":192,"682":879,"684":379,"685":1020,"686":618,"687":702,"county":10968},"2025":{"682":924,"684":389,"686":626,"687":783,"county":11385,"685":1005,"604":206}}};
     const sosEkbIndicators = [{"id":"paid-excl","title":"Utbetalt bistånd","description":"Exklusive introduktionsersättning","matt":"2","format":"thousandCurrency","color":"#005a9c"},{"id":"recipients","title":"Biståndsmottagare","description":"Antal mottagare inklusive barn","matt":"4","format":"number","color":"#2a7f62"},{"id":"households","title":"Biståndshushåll","description":"Antal hushåll","matt":"5","format":"number","color":"#7a4cb0"},{"id":"adult-recipients","title":"Mottagare 18+","description":"Antal biståndsmottagare 18 år och äldre","matt":"6","format":"number","color":"#c04f15"}];
     const sosEkbComparisonData = {"paid-excl":{"2025":{"684":15670,"686":27647,"682":62589,"685":32788,"604":5217,"county":369722,"687":28346},"2024":{"686":25268,"682":57530,"604":5494,"684":16697,"county":335763,"687":26807,"685":30822}},"recipients":{"2024":{"682":1002,"685":586,"684":348,"686":454,"604":131,"687":502,"county":6319},"2025":{"682":1011,"604":130,"684":306,"686":438,"county":6560,"687":455,"685":551}},"households":{"2024":{"604":109,"682":790,"684":276,"685":457,"county":5207,"687":420,"686":371},"2025":{"682":802,"604":108,"684":238,"687":384,"county":5420,"686":361,"685":439}},"adult-recipients":{"2024":{"684":348,"685":586,"686":454,"687":502,"county":6319,"604":131,"682":1002},"2025":{"604":130,"682":1011,"684":306,"685":551,"686":438,"687":455,"county":6560}}};
+    const sosLssIndicators = [{"id":"persons","title":"Personer med LSS-insats","description":"Antal personer med minst en verkställd kommunalt beslutad LSS-insats","format":"number","unit":"personer","color":"#005a9c"},{"id":"daily","title":"Daglig verksamhet","description":"Antal insatser enligt LSS, daglig verksamhet","format":"number","unit":"insatser","color":"#2a7f62"},{"id":"adultHousing","title":"Boende vuxna","description":"Antal insatser enligt LSS, bostad med särskild service för vuxna","format":"number","unit":"insatser","color":"#7a4cb0"},{"id":"contact","title":"Kontaktperson","description":"Antal insatser enligt LSS, kontaktperson","format":"number","unit":"insatser","color":"#c04f15"}];
+    const sosLssComparisonData = {"persons":{"2025":{"county":2920,"604":53,"682":284,"684":103,"685":221,"686":169,"687":194}},"daily":{"2025":{"county":1617,"604":32,"682":175,"684":64,"685":138,"686":104,"687":128}},"adultHousing":{"2025":{"county":1169,"604":21,"682":125,"684":32,"685":68,"686":62,"687":59}},"contact":{"2025":{"county":444,"604":10,"682":50,"684":26,"685":38,"686":9,"687":13}}};
 
     const comparisonMunicipalities = [
         { id: "0684", title: "Sävsjö", color: "#005a9c" },
@@ -2418,12 +2455,11 @@
         if (document.getElementById("socialstyrelsen")?.classList.contains("active")) {
             renderSocialstyrelsenVisuals();
         }
-        if (document.getElementById("sos-hsl")?.classList.contains("active")) {
-            renderSosSourceComparison("sos-hsl");
-        }
-        if (document.getElementById("sos-ekb")?.classList.contains("active")) {
-            renderSosSourceComparison("sos-ekb");
-        }
+        Object.keys(sosSourceConfigs).forEach(sourceId => {
+            if (document.getElementById(sourceId)?.classList.contains("active")) {
+                renderSosSourceComparison(sourceId);
+            }
+        });
     });
 
     document.getElementById("comparison-select").addEventListener("change", () => renderComparison("main-comparison"));
@@ -2504,7 +2540,7 @@
         if (tabId === "socialstyrelsen") {
             requestAnimationFrame(renderSocialstyrelsenVisuals);
         }
-        if (tabId === "sos-hsl" || tabId === "sos-ekb") {
+        if (sosSourceConfigs[tabId]) {
             requestAnimationFrame(() => renderSosSourceComparison(tabId));
         }
     }
@@ -2922,6 +2958,17 @@
     }
 
     const sosSourceConfigs = {
+        "sos-lss": {
+            indicators: sosLssIndicators,
+            data: sosLssComparisonData,
+            cardsId: "sos-lss-cards",
+            indicatorSelectId: "sos-lss-compare-indicator",
+            targetSelectId: "sos-lss-compare-target",
+            chartId: "sos-lss-comparison-chart",
+            legendId: "sos-lss-comparison-legend",
+            tableBodyId: "sos-lss-comparison-table-body",
+            sourceLabel: "LSS"
+        },
         "sos-hsl": {
             indicators: sosHslIndicators,
             data: sosHslComparisonData,
@@ -2977,7 +3024,7 @@
                     <h3>${indicator.title}</h3>
                     <div class="kpi-id">Socialstyrelsen ${config.sourceLabel}, region ${currentSocialstyrelsenRegionId()}</div>
                     <div class="value">${formatSosSourceValue(value, indicator, sourceId)}</div>
-                    <div class="delta ${change < 0 ? "negative" : ""}">${formatSosSourceChange(change, indicator, sourceId)} från 2024</div>
+                    <div class="delta ${change < 0 ? "negative" : ""}">${change === null ? "Jämförelseår saknas" : `${formatSosSourceChange(change, indicator, sourceId)} från 2024`}</div>
                     <div class="status">${indicator.description}</div>
                     <canvas class="sparkline" width="320" height="112" aria-hidden="true"></canvas>
                     <div class="year">Mätår: 2025 (${currentMunicipalityName()})</div>
@@ -3005,7 +3052,7 @@
             <tr>
                 <td>${row.title}</td>
                 <td>${formatSosSourceValue(row.value, indicator, sourceId)}</td>
-                <td>${formatSosSourceChange(row.change, indicator, sourceId)}</td>
+                <td>${row.change === null ? "Jämförelseår saknas" : formatSosSourceChange(row.change, indicator, sourceId)}</td>
             </tr>
         `).join("") : `<tr><td colspan="3">Inga värden för valt urval.</td></tr>`;
     }
@@ -3045,6 +3092,8 @@
         if (value === null || !Number.isFinite(value)) return "Saknas";
         const rounded = Math.round(value);
         if (indicator.format === "thousandCurrency") return `${rounded.toLocaleString("sv-SE")} tkr`;
+        if (indicator.unit === "insatser") return `${rounded.toLocaleString("sv-SE")} insatser`;
+        if (indicator.unit === "personer") return `${rounded.toLocaleString("sv-SE")} personer`;
         if (sourceId === "sos-hsl") return `${rounded.toLocaleString("sv-SE")} patienter`;
         if (indicator.id === "households") return `${rounded.toLocaleString("sv-SE")} hushåll`;
         return `${rounded.toLocaleString("sv-SE")} personer`;
@@ -3056,6 +3105,8 @@
         const prefix = rounded > 0 ? "+" : rounded < 0 ? "−" : "";
         const absolute = Math.abs(rounded).toLocaleString("sv-SE");
         if (indicator.format === "thousandCurrency") return `${prefix}${absolute} tkr`;
+        if (indicator.unit === "insatser") return `${prefix}${absolute} insatser`;
+        if (indicator.unit === "personer") return `${prefix}${absolute} personer`;
         if (sourceId === "sos-hsl") return `${prefix}${absolute} patienter`;
         if (indicator.id === "households") return `${prefix}${absolute} hushåll`;
         return `${prefix}${absolute} personer`;
