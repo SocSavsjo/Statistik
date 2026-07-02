@@ -449,6 +449,14 @@
         color: var(--danger);
     }
 
+    .comparison-table .positive {
+        color: #2a7f62;
+    }
+
+    .comparison-table .negative {
+        color: var(--danger);
+    }
+
     .driver-row {
         display: grid;
         grid-template-columns: 125px minmax(0, 1fr) 72px;
@@ -816,7 +824,7 @@
 <div class="container">
     <header>
         <h1><span id="main-municipality-title">Sävsjö</span> Kommun</h1>
-        <p>Dashboard från: Kolada, Socialstyrelsen, Arbetsförmedlingen, Brå, Migrationsverket, Försäkringskassan och SCB</p>
+        <p>Dashboard från: Kolada, Socialstyrelsen, Arbetsförmedlingen, Brå, Migrationsverket, Försäkringskassan, Folkhälsomyndigheten och SCB</p>
         <div class="municipality-picker">
             <label for="municipality-select">Huvudkommun</label>
             <select id="municipality-select" aria-label="Välj huvudkommun"></select>
@@ -836,6 +844,7 @@
         <span class="tab-break" aria-hidden="true"></span>
         <button class="tab-btn" type="button" data-tab="kommundata">Kommundata</button>
         <button class="tab-btn" type="button" data-tab="ekonomi-resultat">Ekonomi och resultat</button>
+        <button class="tab-btn" type="button" data-tab="folkhalsa">Folkhälsa</button>
         <button class="tab-btn" type="button" data-tab="jobb">Lediga jobb</button>
         <button class="tab-btn" type="button" data-tab="arbetsloshet">Arbetslöshet</button>
         <button class="tab-btn" type="button" data-tab="brott">Brott</button>
@@ -1150,6 +1159,50 @@
                 </article>
             </div>
             <div class="section-comparison" data-comparison-panel="compare-ekonomi-resultat"></div>
+        </section>
+
+        <section id="folkhalsa" class="tab-content" aria-labelledby="Folkhälsa">
+            <div class="info">Folkhälsomyndighetens FolkhälsoStudio. Urvalet visar kommunindikatorer där vald huvudkommun kan jämföras med Höglandet, Jönköpings län och riket.</div>
+            <div class="toolbar source-toolbar">
+                <div class="field">
+                    <label for="fohm-group-select">Ämne:</label>
+                    <select id="fohm-group-select"></select>
+                </div>
+            </div>
+            <div class="kommundata-extras">
+                <article class="comparison-card wide" id="fohm-overview-card">
+                    <h3>Folkhälsa i <span data-main-municipality>Sävsjö</span></h3>
+                    <div class="year" id="fohm-overview-year">Laddar...</div>
+                    <div class="economy-result-grid" id="fohm-kpi-grid"></div>
+                    <div class="insight-note">Flera mått bygger på Nationella folkhälsoenkäten och redovisas som 4-årsmedelvärden. För Höglandet visas ovägt snitt av höglandskommunerna.</div>
+                </article>
+            </div>
+
+            <article class="comparison-card job-wide" id="fohm-comparison-card">
+                <h3>Jämförelse folkhälsa</h3>
+                <div class="toolbar source-toolbar">
+                    <div class="field">
+                        <label for="fohm-indicator-select">Indikator:</label>
+                        <select id="fohm-indicator-select"></select>
+                    </div>
+                </div>
+                <canvas class="comparison-chart" id="fohm-comparison-chart" width="900" height="280"></canvas>
+                <div class="legend" id="fohm-comparison-legend"></div>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Område</th>
+                            <th>Senaste värde</th>
+                            <th>Period</th>
+                            <th>Förändring</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fohm-comparison-table-body">
+                        <tr><td colspan="4">Laddar...</td></tr>
+                    </tbody>
+                </table>
+                <div class="insight-note" id="fohm-comparison-note"></div>
+            </article>
         </section>
 
         <section id="jobb" class="tab-content" aria-labelledby="Lediga jobb">
@@ -1525,7 +1578,7 @@
         </section>
     </main>
 
-    <p class="source">Källa: Kolada API v3, Socialstyrelsens statistikdatabaser samt Arbetsförmedlingens Platsbanken och Historical Ads API samt Brås statistikdatabas och Försäkringskassans statistikdatabas. Befolkningsuppgifterna kommer från SCB via Kolada. Kolada- och jobbdatan hämtas vid sidladdning; Socialstyrelsens värden i flikarna är hämtade från statistikdatabaserna.</p>
+    <p class="source">Källa: Kolada API v3, Socialstyrelsens statistikdatabaser, Folkhälsomyndighetens FolkhälsoStudio samt Arbetsförmedlingens Platsbanken och Historical Ads API samt Brås statistikdatabas och Försäkringskassans statistikdatabas. Befolkningsuppgifterna kommer från SCB via Kolada. Kolada- och jobbdatan hämtas vid sidladdning; Socialstyrelsens värden i flikarna är hämtade från statistikdatabaserna.</p>
 </div>
 <div class="chart-tooltip" id="chart-tooltip" role="status" aria-live="polite"></div>
 
@@ -2552,6 +2605,620 @@
 
     comparisonKpis = [...comparisonKpis, ...economyResultKpis];
 
+    const fohmData = {
+      "source": "Folkhälsomyndigheten, FolkhälsoStudio. Flera mått bygger på Nationella folkhälsoenkäten och redovisas som 4-årsmedelvärden.",
+      "regions": [
+        {
+          "id": "0684",
+          "title": "Sävsjö",
+          "color": "#005a9c"
+        },
+        {
+          "id": "0604",
+          "title": "Aneby",
+          "color": "#a35c00"
+        },
+        {
+          "id": "0685",
+          "title": "Vetlanda",
+          "color": "#2a7f62"
+        },
+        {
+          "id": "0686",
+          "title": "Eksjö",
+          "color": "#b23a48"
+        },
+        {
+          "id": "0682",
+          "title": "Nässjö",
+          "color": "#7a4cb0"
+        },
+        {
+          "id": "0687",
+          "title": "Tranås",
+          "color": "#4f6f8f"
+        },
+        {
+          "id": "highland",
+          "title": "Höglandet",
+          "color": "#222222"
+        },
+        {
+          "id": "06",
+          "title": "Jönköpings län",
+          "color": "#c04f15"
+        },
+        {
+          "id": "00",
+          "title": "Riket",
+          "color": "#6b7280"
+        }
+      ],
+      "indicators": [
+        {
+          "id": "2f57eb83-00a2-4a5a-9813-812d69a6621c",
+          "title": "Bra allmän hälsa",
+          "group": "Hälsa",
+          "unit": "%",
+          "format": "percent",
+          "latestPeriod": "2021-2024",
+          "previousPeriod": "2019-2022",
+          "source": "Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+          "updated": "2024-12-19",
+          "higherIsGood": true,
+          "color": "#005a9c",
+          "values": {
+            "0684": {
+              "value": 66.9,
+              "previous": 66.4
+            },
+            "0604": {
+              "value": 68.3,
+              "previous": 68.2
+            },
+            "0685": {
+              "value": 71.4,
+              "previous": 73.3
+            },
+            "0686": {
+              "value": 73.1,
+              "previous": 73.4
+            },
+            "0682": {
+              "value": 74.8,
+              "previous": 75.4
+            },
+            "0687": {
+              "value": 69.8,
+              "previous": 70.7
+            },
+            "06": {
+              "value": 70.9,
+              "previous": 74.3
+            },
+            "00": {
+              "value": 71,
+              "previous": 73.4
+            },
+            "highland": {
+              "value": 70.71666666666667,
+              "previous": 71.23333333333333
+            }
+          }
+        },
+        {
+          "id": "2d50b892-0b07-4722-b804-3e0b3078d1cf",
+          "title": "Gott psykiskt välbefinnande",
+          "group": "Psykisk hälsa",
+          "unit": "%",
+          "format": "percent",
+          "latestPeriod": "2021-2024",
+          "previousPeriod": "2019-2022",
+          "source": "Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+          "updated": "2024-12-09",
+          "higherIsGood": true,
+          "color": "#2a7f62",
+          "values": {
+            "0684": {
+              "value": 89.1,
+              "previous": 88.9
+            },
+            "0604": {
+              "value": 88.4,
+              "previous": 87.8
+            },
+            "0685": {
+              "value": 88.6,
+              "previous": 89.6
+            },
+            "0686": {
+              "value": 86,
+              "previous": 85.6
+            },
+            "0682": {
+              "value": 89.9,
+              "previous": 89.7
+            },
+            "0687": {
+              "value": 86.9,
+              "previous": 87.7
+            },
+            "06": {
+              "value": 85.8,
+              "previous": 88.5
+            },
+            "00": {
+              "value": 84.9,
+              "previous": 86.1
+            },
+            "highland": {
+              "value": 88.14999999999999,
+              "previous": 88.21666666666665
+            }
+          }
+        },
+        {
+          "id": "1374f20d-3dea-4e09-8f5f-1bf71f23bac8",
+          "title": "Stressad",
+          "group": "Psykisk hälsa",
+          "unit": "%",
+          "format": "percent",
+          "latestPeriod": "2021-2024",
+          "previousPeriod": "2019-2022",
+          "source": "Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+          "updated": "2024-12-09",
+          "higherIsGood": false,
+          "color": "#b23a48",
+          "values": {
+            "0684": {
+              "value": 15.2,
+              "previous": 14.3
+            },
+            "0604": {
+              "value": 12.5,
+              "previous": 12.1
+            },
+            "0685": {
+              "value": 10.5,
+              "previous": 9.7
+            },
+            "0686": {
+              "value": 12.1,
+              "previous": 12
+            },
+            "0682": {
+              "value": 13.9,
+              "previous": 12.4
+            },
+            "0687": {
+              "value": 13.6,
+              "previous": 12.2
+            },
+            "06": {
+              "value": 14.6,
+              "previous": 12.6
+            },
+            "00": {
+              "value": 15.9,
+              "previous": 14.9
+            },
+            "highland": {
+              "value": 12.966666666666667,
+              "previous": 12.116666666666665
+            }
+          }
+        },
+        {
+          "id": "41b5bb84-5e6f-4bce-b399-789414afdde9",
+          "title": "Ängslan, oro eller ångest",
+          "group": "Psykisk hälsa",
+          "unit": "%",
+          "format": "percent",
+          "latestPeriod": "2021-2024",
+          "previousPeriod": "2019-2022",
+          "source": "Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+          "updated": "2024-12-19",
+          "higherIsGood": false,
+          "color": "#7a4cb0",
+          "values": {
+            "0684": {
+              "value": 43.7,
+              "previous": 43.1
+            },
+            "0604": {
+              "value": 40.3,
+              "previous": 40.1
+            },
+            "0685": {
+              "value": 38.7,
+              "previous": 39
+            },
+            "0686": {
+              "value": 38.4,
+              "previous": 39
+            },
+            "0682": {
+              "value": 38.4,
+              "previous": 36.4
+            },
+            "0687": {
+              "value": 37.3,
+              "previous": 36.1
+            },
+            "06": {
+              "value": 40.3,
+              "previous": 39.7
+            },
+            "00": {
+              "value": 43.6,
+              "previous": 42.3
+            },
+            "highland": {
+              "value": 39.46666666666667,
+              "previous": 38.949999999999996
+            }
+          }
+        },
+        {
+          "id": "279e0af5-ceac-4fda-986f-3142a348ada2",
+          "title": "Övervikt och obesitas",
+          "group": "Levnadsvanor",
+          "unit": "%",
+          "format": "percent",
+          "latestPeriod": "2021-2024",
+          "previousPeriod": "2019-2022",
+          "source": "Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+          "updated": "2024-12-09",
+          "higherIsGood": false,
+          "color": "#a35c00",
+          "values": {
+            "0684": {
+              "value": 58.6,
+              "previous": 57.9
+            },
+            "0604": {
+              "value": 55.8,
+              "previous": 54.7
+            },
+            "0685": {
+              "value": 57.4,
+              "previous": 58.1
+            },
+            "0686": {
+              "value": 48.2,
+              "previous": 48
+            },
+            "0682": {
+              "value": 57.1,
+              "previous": 57.5
+            },
+            "0687": {
+              "value": 55.5,
+              "previous": 54.9
+            },
+            "06": {
+              "value": 52.2,
+              "previous": 51.4
+            },
+            "00": {
+              "value": 52.3,
+              "previous": 51.5
+            },
+            "highland": {
+              "value": 55.43333333333334,
+              "previous": 55.18333333333333
+            }
+          }
+        },
+        {
+          "id": "7029722b-4031-4b66-b41a-6877647542ff",
+          "title": "Riskkonsumtion alkohol",
+          "group": "Levnadsvanor",
+          "unit": "%",
+          "format": "percent",
+          "latestPeriod": "2021-2024",
+          "previousPeriod": "2019-2022",
+          "source": "Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+          "updated": "2024-12-09",
+          "higherIsGood": false,
+          "color": "#c04f15",
+          "values": {
+            "0684": {
+              "value": 10.6,
+              "previous": 10.5
+            },
+            "0604": {
+              "value": 10.5,
+              "previous": 10.7
+            },
+            "0685": {
+              "value": 11.5,
+              "previous": 12.4
+            },
+            "0686": {
+              "value": 13.4,
+              "previous": 12.5
+            },
+            "0682": {
+              "value": 12.3,
+              "previous": 11.8
+            },
+            "0687": {
+              "value": 13.2,
+              "previous": 14.1
+            },
+            "06": {
+              "value": 11.1,
+              "previous": 11
+            },
+            "00": {
+              "value": 15.5,
+              "previous": 15.5
+            },
+            "highland": {
+              "value": 11.916666666666666,
+              "previous": 12
+            }
+          }
+        },
+        {
+          "id": "a81bbf96-74e1-4466-9a15-b3c88e4df34c",
+          "title": "Sitter minst 10 timmar/dygn",
+          "group": "Levnadsvanor",
+          "unit": "%",
+          "format": "percent",
+          "latestPeriod": "2021-2024",
+          "previousPeriod": "2019-2022",
+          "source": "Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+          "updated": "2024-12-09",
+          "higherIsGood": false,
+          "color": "#4f6f8f",
+          "values": {
+            "0684": {
+              "value": 16.3,
+              "previous": 14.9
+            },
+            "0604": {
+              "value": 16.9,
+              "previous": 17.2
+            },
+            "0685": {
+              "value": 15.2,
+              "previous": 15.7
+            },
+            "0686": {
+              "value": 21.3,
+              "previous": 21.4
+            },
+            "0682": {
+              "value": 20.6,
+              "previous": 21
+            },
+            "0687": {
+              "value": 21.6,
+              "previous": 20.1
+            },
+            "06": {
+              "value": 21.8,
+              "previous": 20.9
+            },
+            "00": {
+              "value": 24.2,
+              "previous": 23.7
+            },
+            "highland": {
+              "value": 18.650000000000002,
+              "previous": 18.38333333333333
+            }
+          }
+        },
+        {
+          "id": "4c0e52a9-ddab-4435-b736-144ebe61cf48",
+          "title": "Svårt att lita på andra",
+          "group": "Sociala villkor",
+          "unit": "%",
+          "format": "percent",
+          "latestPeriod": "2021-2024",
+          "previousPeriod": "2019-2022",
+          "source": "Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+          "updated": "2024-12-09",
+          "higherIsGood": false,
+          "color": "#8b5a2b",
+          "values": {
+            "0684": {
+              "value": 26.6,
+              "previous": 26.5
+            },
+            "0604": {
+              "value": 24.9,
+              "previous": 25.7
+            },
+            "0685": {
+              "value": 30.5,
+              "previous": 28.8
+            },
+            "0686": {
+              "value": 27.4,
+              "previous": 27.3
+            },
+            "0682": {
+              "value": 34.6,
+              "previous": 33.3
+            },
+            "0687": {
+              "value": 25.3,
+              "previous": 24.3
+            },
+            "06": {
+              "value": 31.6,
+              "previous": 28.7
+            },
+            "00": {
+              "value": 29.6,
+              "previous": 28.2
+            },
+            "highland": {
+              "value": 28.21666666666667,
+              "previous": 27.650000000000002
+            }
+          }
+        },
+        {
+          "id": "7a431b55-2c05-4589-afce-247164907960",
+          "title": "Utsatt för våld eller hot",
+          "group": "Trygghet",
+          "unit": "%",
+          "format": "percent",
+          "latestPeriod": "2021-2024",
+          "previousPeriod": "2019-2022",
+          "source": "Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+          "updated": "2024-12-09",
+          "higherIsGood": false,
+          "color": "#7f1d1d",
+          "values": {
+            "0684": {
+              "value": 6,
+              "previous": 5.9
+            },
+            "0604": {
+              "value": 5,
+              "previous": 4.7
+            },
+            "0685": {
+              "value": 3.8,
+              "previous": 3.3
+            },
+            "0686": {
+              "value": 6.4,
+              "previous": 7.2
+            },
+            "0682": {
+              "value": 5.5,
+              "previous": 5.3
+            },
+            "0687": {
+              "value": 7.7,
+              "previous": 8.1
+            },
+            "06": {
+              "value": 4.8,
+              "previous": 5.3
+            },
+            "00": {
+              "value": 5,
+              "previous": 5.5
+            },
+            "highland": {
+              "value": 5.733333333333334,
+              "previous": 5.75
+            }
+          }
+        },
+        {
+          "id": "c979d886-07a4-496a-93a1-6404491ca676",
+          "title": "Riskabelt spelande",
+          "group": "Levnadsvanor",
+          "unit": "%",
+          "format": "percent",
+          "latestPeriod": "2021-2024",
+          "previousPeriod": "2019-2022",
+          "source": "Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+          "updated": "2024-12-09",
+          "higherIsGood": false,
+          "color": "#606c38",
+          "values": {
+            "0684": {
+              "value": 2.3,
+              "previous": 1.9
+            },
+            "0604": {
+              "value": 2.3,
+              "previous": 2.1
+            },
+            "0685": {
+              "value": 4.1,
+              "previous": 3.1
+            },
+            "0686": {
+              "value": 1.6,
+              "previous": 1.2
+            },
+            "0682": {
+              "value": 2.5,
+              "previous": 2.7
+            },
+            "0687": {
+              "value": 2.4,
+              "previous": 3.3
+            },
+            "06": {
+              "value": 4.2,
+              "previous": 2.9
+            },
+            "00": {
+              "value": 3.4,
+              "previous": 3.5
+            },
+            "highland": {
+              "value": 2.533333333333333,
+              "previous": 2.3833333333333333
+            }
+          }
+        },
+        {
+          "id": "4275ec7b-3343-48e7-ae39-1f181624336c",
+          "title": "Avstått tandläkarvård av ekonomiska skäl",
+          "group": "Tillgänglighet",
+          "unit": "%",
+          "format": "percent",
+          "latestPeriod": "2021-2024",
+          "previousPeriod": "2019-2022",
+          "source": "Folkhälsomyndigheten, Nationella folkhälsoenkäten",
+          "updated": "2024-12-09",
+          "higherIsGood": false,
+          "color": "#6b7280",
+          "values": {
+            "0684": {
+              "value": 10.8,
+              "previous": 10.1
+            },
+            "0604": {
+              "value": 5.5,
+              "previous": 4.9
+            },
+            "0685": {
+              "value": 8.2,
+              "previous": 7.8
+            },
+            "0686": {
+              "value": 7.4,
+              "previous": 7.9
+            },
+            "0682": {
+              "value": 6.4,
+              "previous": 7.5
+            },
+            "0687": {
+              "value": 5.1,
+              "previous": 5.8
+            },
+            "06": {
+              "value": 8.6,
+              "previous": 7.9
+            },
+            "00": {
+              "value": 10.5,
+              "previous": 9.3
+            },
+            "highland": {
+              "value": 7.233333333333333,
+              "previous": 7.333333333333333
+            }
+          }
+        }
+      ]
+    };
+
     const chartTooltipData = new WeakMap();
     const comparisonPanels = new Map();
     const selectedMunicipalityByPanel = new Map();
@@ -2573,6 +3240,9 @@
                 renderSosSourceComparison(sourceId);
             }
         });
+        if (document.getElementById("folkhalsa")?.classList.contains("active")) {
+            renderFohmDashboard();
+        }
     });
 
     document.getElementById("comparison-select").addEventListener("change", () => renderComparison("main-comparison"));
@@ -2584,6 +3254,7 @@
         renderAllCards();
         setupSocialstyrelsenTab();
         setupSocialstyrelsenMoreTabs();
+        setupFohmControls();
         renderEmbeddedComparisonPanels();
         registerComparisonPanel("main-comparison", {
             selectId: "comparison-select",
@@ -2609,6 +3280,7 @@
         });
         await renderKommundataInsights();
         await renderEconomyResultCard();
+        renderFohmDashboard();
         renderJobsDashboard();
         afRenderUnemploymentDashboard();
         renderBraCrimeDashboard();
@@ -2656,6 +3328,9 @@
         }
         if (sosSourceConfigs[tabId]) {
             requestAnimationFrame(() => renderSosSourceComparison(tabId));
+        }
+        if (tabId === "folkhalsa") {
+            requestAnimationFrame(renderFohmDashboard);
         }
     }
 
@@ -3820,8 +4495,183 @@
 
     function formatEconomyDelta(value, metric) {
         if (value > 0) return `+${formatEconomyResultValue(value, metric)}`;
-        if (value < 0) return `−${formatEconomyResultValue(Math.abs(value), metric)}`;
+        if (value < 0) return `âˆ’${formatEconomyResultValue(Math.abs(value), metric)}`;
         return `0${metric.suffix || ""}`;
+    }
+
+    function setupFohmControls() {
+        const groupSelect = document.getElementById("fohm-group-select");
+        const indicatorSelect = document.getElementById("fohm-indicator-select");
+        if (!groupSelect || !indicatorSelect) return;
+
+        const groups = ["Alla", ...new Set(fohmData.indicators.map(indicator => indicator.group))];
+        groupSelect.innerHTML = groups.map(group => `<option value="${escapeHtml(group)}">${escapeHtml(group)}</option>`).join("");
+        groupSelect.addEventListener("change", () => {
+            renderFohmIndicatorOptions();
+            renderFohmDashboard();
+        });
+        indicatorSelect.addEventListener("change", renderFohmDashboard);
+        renderFohmIndicatorOptions();
+    }
+
+    function renderFohmIndicatorOptions() {
+        const indicatorSelect = document.getElementById("fohm-indicator-select");
+        const group = document.getElementById("fohm-group-select")?.value || "Alla";
+        if (!indicatorSelect) return;
+        const selected = indicatorSelect.value;
+        const indicators = fohmFilteredIndicators(group);
+        indicatorSelect.innerHTML = indicators
+            .map(indicator => `<option value="${indicator.id}">${escapeHtml(indicator.group)}: ${escapeHtml(indicator.title)}</option>`)
+            .join("");
+        indicatorSelect.value = indicators.some(indicator => indicator.id === selected)
+            ? selected
+            : indicators[0]?.id || "";
+    }
+
+    function fohmFilteredIndicators(group = document.getElementById("fohm-group-select")?.value || "Alla") {
+        return group === "Alla"
+            ? fohmData.indicators
+            : fohmData.indicators.filter(indicator => indicator.group === group);
+    }
+
+    function renderFohmDashboard() {
+        const grid = document.getElementById("fohm-kpi-grid");
+        const yearEl = document.getElementById("fohm-overview-year");
+        if (!grid || !yearEl) return;
+
+        const indicators = fohmFilteredIndicators();
+        yearEl.textContent = "Senaste tillgängliga period per mått";
+        grid.innerHTML = renderFohmGroups(indicators);
+        renderFohmComparison();
+    }
+
+    function renderFohmGroups(indicators) {
+        const groups = [];
+        indicators.forEach(indicator => {
+            let group = groups.find(item => item.name === indicator.group);
+            if (!group) {
+                group = { name: indicator.group, rows: [] };
+                groups.push(group);
+            }
+            group.rows.push(indicator);
+        });
+
+        return groups.map(group => `
+            <section class="economy-result-group">
+                <div class="economy-result-group-title">${escapeHtml(group.name)}</div>
+                ${group.rows.map(renderFohmItem).join("")}
+            </section>
+        `).join("");
+    }
+
+    function renderFohmItem(indicator) {
+        const point = fohmValueForRegion(indicator, selectedMunicipalityId) || fohmValueForRegion(indicator, DEFAULT_MUNICIPALITY_ID);
+        if (!point || point.value === null) {
+            return `
+                <div class="economy-result-item">
+                    <div class="economy-result-label">${escapeHtml(indicator.title)}</div>
+                    <div class="economy-result-value">Ingen data</div>
+                    <div class="economy-result-meta"></div>
+                </div>
+            `;
+        }
+
+        const delta = point.previous === null ? null : point.value - point.previous;
+        const deltaText = delta === null
+            ? "Jämförelseperiod saknas"
+            : `${fohmSignedPercentDelta(delta)} från ${indicator.previousPeriod}`;
+        const tone = fohmDeltaTone(indicator, delta);
+
+        return `
+            <div class="economy-result-item">
+                <div class="economy-result-label">${escapeHtml(indicator.title)}</div>
+                <div class="economy-result-value">${fohmFormatValue(point.value)}</div>
+                <div class="economy-result-meta">Period: ${escapeHtml(indicator.latestPeriod)}</div>
+                <div class="economy-result-meta ${tone}">${deltaText}</div>
+            </div>
+        `;
+    }
+
+    function renderFohmComparison() {
+        const select = document.getElementById("fohm-indicator-select");
+        const indicator = fohmData.indicators.find(item => item.id === select?.value) || fohmFilteredIndicators()[0];
+        const tableBody = document.getElementById("fohm-comparison-table-body");
+        if (!indicator || !tableBody) return;
+
+        const rows = fohmComparisonRows(indicator);
+        const chartRows = rows
+            .filter(row => row.value !== null)
+            .map(row => ({
+                id: row.id,
+                title: row.title,
+                color: row.color,
+                values: [
+                    { period: fohmPeriodYear(indicator.previousPeriod), periodLabel: indicator.previousPeriod, value: row.previous },
+                    { period: fohmPeriodYear(indicator.latestPeriod), periodLabel: indicator.latestPeriod, value: row.value }
+                ].filter(point => point.value !== null)
+            }))
+            .filter(row => row.values.length >= 1);
+
+        drawLineChart(document.getElementById("fohm-comparison-chart"), chartRows, "percent", true, selectedMunicipalityId);
+        document.getElementById("fohm-comparison-legend").innerHTML = rows
+            .filter(row => row.value !== null)
+            .map(row => `<span><i style="background:${row.color}"></i>${escapeHtml(row.title)}</span>`)
+            .join("");
+
+        tableBody.innerHTML = rows.map(row => {
+            const delta = row.previous === null || row.value === null ? null : row.value - row.previous;
+            return `
+                <tr>
+                    <td>${escapeHtml(row.title)}</td>
+                    <td>${fohmFormatValue(row.value)}</td>
+                    <td>${escapeHtml(indicator.latestPeriod)}</td>
+                    <td class="${fohmDeltaTone(indicator, delta)}">${delta === null ? "-" : `${fohmSignedPercentDelta(delta)} från ${indicator.previousPeriod}`}</td>
+                </tr>
+            `;
+        }).join("");
+
+        document.getElementById("fohm-comparison-note").textContent =
+            `${indicator.title}. Källa: ${indicator.source}. Uppdaterad: ${indicator.updated}. Höglandet visas som ovägt snitt av kommunerna.`;
+    }
+
+    function fohmComparisonRows(indicator) {
+        const selected = selectedMunicipalityId;
+        const highlandIds = ["0684", "0604", "0685", "0686", "0682", "0687"].filter(id => id !== selected);
+        return [selected, ...highlandIds, "highland", "06", "00"].map(id => {
+            const region = fohmData.regions.find(item => item.id === id) || { id, title: currentMunicipalityName(), color: "#005a9c" };
+            const point = fohmValueForRegion(indicator, id);
+            return {
+                ...region,
+                title: id === selectedMunicipalityId ? currentMunicipalityName() : region.title,
+                value: point?.value ?? null,
+                previous: point?.previous ?? null
+            };
+        });
+    }
+
+    function fohmValueForRegion(indicator, regionId) {
+        return indicator.values[regionId] || null;
+    }
+
+    function fohmFormatValue(value) {
+        return Number.isFinite(value) ? formatValue(value, "percent") : "-";
+    }
+
+    function fohmSignedPercentDelta(value) {
+        if (value > 0) return `+${value.toLocaleString("sv-SE", { maximumFractionDigits: 1 })} procentenheter`;
+        if (value < 0) return `−${Math.abs(value).toLocaleString("sv-SE", { maximumFractionDigits: 1 })} procentenheter`;
+        return "0 procentenheter";
+    }
+
+    function fohmDeltaTone(indicator, value) {
+        if (value === null || value === 0) return "";
+        const goodDirection = indicator.higherIsGood ? value > 0 : value < 0;
+        return goodDirection ? "positive" : "negative";
+    }
+
+    function fohmPeriodYear(period) {
+        const matches = String(period || "").match(/\d{4}/g);
+        return matches?.length ? Number(matches[matches.length - 1]) : Number(period) || 0;
     }
 
     async function latestGenderPoint(kpiId) {
