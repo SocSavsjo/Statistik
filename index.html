@@ -1291,7 +1291,7 @@
                     </tbody>
                 </table>
 
-                <h3>Månadsöversikt 2025</h3>
+                <h3>Årsöversikt</h3>
                 <canvas class="comparison-chart" id="migration-monthly-chart" width="900" height="260"></canvas>
                 <div class="legend" id="migration-monthly-legend"></div>
                 <div class="insight-note" id="migration-note"></div>
@@ -1795,21 +1795,26 @@
                 id: "main",
                 title: currentMunicipalityName(),
                 color: "#005a9c",
-                values: migrationData.monthly.map(row => ({ period: afMonthToChartPeriod(row.period), periodLabel: row.period, value: selectedMunicipalityId === DEFAULT_MUNICIPALITY_ID ? row.savsjo : null }))
+                values: migrationData.residentTrend.map(row => ({
+                    period: row.year,
+                    value: row.year === migrationData.year
+                        ? mainMigration.total
+                        : (selectedMunicipalityId === DEFAULT_MUNICIPALITY_ID ? row.savsjo : null)
+                }))
             },
             {
                 id: "highland",
                 title: "Höglandet",
                 color: "#222222",
                 dash: [8, 5],
-                values: migrationData.monthly.map(row => ({ period: afMonthToChartPeriod(row.period), periodLabel: row.period, value: row.highland }))
+                values: migrationData.residentTrend.map(row => ({ period: row.year, value: row.highland }))
             },
             {
                 id: "county",
                 title: "Jönköpings län",
                 color: "#c04f15",
                 dash: [3, 4],
-                values: migrationData.monthly.map(row => ({ period: afMonthToChartPeriod(row.period), periodLabel: row.period, value: row.county }))
+                values: migrationData.residentTrend.map(row => ({ period: row.year, value: row.county }))
             }
         ];
         drawLineChart(document.getElementById("migration-monthly-chart"), series, "number", true);
