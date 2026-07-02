@@ -387,6 +387,50 @@
         gap: 12px;
     }
 
+    .economy-result-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+    .economy-result-item {
+        background: #f6f8fa;
+        border: 1px solid #d8e0e7;
+        border-radius: 6px;
+        padding: 12px;
+        min-width: 0;
+    }
+
+    .economy-result-label {
+        color: #555;
+        font-size: 0.86rem;
+        font-weight: 700;
+        min-height: 2.5em;
+    }
+
+    .economy-result-value {
+        color: #222;
+        font-size: 1.35rem;
+        font-weight: 800;
+        margin-top: 8px;
+        overflow-wrap: anywhere;
+    }
+
+    .economy-result-meta {
+        color: #666;
+        font-size: 0.84rem;
+        margin-top: 4px;
+    }
+
+    .economy-result-meta.positive {
+        color: #2a7f62;
+    }
+
+    .economy-result-meta.negative {
+        color: var(--danger);
+    }
+
     .driver-row {
         display: grid;
         grid-template-columns: 125px minmax(0, 1fr) 72px;
@@ -725,6 +769,10 @@
             gap: 6px;
         }
 
+        .economy-result-grid {
+            grid-template-columns: 1fr;
+        }
+
         .driver-value,
         .age-value {
             text-align: left;
@@ -1061,6 +1109,13 @@
                     </div>
                     <div class="pyramid-chart" id="population-pyramid">Laddar...</div>
                     <div class="insight-note" id="population-pyramid-year"></div>
+                </article>
+
+                <article class="comparison-card wide" id="economy-result-card">
+                    <h3>Ekonomi och resultat</h3>
+                    <div class="year" id="economy-result-year">Laddar...</div>
+                    <div class="economy-result-grid" id="economy-result-grid"></div>
+                    <div class="insight-note">Källa: Kolada. Värdena visar senaste tillgängliga mätår för vald huvudkommun.</div>
                 </article>
             </div>
             <div class="section-comparison" data-comparison-panel="compare-kommundata"></div>
@@ -2400,7 +2455,7 @@
         ]
     };
 
-    const comparisonKpis = Object.values(dashboards).flat();
+    let comparisonKpis = Object.values(dashboards).flat();
     const genderLabels = { T: "totalt", M: "män", K: "kvinnor" };
     const dataCache = new Map();
 
@@ -2438,6 +2493,16 @@
         { id: "N01953", title: "6-15" },
         { id: "N01952", title: "0-5" }
     ];
+
+    const economyResultKpis = [
+        { id: "N00900", title: "Skattesats totalt", format: "percent" },
+        { id: "N03007", title: "Årets resultat", format: "currency", suffix: "/inv" },
+        { id: "N03102", title: "Resultatandel", format: "percent" },
+        { id: "N03002", title: "Soliditet inkl. pension", format: "percent" },
+        { id: "N00904", title: "Skattekraft mot riket", format: "percent" }
+    ];
+
+    comparisonKpis = [...comparisonKpis, ...economyResultKpis];
 
     const chartTooltipData = new WeakMap();
     const comparisonPanels = new Map();
@@ -3219,6 +3284,7 @@
             const panelId = `compare-${area}`;
             const target = document.querySelector(`[data-comparison-panel="${panelId}"]`);
             if (!target) return;
+            const panelKpis = area === "kommundata" ? [...kpis, ...economyResultKpis] : kpis;
 
             target.innerHTML = `
                 <div class="toolbar">
@@ -3251,7 +3317,7 @@
                 chartId: `${panelId}-chart`,
                 legendId: `${panelId}-legend`,
                 tableBodyId: `${panelId}-table-body`,
-                kpis
+                kpis: panelKpis
             });
             renderComparisonOptions(panelId);
             document.getElementById(`${panelId}-select`).addEventListener("change", () => renderComparison(panelId));
@@ -3383,7 +3449,8 @@
         await Promise.all([
             renderPopulationDrivers(),
             renderAgeGroups(),
-            renderPopulationPyramid()
+            renderPopulationPyramid(),
+            renderEconomyResultCard()
         ]);
     }
 
@@ -3608,6 +3675,76 @@
     async function latestKpiPoint(kpiId, gender = "T") {
         const data = await fetchJson(`${API_BASE}/data/municipality/${selectedMunicipalityId}/kpi/${kpiId}`);
         return latestValidValue(valuesByYear(data.values || [], gender));
+    }
+
+    async function economyResultPoint(kpi) {
+        const data = await fetchJson(`${API_BASE}/data/municipality/${selectedMunicipalityId}/kpi/${kpi.id}`);
+        const series = valuesByYear(data.values || [], "T");
+        return {
+            ...kpi,
+            latest: series[series.length - 1] || null,
+            previous: series[series.length - 2] || null
+        };
+    }
+
+    async function renderEconomyResultCard() {
+        const yearEl = document.getElementById("economy-result-year");
+        const gridEl = document.getElementById("economy-result-grid");
+
+        if (!yearEl || !gridEl) return;
+
+        yearEl.textContent = "Laddar...";
+        gridEl.innerHTML = "";
+
+        try {
+            const rows = await Promise.all(economyResultKpis.map(economyResultPoint));
+            const rowsWithData = rows.filter(row => row.latest);
+
+            if (!rowsWithData.length) {
+                throw new Error("Saknar ekonomi- och resultatdata");
+            }
+
+            yearEl.textContent = "Senaste tillgängliga mätår per mått";
+            gridEl.innerHTML = rows.map(row => {
+                if (!row.latest) {
+                    return `
+                        <div class="economy-result-item">
+                            <div class="economy-result-label">${escapeHtml(row.title)}</div>
+                            <div class="economy-result-value">Ingen data</div>
+                            <div class="economy-result-meta"></div>
+                        </div>
+                    `;
+                }
+
+                const delta = row.previous ? row.latest.value - row.previous.value : null;
+                const deltaText = delta === null
+                    ? "Jämförelseår saknas"
+                    : `${formatEconomyDelta(delta, row)} från ${row.previous.period}`;
+                const deltaTone = delta === null ? "" : valueTone(delta);
+
+                return `
+                    <div class="economy-result-item">
+                        <div class="economy-result-label">${escapeHtml(row.title)}</div>
+                        <div class="economy-result-value">${formatEconomyResultValue(row.latest.value, row)}</div>
+                        <div class="economy-result-meta">Mätår: ${row.latest.period}</div>
+                        <div class="economy-result-meta ${deltaTone}">${deltaText}</div>
+                    </div>
+                `;
+            }).join("");
+        } catch (error) {
+            yearEl.textContent = "";
+            gridEl.innerHTML = `<div class="status">Kolada-data för ekonomi och resultat kunde inte hämtas.</div>`;
+        }
+    }
+
+    function formatEconomyResultValue(value, metric) {
+        return `${formatValue(value, metric.format)}${metric.suffix || ""}`;
+    }
+
+    function formatEconomyDelta(value, metric) {
+        if (value > 0) return `+${formatEconomyResultValue(value, metric)}`;
+        if (value < 0) return `−${formatEconomyResultValue(Math.abs(value), metric)}`;
+        return `0${metric.suffix || ""}`;
     }
 
     async function latestGenderPoint(kpiId) {
@@ -3950,7 +4087,7 @@
             panel.format = kpi.format;
             drawLineChart(document.getElementById(panel.chartId), rowsWithAverages, kpi.format, true, selectedMunicipalityByPanel.get(panelId));
             renderComparisonLegend(panelId, rowsWithAverages);
-            renderComparisonTable(panelId, rowsWithAverages, kpi.format);
+            renderComparisonTable(panelId, rowsWithAverages, kpi);
         } catch (error) {
             clearCanvas(document.getElementById(panel.chartId));
             document.getElementById(panel.legendId).innerHTML = "";
@@ -3992,9 +4129,10 @@
         });
     }
 
-    function renderComparisonTable(panelId, rows, format) {
+    function renderComparisonTable(panelId, rows, kpi) {
         const panel = comparisonPanels.get(panelId);
         const selected = selectedMunicipalityByPanel.get(panelId);
+        const format = kpi.format;
         document.getElementById(panel.tableBodyId).innerHTML = rows.map(row => {
             const first = row.values[0];
             const latest = row.values[row.values.length - 1];
@@ -4011,12 +4149,12 @@
                 : null;
             const changeText = change === null
                 ? ""
-                : `${change > 0 ? "+" : ""}${formatValue(change, format)}`;
+                : `${change > 0 ? "+" : ""}${formatComparisonValue(change, kpi)}`;
 
             return `
                 <tr class="${rowClass}">
                     <td>${nameButton}</td>
-                    <td>${formatValue(latest.value, format)}</td>
+                    <td>${formatComparisonValue(latest.value, kpi)}</td>
                     <td>${latest.period}</td>
                     <td>${changeText}</td>
                 </tr>
@@ -4026,6 +4164,10 @@
         document.querySelectorAll(`#${panel.tableBodyId} [data-municipality]`).forEach(button => {
             button.addEventListener("click", () => toggleMunicipalityHighlight(panelId, button.dataset.municipality));
         });
+    }
+
+    function formatComparisonValue(value, kpi) {
+        return `${formatValue(value, kpi.format)}${kpi.suffix || ""}`;
     }
 
     function toggleMunicipalityHighlight(panelId, municipalityId) {
