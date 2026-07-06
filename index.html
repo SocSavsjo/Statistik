@@ -850,6 +850,7 @@
         <button class="tab-btn" type="button" data-tab="brott">Brott</button>
         <button class="tab-btn" type="button" data-tab="migration">Migration</button>
         <button class="tab-btn" type="button" data-tab="forsakringskassan">Försäkringskassan</button>
+        <button class="tab-btn" type="button" data-tab="boenden">Boende ÄO/LSS</button>
     </nav>
 
     <main>
@@ -1550,6 +1551,115 @@
             </article>
         </section>
 
+
+        <section id="boenden" class="tab-content" aria-labelledby="Boende ÄO/LSS">
+            <div class="info">Källa: Boverkets bostadsmarknadsenkät 2026, öppna data. Urvalet visar Höglandskommunerna och följer vald huvudkommun i huvudkorten.</div>
+            <article class="comparison-card job-wide" id="bme-housing-panel">
+                <h3>ÄO boende 2026</h3>
+                <div class="grid job-cards">
+                    <article class="card" style="--card-accent:#005a9c">
+                        <h3><span data-main-municipality-full>Sävsjö kommun</span></h3>
+                        <div class="kpi-id">Särskilt boende, kommunala platser</div>
+                        <div class="value" id="bme-main-sabo">-</div>
+                        <div class="delta neutral" id="bme-main-sabo-note"></div>
+                    </article>
+                    <article class="card" style="--card-accent:#222222">
+                        <h3>Höglandet</h3>
+                        <div class="kpi-id">Aneby, Eksjö, Nässjö, Sävsjö, Tranås, Vetlanda</div>
+                        <div class="value" id="bme-highland-sabo">-</div>
+                        <div class="delta neutral" id="bme-highland-sabo-note">Summerat kommunvärde</div>
+                    </article>
+                    <article class="card" style="--card-accent:#c04f15">
+                        <h3>Trygghetsbostäder</h3>
+                        <div class="kpi-id">Kommuner på Höglandet där boendeformen finns</div>
+                        <div class="value" id="bme-highland-trygghet">-</div>
+                        <div class="delta neutral" id="bme-highland-trygghet-note"></div>
+                    </article>
+                </div>
+
+                <h3>Höglandet per kommun</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Kommun</th>
+                            <th>SÄBO platser</th>
+                            <th>Korttid</th>
+                            <th>SÄBO läge</th>
+                            <th>Trygghetsbostäder</th>
+                            <th>Trygghets läge</th>
+                            <th>Seniorbostäder</th>
+                            <th>Senior läge</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bme-housing-table-body">
+                        <tr><td colspan="8">Laddar...</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>Planeringsbedömning</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Kommun</th>
+                            <th>SÄBO behov täckt om 2 år</th>
+                            <th>SÄBO behov täckt om 5 år</th>
+                            <th>Trygghetsbostäder behov</th>
+                            <th>Trygghets behov täckt om 2 år</th>
+                            <th>Trygghets behov täckt om 5 år</th>
+                            <th>Ind. behovsprövat trygghetsboende</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bme-housing-planning-table-body">
+                        <tr><td colspan="7">Laddar...</td></tr>
+                    </tbody>
+                </table>
+                <div class="insight-note" id="bme-housing-note"></div>
+            </article>
+
+            <article class="comparison-card job-wide" id="lss-housing-panel">
+                <h3>LSS-boende 2025</h3>
+                <div class="grid job-cards">
+                    <article class="card" style="--card-accent:#7a4cb0">
+                        <h3><span data-main-municipality-full>Sävsjö kommun</span></h3>
+                        <div class="kpi-id">Bostad med särskild service för vuxna</div>
+                        <div class="value" id="lss-housing-main">-</div>
+                        <div class="delta neutral" id="lss-housing-main-note"></div>
+                    </article>
+                    <article class="card" style="--card-accent:#222222">
+                        <h3>Höglandet</h3>
+                        <div class="kpi-id">Aneby, Eksjö, Nässjö, Sävsjö, Tranås, Vetlanda</div>
+                        <div class="value" id="lss-housing-highland">-</div>
+                        <div class="delta neutral" id="lss-housing-highland-note">Summerat kommunvärde</div>
+                    </article>
+                    <article class="card" style="--card-accent:#005a9c">
+                        <h3>Personer med LSS-insats</h3>
+                        <div class="kpi-id">Höglandet totalt</div>
+                        <div class="value" id="lss-persons-highland">-</div>
+                        <div class="delta neutral" id="lss-persons-highland-note"></div>
+                    </article>
+                </div>
+
+                <h3>Höglandet per kommun, LSS</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Kommun</th>
+                            <th>Personer med LSS-insats</th>
+                            <th>Bostad med särskild service vuxna</th>
+                            <th>Daglig verksamhet</th>
+                            <th>Kontaktperson</th>
+                            <th>Boendeandel av personer</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lss-housing-table-body">
+                        <tr><td colspan="6">Laddar...</td></tr>
+                    </tbody>
+                </table>
+                <div class="insight-note" id="lss-housing-note"></div>
+            </article>
+
+        </section>
+
         <section id="jamforelser" class="tab-content" aria-labelledby="Jämförelser">
             <div class="toolbar">
                 <label for="comparison-select">Välj nyckeltal:</label>
@@ -1815,6 +1925,20 @@
     }
 
 
+    const bmeHousingData = {
+        source: "Boverkets bostadsmarknadsenkät 2026, öppna data: Äldre - BME 2026",
+        sourceUrl: "https://www.boverket.se/sv/om-boverket/oppna-data/bostadsmarknadsenkaten/",
+        year: 2026,
+        municipalities: [
+            { id: "0604", name: "Aneby", saboStatus: "Balans", saboNeed2: "Ja", saboNeed5: "Nej", saboMunicipal: 63, saboPurchased: 0, shortTerm: 8, individualNeedsTestedSecurity: "Nej", securityHousing: "Ja", securityStatus: "Balans", securityNeed: "", securityNeed2: "Ja", securityNeed5: "Nej", seniorHousing: "Nej", seniorStatus: "", seniorNeed: "Ja, det finns ett behov" },
+            { id: "0686", name: "Eksjö", saboStatus: "Balans", saboNeed2: "Ja", saboNeed5: "Kan inte bedöma", saboMunicipal: 188, saboPurchased: 0, shortTerm: 16, individualNeedsTestedSecurity: "Nej", securityHousing: "Ja", securityStatus: "Underskott", securityNeed: "", securityNeed2: "Nej", securityNeed5: "Ja", seniorHousing: "Nej", seniorStatus: "", seniorNeed: "Nej" },
+            { id: "0682", name: "Nässjö", saboStatus: "Underskott", saboNeed2: "Ja", saboNeed5: "Ja", saboMunicipal: 275, saboPurchased: 0, shortTerm: 35, individualNeedsTestedSecurity: "Nej", securityHousing: "Ja", securityStatus: "Underskott", securityNeed: "", securityNeed2: "Kan inte bedöma", securityNeed5: "Kan inte bedöma", seniorHousing: "Ja", seniorStatus: "Underskott", seniorNeed: "" },
+            { id: "0684", name: "Sävsjö", saboStatus: "Balans", saboNeed2: "Ja", saboNeed5: "Ja", saboMunicipal: 99, saboPurchased: 0, shortTerm: 20, individualNeedsTestedSecurity: "Nej", securityHousing: "Ja", securityStatus: "Överskott", securityNeed: "", securityNeed2: "Ja", securityNeed5: "Ja", seniorHousing: "Ja", seniorStatus: "Överskott", seniorNeed: "" },
+            { id: "0687", name: "Tranås", saboStatus: "Balans", saboNeed2: "Ja", saboNeed5: "Ja", saboMunicipal: 222, saboPurchased: 0, shortTerm: 16, individualNeedsTestedSecurity: "Nej", securityHousing: "Nej", securityStatus: "", securityNeed: "Ja", securityNeed2: "Nej", securityNeed5: "Ja", seniorHousing: "Ja", seniorStatus: "Underskott", seniorNeed: "" },
+            { id: "0685", name: "Vetlanda", saboStatus: "Underskott", saboNeed2: "Nej", saboNeed5: "Kan inte bedöma", saboMunicipal: 307, saboPurchased: 0, shortTerm: 26, individualNeedsTestedSecurity: "Nej", securityHousing: "Ja", securityStatus: "Underskott", securityNeed: "", securityNeed2: "Nej", securityNeed5: "Kan inte bedöma", seniorHousing: "Ja", seniorStatus: "Underskott", seniorNeed: "" }
+        ]
+    };
+
     const fkData = {"source":"Försäkringskassan statistikdatabas, öppna API","snapshotDate":"2026-06-30","highlandMunicipalities":[{"key":"0604","name":"Aneby"},{"key":"0686","name":"Eksjö"},{"key":"0682","name":"Nässjö"},{"key":"0684","name":"Sävsjö"},{"key":"0687","name":"Tranås"},{"key":"0685","name":"Vetlanda"}],"vab":{"year":2025,"label":"VAB / tillfällig föräldrapenning","savsjo":{"key":"0684","name":"Sävsjö","recipients":1054,"netDays":7666,"amountKsek":8920},"highland":{"recipients":9842,"netDays":70523,"amountKsek":82063},"county":{"recipients":33114,"netDays":241026,"amountKsek":283388},"municipalities":[{"key":"0604","name":"Aneby","recipients":678,"netDays":4332,"amountKsek":5177},{"key":"0686","name":"Eksjö","recipients":1515,"netDays":10151,"amountKsek":11889},{"key":"0682","name":"Nässjö","recipients":2745,"netDays":19834,"amountKsek":23175},{"key":"0684","name":"Sävsjö","recipients":1054,"netDays":7666,"amountKsek":8920},{"key":"0687","name":"Tranås","recipients":1527,"netDays":11918,"amountKsek":13765},{"key":"0685","name":"Vetlanda","recipients":2323,"netDays":16622,"amountKsek":19137}]},"sicknessActivity":{"period":"2026-05","label":"Sjuk- och aktivitetsersättning","savsjo":{"key":"0684","name":"Sävsjö","recipients":324,"amountKsek":4330},"highland":{"recipients":3400,"amountKsek":44892},"county":{"recipients":10360,"amountKsek":137696},"municipalities":[{"key":"0604","name":"Aneby","recipients":194,"amountKsek":2667},{"key":"0686","name":"Eksjö","recipients":550,"amountKsek":7082},{"key":"0682","name":"Nässjö","recipients":968,"amountKsek":13054},{"key":"0684","name":"Sävsjö","recipients":324,"amountKsek":4330},{"key":"0687","name":"Tranås","recipients":595,"amountKsek":7929},{"key":"0685","name":"Vetlanda","recipients":769,"amountKsek":9830}]},"sickPayCounty":{"year":2025,"label":"Sjukpenning och rehabiliteringspenning","recipients":21716,"netDays":2071234,"amountKsek":1470853}};
 
     const migrationData = {"source":"Migrationsverket, öppna data: Kommunmottagna enligt ersättningsförordningen 2025","sourceUrl":"https://www.migrationsverket.se/Om-Migrationsverket/Statistik/Oppna-data.html","snapshotDate":"2026-06-30","updatedInSource":"2026-02-03","year":2025,"areas":{"savsjo":{"label":"Sävsjö kommun","total":0,"protected":0,"resident":40},"highland":{"label":"Höglandet","total":85,"protected":34,"resident":383,"members":["Aneby","Eksjö","Nässjö","Sävsjö","Tranås","Vetlanda"]},"county":{"label":"Jönköpings län","total":340,"protected":198,"resident":1224,"members":["Aneby","Eksjö","Gislaved","Gnosjö","Habo","Jönköping","Mullsjö","Nässjö","Sävsjö","Tranås","Vaggeryd","Vetlanda","Värnamo"]}},"residentTrend":[{"year":2024,"savsjo":0,"highland":237,"county":808},{"year":2025,"savsjo":0,"highland":90,"county":326}],"municipalities":[{"label":"Aneby","total":0,"protected":0,"resident":16},{"label":"Eksjö","total":13,"protected":9,"resident":88},{"label":"Nässjö","total":23,"protected":12,"resident":100},{"label":"Sävsjö","total":0,"protected":0,"resident":40},{"label":"Tranås","total":20,"protected":0,"resident":46},{"label":"Vetlanda","total":29,"protected":13,"resident":93}],"monthly":[{"period":"2025-01","savsjo":0,"highland":0,"county":38},{"period":"2025-02","savsjo":0,"highland":0,"county":24},{"period":"2025-03","savsjo":0,"highland":0,"county":0},{"period":"2025-04","savsjo":0,"highland":0,"county":0},{"period":"2025-05","savsjo":0,"highland":0,"county":13},{"period":"2025-06","savsjo":0,"highland":0,"county":10},{"period":"2025-07","savsjo":0,"highland":0,"county":6},{"period":"2025-08","savsjo":0,"highland":0,"county":0},{"period":"2025-09","savsjo":0,"highland":0,"county":25},{"period":"2025-10","savsjo":0,"highland":6,"county":18},{"period":"2025-11","savsjo":0,"highland":6,"county":31},{"period":"2025-12","savsjo":0,"highland":7,"county":14}],"categories":[{"label":"Kvotflykting (Kategori 1)","savsjo":0,"highland":13,"county":41,"municipalities":{"0604":null,"0686":null,"0682":null,"0684":0,"0687":7,"0685":6}},{"label":"Person från anläggningsboende (ABO) i Migrationsverkets mottagningssystem (Kategori 2)","savsjo":null,"highland":13,"county":159,"municipalities":{"0604":null,"0686":null,"0682":13,"0684":null,"0687":0,"0685":null}},{"label":"Person från eget boende (EBO) i Migrationsverkets mottagningssystem (Kategori 6)","savsjo":null,"highland":20,"county":94,"municipalities":{"0604":null,"0686":6,"0682":0,"0684":null,"0687":null,"0685":14}},{"label":"Anhöriga (Kategori 4)","savsjo":null,"highland":6,"county":36,"municipalities":{"0604":0,"0686":null,"0682":6,"0684":null,"0687":null,"0685":0}},{"label":"Omfattas återigen, ej sammanhängande vistelse (Kategori 8)","savsjo":0,"highland":0,"county":null,"municipalities":{"0604":0,"0686":0,"0682":0,"0684":0,"0687":0,"0685":0}},{"label":"Övriga (Kategori 3)","savsjo":0,"highland":0,"county":null,"municipalities":{"0604":0,"0686":null,"0682":null,"0684":0,"0687":null,"0685":null}}],"age":[{"label":"0-5 år","savsjo":null,"highland":0,"county":40,"municipalities":{"0604":null,"0686":null,"0682":null,"0684":null,"0687":null,"0685":null}},{"label":"6-15 år","savsjo":0,"highland":0,"county":42,"municipalities":{"0604":0,"0686":null,"0682":0,"0684":0,"0687":null,"0685":null}},{"label":"16-17 år","savsjo":0,"highland":0,"county":15,"municipalities":{"0604":0,"0686":0,"0682":0,"0684":0,"0687":null,"0685":null}},{"label":"18-19 år","savsjo":0,"highland":0,"county":18,"municipalities":{"0604":0,"0686":0,"0682":null,"0684":0,"0687":0,"0685":0}},{"label":"20-65 år","savsjo":null,"highland":46,"county":226,"municipalities":{"0604":null,"0686":10,"0682":14,"0684":null,"0687":6,"0685":16}},{"label":"66+ år","savsjo":null,"highland":0,"county":10,"municipalities":{"0604":0,"0686":0,"0682":0,"0684":null,"0687":0,"0685":null}}],"gender":[{"label":"Kvinnor","savsjo":null,"highland":35,"county":195,"municipalities":{"0604":null,"0686":null,"0682":13,"0684":null,"0687":10,"0685":12}},{"label":"Män","savsjo":null,"highland":37,"county":156,"municipalities":{"0604":null,"0686":null,"0682":10,"0684":null,"0687":10,"0685":17}}]};
@@ -1829,6 +1953,107 @@
 
 
 
+
+    function renderBmeHousingDashboard() {
+        const rows = bmeHousingData.municipalities;
+        const main = rows.find(row => row.id === selectedMunicipalityId) || rows.find(row => row.id === DEFAULT_MUNICIPALITY_ID);
+        const number = value => Number.isFinite(value) ? formatValue(value, "number") : "-";
+        const textValue = value => value || "-";
+        const highlandSabo = rows.reduce((sum, row) => sum + (row.saboMunicipal || 0) + (row.saboPurchased || 0), 0);
+        const highlandShortTerm = rows.reduce((sum, row) => sum + (row.shortTerm || 0), 0);
+        const securityCount = rows.filter(row => row.securityHousing === "Ja").length;
+        const seniorCount = rows.filter(row => row.seniorHousing === "Ja").length;
+
+        document.getElementById("bme-main-sabo").textContent = number((main.saboMunicipal || 0) + (main.saboPurchased || 0));
+        document.getElementById("bme-main-sabo-note").textContent = `${number(main.shortTerm)} korttidsplatser. SÄBO-läge: ${main.saboStatus}.`;
+        document.getElementById("bme-highland-sabo").textContent = number(highlandSabo);
+        document.getElementById("bme-highland-sabo-note").textContent = `${number(highlandShortTerm)} korttidsplatser. Alla köpta SÄBO-platser är 0 i urvalet.`;
+        document.getElementById("bme-highland-trygghet").textContent = `${securityCount} av ${rows.length}`;
+        document.getElementById("bme-highland-trygghet-note").textContent = `${seniorCount} av ${rows.length} har seniorbostäder.`;
+
+        document.getElementById("bme-housing-table-body").innerHTML = rows.map(row => `
+            <tr class="${row.id === selectedMunicipalityId ? "is-highlighted" : ""}">
+                <td>${row.name}</td>
+                <td>${number((row.saboMunicipal || 0) + (row.saboPurchased || 0))}</td>
+                <td>${number(row.shortTerm)}</td>
+                <td>${textValue(row.saboStatus)}</td>
+                <td>${textValue(row.securityHousing)}</td>
+                <td>${textValue(row.securityStatus)}</td>
+                <td>${textValue(row.seniorHousing)}</td>
+                <td>${textValue(row.seniorStatus || row.seniorNeed)}</td>
+            </tr>
+        `).join("");
+
+        document.getElementById("bme-housing-planning-table-body").innerHTML = rows.map(row => `
+            <tr class="${row.id === selectedMunicipalityId ? "is-highlighted" : ""}">
+                <td>${row.name}</td>
+                <td>${textValue(row.saboNeed2)}</td>
+                <td>${textValue(row.saboNeed5)}</td>
+                <td>${textValue(row.securityNeed)}</td>
+                <td>${textValue(row.securityNeed2)}</td>
+                <td>${textValue(row.securityNeed5)}</td>
+                <td>${textValue(row.individualNeedsTestedSecurity)}</td>
+            </tr>
+        `).join("");
+
+        document.getElementById("bme-housing-note").textContent =
+            `${bmeHousingData.source}. BME visar bedömningar för trygghetsbostäder och seniorbostäder, medan särskilt boende och korttidsboende redovisas som antal platser.`;
+        renderLssHousingDashboard();
+    }
+
+    function renderLssHousingDashboard() {
+        const regionOrder = [
+            { id: "604", htmlId: "0604", name: "Aneby" },
+            { id: "686", htmlId: "0686", name: "Eksjö" },
+            { id: "682", htmlId: "0682", name: "Nässjö" },
+            { id: "684", htmlId: "0684", name: "Sävsjö" },
+            { id: "687", htmlId: "0687", name: "Tranås" },
+            { id: "685", htmlId: "0685", name: "Vetlanda" }
+        ];
+        const selectedRegionId = String(Number(selectedMunicipalityId));
+        const number = value => Number.isFinite(value) ? formatValue(value, "number") : "-";
+        const valueFor = (indicatorId, regionId) => {
+            const value = sosLssComparisonData[indicatorId]?.["2025"]?.[regionId];
+            return Number.isFinite(value) ? value : null;
+        };
+        const sumFor = indicatorId => regionOrder.reduce((sum, row) => sum + (valueFor(indicatorId, row.id) || 0), 0);
+        const mainHousing = valueFor("adultHousing", selectedRegionId);
+        const mainPersons = valueFor("persons", selectedRegionId);
+        const highlandHousing = sumFor("adultHousing");
+        const highlandPersons = sumFor("persons");
+
+        document.getElementById("lss-housing-main").textContent = number(mainHousing);
+        document.getElementById("lss-housing-main-note").textContent = Number.isFinite(mainPersons) && mainPersons > 0
+            ? `${formatPercent((mainHousing / mainPersons) * 100)} av personer med LSS-insats`
+            : "Socialstyrelsen, 2025";
+        document.getElementById("lss-housing-highland").textContent = number(highlandHousing);
+        document.getElementById("lss-housing-highland-note").textContent = `${formatPercent((highlandHousing / highlandPersons) * 100)} av personer med LSS-insats`;
+        document.getElementById("lss-persons-highland").textContent = number(highlandPersons);
+        document.getElementById("lss-persons-highland-note").textContent = "Personer med minst en verkställd kommunalt beslutad LSS-insats";
+
+        document.getElementById("lss-housing-table-body").innerHTML = regionOrder.map(row => {
+            const persons = valueFor("persons", row.id);
+            const housing = valueFor("adultHousing", row.id);
+            const daily = valueFor("daily", row.id);
+            const contact = valueFor("contact", row.id);
+            const share = Number.isFinite(persons) && persons > 0 && Number.isFinite(housing)
+                ? formatPercent((housing / persons) * 100)
+                : "-";
+            return `
+                <tr class="${row.id === selectedRegionId ? "is-highlighted" : ""}">
+                    <td>${row.name}</td>
+                    <td>${number(persons)}</td>
+                    <td>${number(housing)}</td>
+                    <td>${number(daily)}</td>
+                    <td>${number(contact)}</td>
+                    <td>${share}</td>
+                </tr>
+            `;
+        }).join("");
+
+        document.getElementById("lss-housing-note").textContent =
+            "Källa: Socialstyrelsens Excelbilaga till Statistik om insatser enligt LSS 2025. Måttet visar antal insatser för bostad med särskild service för vuxna, inte antal faktiska boendeenheter.";
+    }
 
     function renderFkDashboard() {
         const panel = document.getElementById("fk-panel");
@@ -3286,6 +3511,7 @@
         renderBraCrimeDashboard();
         renderMigrationDashboard();
         renderFkDashboard();
+        renderBmeHousingDashboard();
         await Promise.all([...comparisonPanels.keys()].map(renderComparison));
     }
 
