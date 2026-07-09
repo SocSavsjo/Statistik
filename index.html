@@ -351,6 +351,11 @@
         background: #f0f7fc;
     }
 
+    .comparison-table tr.summary-row {
+        background: #f8fafc;
+        font-weight: 800;
+    }
+
     .kommundata-extras {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -751,6 +756,103 @@
         font-size: 0.88rem;
     }
 
+    .simulator-controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 14px;
+        align-items: stretch;
+        background: var(--primary-light);
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 18px;
+    }
+
+    .simulator-field {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        gap: 6px;
+        font-weight: 700;
+        color: var(--primary-dark);
+        line-height: 1.22;
+    }
+
+    .simulator-field input,
+    .simulator-field select {
+        width: 100%;
+        min-height: 42px;
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        background: #fff;
+        padding: 8px 10px;
+        font: inherit;
+    }
+
+    .simulator-results {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 14px;
+        margin: 18px 0;
+    }
+
+    .simulator-metric {
+        border: 1px solid var(--border);
+        border-left: 5px solid var(--primary);
+        border-radius: 8px;
+        padding: 14px;
+        background: #fff;
+    }
+
+    .simulator-metric-title {
+        color: var(--muted);
+        font-weight: 800;
+        font-size: 0.86rem;
+        margin-bottom: 8px;
+    }
+
+    .simulator-metric-value {
+        color: var(--primary);
+        font-size: 1.55rem;
+        font-weight: 900;
+        line-height: 1.15;
+    }
+
+    .simulator-metric-value.is-cost {
+        color: #c04f15;
+    }
+
+    .simulator-metric-value.is-saving {
+        color: #2a7f62;
+    }
+
+    .simulator-metric-note {
+        color: var(--muted);
+        font-size: 0.88rem;
+        margin-top: 8px;
+    }
+
+    .welfare-tech-card {
+        margin-top: 22px;
+        border-top-color: #2a7f62;
+    }
+
+    .welfare-tech-assumptions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: -4px 0 14px;
+    }
+
+    .welfare-tech-pill {
+        background: #eef7f3;
+        color: #235f4d;
+        border: 1px solid #cfe4dc;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.84rem;
+        font-weight: 800;
+    }
+
     @media (max-width: 640px) {
         body {
             padding: 14px;
@@ -851,6 +953,7 @@
         <button class="tab-btn" type="button" data-tab="migration">Migration</button>
         <button class="tab-btn" type="button" data-tab="forsakringskassan">Försäkringskassan</button>
         <button class="tab-btn" type="button" data-tab="boenden">Boende ÄO/LSS</button>
+        <button class="tab-btn" type="button" data-tab="simulator">Välfärdsteknik simulator</button>
     </nav>
 
     <main>
@@ -1132,6 +1235,30 @@
                     <div class="insight-note">Andelarna räknas på kommunens totala befolkning samma år. Gruppen 80+ ingår även i 65+.</div>
                 </article>
 
+                <article class="comparison-card" id="dependency-ratio-card">
+                    <h3>Försörjningskvot</h3>
+                    <div class="insight-summary">
+                        <div>
+                            <div class="value" id="dependency-ratio-value">Laddar...</div>
+                            <div class="year" id="dependency-ratio-year"></div>
+                        </div>
+                    </div>
+                    <table class="comparison-table source-mini-table">
+                        <thead>
+                            <tr>
+                                <th>Område</th>
+                                <th>Kvot</th>
+                                <th>0-19 + 65+</th>
+                                <th>20-64</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dependency-ratio-table-body">
+                            <tr><td colspan="4">Laddar...</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="insight-note">Antal personer 0-19 år och 65+ per 100 personer i åldern 20-64 år.</div>
+                </article>
+
                 <article class="comparison-card wide" id="population-pyramid-card">
                     <h3>Befolkningspyramid</h3>
                     <div class="pyramid-head">
@@ -1143,6 +1270,26 @@
                     </div>
                     <div class="pyramid-chart" id="population-pyramid">Laddar...</div>
                     <div class="insight-note" id="population-pyramid-year"></div>
+                </article>
+
+                <article class="comparison-card wide" id="population-share-card">
+                    <h3>Höglandskommunernas andel av befolkningen</h3>
+                    <div class="year" id="population-share-year">Laddar...</div>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Kommun/område</th>
+                                <th>Invånare</th>
+                                <th>Andel av Höglandet</th>
+                                <th>Andel av Jönköpings län</th>
+                                <th>Andel av landet</th>
+                            </tr>
+                        </thead>
+                        <tbody id="population-share-table-body">
+                            <tr><td colspan="5">Laddar...</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="insight-note" id="population-share-note">Källa: SCB via Kolada, KPI N01951.</div>
                 </article>
 
             </div>
@@ -1575,7 +1722,30 @@
                         <div class="value" id="bme-highland-trygghet">-</div>
                         <div class="delta neutral" id="bme-highland-trygghet-note"></div>
                     </article>
+                    <article class="card" style="--card-accent:#00856f">
+                        <h3>Antal boenden</h3>
+                        <div class="kpi-id"><span data-main-municipality-full>Sävsjö kommun</span>, särskilt boende</div>
+                        <div class="value" id="bme-main-units">-</div>
+                        <div class="delta neutral" id="bme-main-units-note"></div>
+                    </article>
                 </div>
+
+                <h3>Boenden och snitt</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Kommun</th>
+                            <th>SÄBO platser</th>
+                            <th>Antal boenden</th>
+                            <th>Snitt platser per boende</th>
+                            <th>Korttid</th>
+                            <th>Kommentar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bme-housing-distribution-table-body">
+                        <tr><td colspan="6">Laddar...</td></tr>
+                    </tbody>
+                </table>
 
                 <h3>Höglandet per kommun</h3>
                 <table class="comparison-table">
@@ -1639,6 +1809,24 @@
                     </article>
                 </div>
 
+                <h3>Fördelning av LSS-boende</h3>
+                <canvas class="comparison-chart" id="lss-housing-distribution-chart" width="900" height="300"></canvas>
+                <div class="legend" id="lss-housing-distribution-legend"></div>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Kommun</th>
+                            <th>Bostad med särskild service vuxna</th>
+                            <th>Andel av Höglandet</th>
+                            <th>Personer med LSS-insats</th>
+                            <th>Boendeandel</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lss-housing-distribution-table-body">
+                        <tr><td colspan="5">Laddar...</td></tr>
+                    </tbody>
+                </table>
+
                 <h3>Höglandet per kommun, LSS</h3>
                 <table class="comparison-table">
                     <thead>
@@ -1672,7 +1860,7 @@
                     <div class="legend" id="comparison-legend"></div>
                     <table class="comparison-table">
                         <thead>
-                            <tr>
+                            <tr id="comparison-table-head">
                                 <th>Kommun</th>
                                 <th>Senaste värde</th>
                                 <th>Mätår</th>
@@ -1685,6 +1873,211 @@
                     </table>
                 </article>
             </div>
+        </section>
+
+        <section id="simulator" class="tab-content" aria-labelledby="Simulator">
+            <div class="info">Beräknar bara på områden där dashboarden har både volym och kostnad.</div>
+            <article class="comparison-card job-wide">
+                <h3>Scenario och kostnadseffekt</h3>
+                <div class="simulator-controls">
+                    <label class="simulator-field" for="simulator-scenario">
+                        Område
+                        <select id="simulator-scenario"></select>
+                    </label>
+                    <label class="simulator-field" for="simulator-volume-mode">
+                        Volymändring
+                        <select id="simulator-volume-mode">
+                            <option value="percent">Procent</option>
+                            <option value="fixed">Fast antal</option>
+                        </select>
+                    </label>
+                    <label class="simulator-field" for="simulator-volume-change">
+                        Ändring
+                        <input id="simulator-volume-change" type="number" value="5" step="0.1" inputmode="decimal">
+                    </label>
+                    <label class="simulator-field" for="simulator-growth">
+                        Årlig volymökning
+                        <input id="simulator-growth" type="number" value="5" step="0.1" inputmode="decimal">
+                    </label>
+                </div>
+                <div class="simulator-results" id="simulator-results">
+                    <div class="status">Välj fliken för att ladda beräkningen.</div>
+                </div>
+                <canvas class="comparison-chart" id="simulator-chart" width="900" height="280"></canvas>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>År</th>
+                            <th id="simulator-value-header">Beräknad årskostnad</th>
+                            <th id="simulator-delta-header">Ökning mot nuläge</th>
+                            <th>Kommentar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="simulator-table-body">
+                        <tr><td colspan="4">Laddar...</td></tr>
+                    </tbody>
+                </table>
+                <div class="insight-note" id="simulator-note"></div>
+            </article>
+            <article class="comparison-card job-wide welfare-tech-card">
+                <h3>Välfärdsteknik: traditionell tillsyn mot digital tillsyn</h3>
+                <div class="simulator-controls">
+                    <label class="simulator-field" for="welfare-camera-count">
+                        Antal kameror
+                        <input id="welfare-camera-count" type="number" value="1" min="0" step="1" inputmode="numeric">
+                    </label>
+                    <label class="simulator-field" for="welfare-visits">
+                        Tillsyner per kamera/månad
+                        <input id="welfare-visits" type="number" value="30" min="0" step="1" inputmode="numeric">
+                    </label>
+                    <label class="simulator-field" for="welfare-km">
+                        Km tur/retur
+                        <input id="welfare-km" type="number" value="8" min="0" step="0.5" inputmode="decimal">
+                    </label>
+                    <label class="simulator-field" for="welfare-salary">
+                        Månadslön
+                        <input id="welfare-salary" type="number" value="27500" min="0" step="500" inputmode="numeric">
+                    </label>
+                    <label class="simulator-field" for="welfare-camera-cost">
+                        Kamerakostnad/månad
+                        <input id="welfare-camera-cost" type="number" value="500" min="0" step="50" inputmode="numeric">
+                    </label>
+                    <label class="simulator-field" for="welfare-wage-growth">
+                        Årlig löneökning
+                        <input id="welfare-wage-growth" type="number" value="3" step="0.1" inputmode="decimal">
+                    </label>
+                </div>
+                <div class="welfare-tech-assumptions">
+                    <span class="welfare-tech-pill">5 min per km</span>
+                    <span class="welfare-tech-pill">5 min fysisk tillsyn</span>
+                    <span class="welfare-tech-pill">1 min digital tillsyn</span>
+                    <span class="welfare-tech-pill">Lön x 1,4</span>
+                </div>
+                <div class="simulator-results" id="welfare-tech-results">
+                    <div class="status">Välj fliken för att ladda beräkningen.</div>
+                </div>
+                <div class="legend" id="welfare-tech-legend"></div>
+                <canvas class="comparison-chart" id="welfare-tech-chart" width="900" height="280"></canvas>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>År</th>
+                            <th>Traditionell tillsyn</th>
+                            <th>Digital tillsyn</th>
+                            <th>Besparing</th>
+                            <th>Ack. besparing</th>
+                        </tr>
+                    </thead>
+                    <tbody id="welfare-tech-table-body">
+                        <tr><td colspan="5">Laddar...</td></tr>
+                    </tbody>
+                </table>
+                <div class="insight-note" id="welfare-tech-note"></div>
+            </article>
+            <article class="comparison-card job-wide welfare-tech-card">
+                <h3>Välfärdsteknik: Läkemedelsrobot</h3>
+                <div class="simulator-controls">
+                    <label class="simulator-field" for="medicine-robot-count">
+                        Antal läkemedelsrobot
+                        <input id="medicine-robot-count" type="number" value="1" min="0" step="1" inputmode="numeric">
+                    </label>
+                    <label class="simulator-field" for="medicine-handover-count">
+                        Antal överlämningar
+                        <input id="medicine-handover-count" type="number" value="60" min="0" step="1" inputmode="numeric">
+                    </label>
+                    <label class="simulator-field" for="medicine-km">
+                        Km tur/retur
+                        <input id="medicine-km" type="number" value="8" min="0" step="0.5" inputmode="decimal">
+                    </label>
+                    <label class="simulator-field" for="medicine-salary">
+                        Månadslön
+                        <input id="medicine-salary" type="number" value="27500" min="0" step="500" inputmode="numeric">
+                    </label>
+                    <label class="simulator-field" for="medicine-robot-cost">
+                        Kostnad automat/månad
+                        <input id="medicine-robot-cost" type="number" value="1500" min="0" step="100" inputmode="numeric">
+                    </label>
+                    <label class="simulator-field" for="medicine-wage-growth">
+                        Årlig löneökning
+                        <input id="medicine-wage-growth" type="number" value="3" step="0.1" inputmode="decimal">
+                    </label>
+                </div>
+                <div class="welfare-tech-assumptions">
+                    <span class="welfare-tech-pill">5 min per km</span>
+                    <span class="welfare-tech-pill">15 min besök</span>
+                    <span class="welfare-tech-pill">Lön x 1,4</span>
+                </div>
+                <div class="simulator-results" id="medicine-robot-results">
+                    <div class="status">Välj fliken för att ladda beräkningen.</div>
+                </div>
+                <div class="legend" id="medicine-robot-legend"></div>
+                <canvas class="comparison-chart" id="medicine-robot-chart" width="900" height="280"></canvas>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>År</th>
+                            <th>Traditionell överlämning</th>
+                            <th>Läkemedelsrobot</th>
+                            <th>Besparing</th>
+                            <th>Ack. besparing</th>
+                        </tr>
+                    </thead>
+                    <tbody id="medicine-robot-table-body">
+                        <tr><td colspan="5">Laddar...</td></tr>
+                    </tbody>
+                </table>
+                <div class="insight-note" id="medicine-robot-note"></div>
+            </article>
+            <article class="comparison-card job-wide welfare-tech-card">
+                <h3>Välfärdsteknik: Digitala hembesök</h3>
+                <div class="simulator-controls">
+                    <label class="simulator-field" for="digital-visit-count">
+                        Hembesök som ersätts/månad
+                        <input id="digital-visit-count" type="number" value="30" min="0" step="1" inputmode="numeric">
+                    </label>
+                    <label class="simulator-field" for="digital-visit-km">
+                        Km tur/retur
+                        <input id="digital-visit-km" type="number" value="8" min="0" step="0.5" inputmode="decimal">
+                    </label>
+                    <label class="simulator-field" for="digital-visit-salary">
+                        Månadslön
+                        <input id="digital-visit-salary" type="number" value="27500" min="0" step="500" inputmode="numeric">
+                    </label>
+                    <label class="simulator-field" for="digital-visit-cost">
+                        Digital kostnad/månad
+                        <input id="digital-visit-cost" type="number" value="0" min="0" step="100" inputmode="numeric">
+                    </label>
+                    <label class="simulator-field" for="digital-visit-wage-growth">
+                        Årlig löneökning
+                        <input id="digital-visit-wage-growth" type="number" value="3" step="0.1" inputmode="decimal">
+                    </label>
+                </div>
+                <div class="welfare-tech-assumptions">
+                    <span class="welfare-tech-pill">5 min per km</span>
+                    <span class="welfare-tech-pill">Insatstid kvittas</span>
+                    <span class="welfare-tech-pill">Lön x 1,4</span>
+                </div>
+                <div class="simulator-results" id="digital-visit-results">
+                    <div class="status">Välj fliken för att ladda beräkningen.</div>
+                </div>
+                <div class="legend" id="digital-visit-legend"></div>
+                <canvas class="comparison-chart" id="digital-visit-chart" width="900" height="280"></canvas>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>År</th>
+                            <th>Traditionella resor</th>
+                            <th>Digital kostnad</th>
+                            <th>Besparing</th>
+                            <th>Ack. besparing</th>
+                        </tr>
+                    </thead>
+                    <tbody id="digital-visit-table-body">
+                        <tr><td colspan="5">Laddar...</td></tr>
+                    </tbody>
+                </table>
+                <div class="insight-note" id="digital-visit-note"></div>
+            </article>
         </section>
     </main>
 
@@ -1961,13 +2354,20 @@
         const textValue = value => value || "-";
         const highlandSabo = rows.reduce((sum, row) => sum + (row.saboMunicipal || 0) + (row.saboPurchased || 0), 0);
         const highlandShortTerm = rows.reduce((sum, row) => sum + (row.shortTerm || 0), 0);
+        const highlandUnits = rows.reduce((sum, row) => sum + (Number.isFinite(row.saboUnits) ? row.saboUnits : 0), 0);
         const securityCount = rows.filter(row => row.securityHousing === "Ja").length;
         const seniorCount = rows.filter(row => row.seniorHousing === "Ja").length;
 
         document.getElementById("bme-main-sabo").textContent = number((main.saboMunicipal || 0) + (main.saboPurchased || 0));
         document.getElementById("bme-main-sabo-note").textContent = `${number(main.shortTerm)} korttidsplatser. SÄBO-läge: ${main.saboStatus}.`;
+        document.getElementById("bme-main-units").textContent = Number.isFinite(main.saboUnits) ? number(main.saboUnits) : "-";
+        document.getElementById("bme-main-units-note").textContent = Number.isFinite(main.saboUnits) && main.saboUnits > 0
+            ? `${formatValue(((main.saboMunicipal || 0) + (main.saboPurchased || 0)) / main.saboUnits, "decimal")} platser per boende i snitt`
+            : "Antal boenden saknas";
         document.getElementById("bme-highland-sabo").textContent = number(highlandSabo);
-        document.getElementById("bme-highland-sabo-note").textContent = `${number(highlandShortTerm)} korttidsplatser. Alla köpta SÄBO-platser är 0 i urvalet.`;
+        document.getElementById("bme-highland-sabo-note").textContent = highlandUnits > 0
+            ? `${number(highlandShortTerm)} korttidsplatser. ${number(highlandUnits)} boenden/enheter, ${formatValue(highlandSabo / highlandUnits, "decimal")} platser per boende i snitt.`
+            : `${number(highlandShortTerm)} korttidsplatser. Antal boenden saknas i urvalet.`;
         document.getElementById("bme-highland-trygghet").textContent = `${securityCount} av ${rows.length}`;
         document.getElementById("bme-highland-trygghet-note").textContent = `${seniorCount} av ${rows.length} har seniorbostäder.`;
 
@@ -1996,9 +2396,31 @@
             </tr>
         `).join("");
 
+        renderBmeHousingDistribution(rows, selectedMunicipalityId);
+
         document.getElementById("bme-housing-note").textContent =
             `${bmeHousingData.source}. BME visar bedömningar för trygghetsbostäder och seniorbostäder, medan särskilt boende och korttidsboende redovisas som antal platser.`;
         renderLssHousingDashboard();
+    }
+
+    function renderBmeHousingDistribution(rows, highlightedId) {
+        const number = value => Number.isFinite(value) ? formatValue(value, "number") : "-";
+        const decimal = value => Number.isFinite(value) ? formatValue(value, "decimal") : "-";
+        document.getElementById("bme-housing-distribution-table-body").innerHTML = rows.map(row => {
+            const sabo = (row.saboMunicipal || 0) + (row.saboPurchased || 0);
+            const units = Number.isFinite(row.saboUnits) ? row.saboUnits : null;
+            const average = units && units > 0 ? sabo / units : null;
+            return `
+            <tr class="${row.id === highlightedId ? "is-highlighted" : ""}">
+                <td>${row.name}</td>
+                <td>${number(sabo)}</td>
+                <td>${units === null ? "-" : number(units)}</td>
+                <td>${average === null ? "-" : decimal(average)}</td>
+                <td>${number(row.shortTerm)}</td>
+                <td>${row.saboUnitsSource || "Antal boenden saknas"}</td>
+            </tr>
+            `;
+        }).join("");
     }
 
     function renderLssHousingDashboard() {
@@ -2051,8 +2473,123 @@
             `;
         }).join("");
 
+        renderLssHousingDistribution(regionOrder, selectedRegionId, valueFor, number);
+
         document.getElementById("lss-housing-note").textContent =
             "Källa: Socialstyrelsens Excelbilaga till Statistik om insatser enligt LSS 2025. Måttet visar antal insatser för bostad med särskild service för vuxna, inte antal faktiska boendeenheter.";
+    }
+
+    function renderLssHousingDistribution(regionOrder, highlightedId, valueFor, number) {
+        const rows = regionOrder.map(row => {
+            const persons = valueFor("persons", row.id);
+            const housing = valueFor("adultHousing", row.id);
+            return {
+                id: row.id,
+                title: row.name,
+                housing: housing || 0,
+                persons: persons || 0,
+                share: Number.isFinite(persons) && persons > 0 && Number.isFinite(housing)
+                    ? (housing / persons) * 100
+                    : null
+            };
+        });
+        const highlandHousing = rows.reduce((sum, row) => sum + row.housing, 0);
+
+        document.getElementById("lss-housing-distribution-table-body").innerHTML = rows.map(row => `
+            <tr class="${row.id === highlightedId ? "is-highlighted" : ""}">
+                <td>${row.title}</td>
+                <td>${number(row.housing)}</td>
+                <td>${highlandHousing > 0 ? formatPercent((row.housing / highlandHousing) * 100) : "-"}</td>
+                <td>${number(row.persons)}</td>
+                <td>${row.share === null ? "-" : formatPercent(row.share)}</td>
+            </tr>
+        `).join("");
+
+        const series = [
+            { key: "housing", title: "LSS-boende vuxna", color: "#006AA7" },
+            { key: "persons", title: "Personer med LSS-insats", color: "#222222" }
+        ];
+        drawGroupedDistributionChart(document.getElementById("lss-housing-distribution-chart"), rows, series, highlightedId);
+        document.getElementById("lss-housing-distribution-legend").innerHTML = series.map(item => `
+            <span class="legend-item">
+                <span class="legend-color" style="background:${item.color}"></span>
+                ${item.title}
+            </span>
+        `).join("");
+    }
+
+    function drawGroupedDistributionChart(canvas, rows, series, highlightedId) {
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        const rect = canvas.getBoundingClientRect();
+        const cssWidth = Math.max(320, rect.width || canvas.width);
+        const cssHeight = Math.max(220, rect.height || canvas.height);
+        const pixelRatio = window.devicePixelRatio || 1;
+        canvas.width = Math.round(cssWidth * pixelRatio);
+        canvas.height = Math.round(cssHeight * pixelRatio);
+        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+        const padding = { top: 18, right: 18, bottom: 52, left: 54 };
+        const plotWidth = cssWidth - padding.left - padding.right;
+        const plotHeight = cssHeight - padding.top - padding.bottom;
+        const maxValue = Math.max(1, ...rows.flatMap(row => series.map(item => row[item.key] || 0)));
+        const yMax = niceNumber(maxValue * 1.15);
+        const groupWidth = plotWidth / Math.max(rows.length, 1);
+        const barGap = 4;
+        const barWidth = Math.min(28, Math.max(8, (groupWidth - 18 - barGap * (series.length - 1)) / series.length));
+
+        ctx.strokeStyle = "#d8e0e6";
+        ctx.lineWidth = 1;
+        ctx.fillStyle = "#667085";
+        ctx.font = "12px Arial, sans-serif";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        for (let tick = 0; tick <= 4; tick += 1) {
+            const value = (yMax / 4) * tick;
+            const y = padding.top + plotHeight - (value / yMax) * plotHeight;
+            ctx.beginPath();
+            ctx.moveTo(padding.left, y);
+            ctx.lineTo(cssWidth - padding.right, y);
+            ctx.stroke();
+            ctx.fillText(formatValue(Math.round(value), "number"), padding.left - 8, y);
+        }
+
+        rows.forEach((row, rowIndex) => {
+            const centerX = padding.left + rowIndex * groupWidth + groupWidth / 2;
+            const totalBarWidth = series.length * barWidth + (series.length - 1) * barGap;
+            const startX = centerX - totalBarWidth / 2;
+            if (row.id === highlightedId) {
+                ctx.fillStyle = "rgba(0, 106, 167, 0.08)";
+                ctx.fillRect(padding.left + rowIndex * groupWidth + 4, padding.top, Math.max(12, groupWidth - 8), plotHeight);
+            }
+
+            series.forEach((item, seriesIndex) => {
+                const value = row[item.key] || 0;
+                const barHeight = (value / yMax) * plotHeight;
+                const x = startX + seriesIndex * (barWidth + barGap);
+                const y = padding.top + plotHeight - barHeight;
+                ctx.fillStyle = item.color;
+                ctx.fillRect(x, y, barWidth, barHeight);
+            });
+
+            ctx.save();
+            ctx.translate(centerX, cssHeight - 18);
+            ctx.rotate(-Math.PI / 5);
+            ctx.fillStyle = row.id === highlightedId ? "#004B7C" : "#475467";
+            ctx.font = row.id === highlightedId ? "bold 12px Arial, sans-serif" : "12px Arial, sans-serif";
+            ctx.textAlign = "right";
+            ctx.textBaseline = "middle";
+            ctx.fillText(row.title, 0, 0);
+            ctx.restore();
+        });
+
+        ctx.strokeStyle = "#98a2b3";
+        ctx.beginPath();
+        ctx.moveTo(padding.left, padding.top);
+        ctx.lineTo(padding.left, padding.top + plotHeight);
+        ctx.lineTo(cssWidth - padding.right, padding.top + plotHeight);
+        ctx.stroke();
     }
 
     function renderFkDashboard() {
@@ -2771,6 +3308,61 @@
     let comparisonKpis = Object.values(dashboards).flat();
     const genderLabels = { T: "totalt", M: "män", K: "kvinnor" };
     const dataCache = new Map();
+    const simulatorScenarios = [
+        {
+            id: "homecare",
+            title: "Hemtjänst",
+            description: "Hemtjänsttagare 65+ i ordinärt boende multiplicerat med kostnad per hemtjänsttagare.",
+            kind: "koladaPair",
+            volumeKpi: "N21702",
+            unitCostKpi: "N21006",
+            volumeLabel: "hemtjänsttagare",
+            unitCostLabel: "kr per hemtjänsttagare",
+            source: "Kolada"
+        },
+        {
+            id: "special-housing",
+            title: "Särskilt boende",
+            description: "Personer i permanent särskilt boende multiplicerat med kostnad särskilt boende per brukare.",
+            kind: "socialstyrelsenElderWithKoladaCost",
+            indicatorId: "4",
+            unitCostKpi: "N23009",
+            volumeLabel: "brukare",
+            unitCostLabel: "kr per brukare",
+            source: "Socialstyrelsen och Kolada"
+        },
+        {
+            id: "lss-daily",
+            title: "LSS daglig verksamhet",
+            description: "Personer med daglig verksamhet enligt LSS multiplicerat med kostnad per brukare.",
+            kind: "koladaPair",
+            volumeKpi: "N28804",
+            unitCostKpi: "N28015",
+            volumeLabel: "brukare",
+            unitCostLabel: "kr per brukare",
+            source: "Kolada"
+        },
+        {
+            id: "economic-assistance",
+            title: "Ekonomiskt bistånd",
+            description: "Utbetalt ekonomiskt bistånd dividerat med antal biståndsmottagare, därefter simulerad volym och styckkostnad.",
+            kind: "sosEconomicAssistance",
+            volumeLabel: "biståndsmottagare",
+            unitCostLabel: "kr per mottagare",
+            source: "Socialstyrelsen"
+        }
+    ];
+    const welfareTechAssumptions = {
+        baseYear: 2026,
+        minutesPerKm: 5,
+        physicalVisitMinutes: 5,
+        medicationVisitMinutes: 15,
+        digitalVisitMinutes: 1,
+        payrollMultiplier: 1.4,
+        monthlyWorkHours: 160
+    };
+    let simulatorControlListenersReady = false;
+    let simulatorRenderToken = 0;
 
     const populationDriverKpis = [
         { id: "N01800", title: "Flyttnetto" },
@@ -3468,6 +4060,12 @@
         if (document.getElementById("folkhalsa")?.classList.contains("active")) {
             renderFohmDashboard();
         }
+        if (document.getElementById("simulator")?.classList.contains("active")) {
+            renderSimulator();
+            renderWelfareTechSimulator();
+            renderMedicineRobotSimulator();
+            renderDigitalVisitSimulator();
+        }
     });
 
     document.getElementById("comparison-select").addEventListener("change", () => renderComparison("main-comparison"));
@@ -3480,12 +4078,14 @@
         setupSocialstyrelsenTab();
         setupSocialstyrelsenMoreTabs();
         setupFohmControls();
+        setupSimulatorControls();
         renderEmbeddedComparisonPanels();
         registerComparisonPanel("main-comparison", {
             selectId: "comparison-select",
             titleId: "comparison-title",
             chartId: "comparison-chart",
             legendId: "comparison-legend",
+            tableHeadId: "comparison-table-head",
             tableBodyId: "comparison-table-body",
             kpis: comparisonKpis
         });
@@ -3512,6 +4112,12 @@
         renderMigrationDashboard();
         renderFkDashboard();
         renderBmeHousingDashboard();
+        if (document.getElementById("simulator")?.classList.contains("active")) {
+            await renderSimulator();
+            renderWelfareTechSimulator();
+            renderMedicineRobotSimulator();
+            renderDigitalVisitSimulator();
+        }
         await Promise.all([...comparisonPanels.keys()].map(renderComparison));
     }
 
@@ -3558,6 +4164,448 @@
         if (tabId === "folkhalsa") {
             requestAnimationFrame(renderFohmDashboard);
         }
+        if (tabId === "simulator") {
+            requestAnimationFrame(renderSimulator);
+            requestAnimationFrame(renderWelfareTechSimulator);
+            requestAnimationFrame(renderMedicineRobotSimulator);
+            requestAnimationFrame(renderDigitalVisitSimulator);
+        }
+    }
+
+    function setupSimulatorControls() {
+        const select = document.getElementById("simulator-scenario");
+        if (!select) return;
+
+        select.innerHTML = simulatorScenarios
+            .map(scenario => `<option value="${scenario.id}">${scenario.title}</option>`)
+            .join("");
+
+        if (simulatorControlListenersReady) return;
+        simulatorControlListenersReady = true;
+        ["simulator-scenario", "simulator-volume-mode", "simulator-volume-change", "simulator-growth"].forEach(id => {
+            document.getElementById(id)?.addEventListener("input", renderSimulator);
+            document.getElementById(id)?.addEventListener("change", renderSimulator);
+        });
+        ["welfare-camera-count", "welfare-visits", "welfare-km", "welfare-salary", "welfare-camera-cost", "welfare-wage-growth"].forEach(id => {
+            document.getElementById(id)?.addEventListener("input", renderWelfareTechSimulator);
+            document.getElementById(id)?.addEventListener("change", renderWelfareTechSimulator);
+        });
+        ["medicine-robot-count", "medicine-handover-count", "medicine-km", "medicine-salary", "medicine-robot-cost", "medicine-wage-growth"].forEach(id => {
+            document.getElementById(id)?.addEventListener("input", renderMedicineRobotSimulator);
+            document.getElementById(id)?.addEventListener("change", renderMedicineRobotSimulator);
+        });
+        ["digital-visit-count", "digital-visit-km", "digital-visit-salary", "digital-visit-cost", "digital-visit-wage-growth"].forEach(id => {
+            document.getElementById(id)?.addEventListener("input", renderDigitalVisitSimulator);
+            document.getElementById(id)?.addEventListener("change", renderDigitalVisitSimulator);
+        });
+    }
+
+    async function renderSimulator() {
+        const resultsEl = document.getElementById("simulator-results");
+        const tableBody = document.getElementById("simulator-table-body");
+        const noteEl = document.getElementById("simulator-note");
+        const chart = document.getElementById("simulator-chart");
+        if (!resultsEl || !tableBody || !noteEl || !chart) return;
+
+        const token = ++simulatorRenderToken;
+        const scenarioId = document.getElementById("simulator-scenario")?.value || simulatorScenarios[0].id;
+        const scenario = simulatorScenarios.find(item => item.id === scenarioId) || simulatorScenarios[0];
+
+        resultsEl.innerHTML = `<div class="status">Laddar beräkning för ${escapeHtml(scenario.title)}...</div>`;
+        tableBody.innerHTML = `<tr><td colspan="4">Laddar...</td></tr>`;
+        noteEl.textContent = "";
+        clearCanvas(chart);
+
+        try {
+            const basis = await simulatorBasis(scenario);
+            if (token !== simulatorRenderToken) return;
+            if (!basis || !Number.isFinite(basis.volume) || !Number.isFinite(basis.unitCost) || basis.volume <= 0) {
+                throw new Error("Saknar komplett volym och styckkostnad.");
+            }
+
+            const volumeMode = document.getElementById("simulator-volume-mode")?.value || "percent";
+            const changeInput = parseSimulatorNumber(document.getElementById("simulator-volume-change")?.value, 0);
+            const annualGrowth = parseSimulatorNumber(document.getElementById("simulator-growth")?.value, 5);
+            const baselineCost = basis.volume * basis.unitCost;
+            const yearOneVolume = simulatorChangedVolume(basis.volume, volumeMode, changeInput);
+            const projections = simulatorProjection(basis, yearOneVolume, annualGrowth);
+            const yearOne = projections[1];
+            const yearFive = projections[5];
+            const changeLabel = volumeMode === "percent"
+                ? `${formatPercent(changeInput)}`
+                : `${formatSignedNumber(changeInput)} ${scenario.volumeLabel}`;
+
+            document.getElementById("simulator-value-header").textContent = "Beräknad årskostnad";
+            document.getElementById("simulator-delta-header").textContent = "Ökning mot nuläge";
+
+            resultsEl.innerHTML = [
+                simulatorMetric("Volym nuläge", `${formatValue(basis.volume, "number")} ${scenario.volumeLabel}`, `Mätår ${basis.volumePeriod || "-"}`),
+                simulatorMetric("Styckkostnad", formatValue(basis.unitCost, "currency"), scenario.unitCostLabel),
+                simulatorMetric("Kostnad nuläge", formatValue(baselineCost, "currency"), "Volym x styckkostnad"),
+                simulatorMetric("År 1, ny kostnad", formatValue(yearOne.cost, "currency"), `${formatValue(yearOne.volume, "number")} ${scenario.volumeLabel}`),
+                simulatorMetric("Ökning år 1", formatSignedCurrency(yearOne.delta), `Volymändring: ${changeLabel}`, yearOne.delta),
+                simulatorMetric("Ökning år 5", formatSignedCurrency(yearFive.delta), `${formatPercent(annualGrowth)} årlig volymökning efter år 1`, yearFive.delta)
+            ].join("");
+
+            drawLineChart(chart, [
+                { id: "cost", title: "Årskostnad", color: "#c04f15", values: projections.map(item => ({ period: item.year, value: item.cost })) },
+                { id: "baseline", title: "Nuläge", color: "#6b7280", dash: [4, 4], values: projections.map(item => ({ period: item.year, value: baselineCost })) }
+            ], "currency", true);
+
+            tableBody.innerHTML = projections.map((item, index) => `
+                <tr class="${index === 0 ? "is-highlighted" : ""}">
+                    <td>${index === 0 ? "Nuläge" : `År ${index}`}</td>
+                    <td>${formatValue(item.cost, "currency")}</td>
+                    <td>${index === 0 ? "-" : formatSignedCurrency(item.delta)}</td>
+                    <td>${formatValue(item.volume, "number")} ${scenario.volumeLabel}</td>
+                </tr>
+            `).join("");
+
+            noteEl.textContent = `${scenario.description} Källa: ${scenario.source}. Volymändringen avser antal personer/brukare/mottagare. Mätår volym: ${basis.volumePeriod || "-"}, mätår kostnad: ${basis.unitCostPeriod || "-"}.`;
+        } catch (error) {
+            if (token !== simulatorRenderToken) return;
+            resultsEl.innerHTML = `<div class="status">Det saknas komplett beräkningsunderlag för valt område.</div>`;
+            tableBody.innerHTML = `<tr><td colspan="4">Välj ett annat område eller kontrollera om nyckeltalet har värde för vald kommun.</td></tr>`;
+            noteEl.textContent = error.message || "";
+            clearCanvas(chart);
+        }
+    }
+
+    function renderWelfareTechSimulator() {
+        const resultsEl = document.getElementById("welfare-tech-results");
+        const tableBody = document.getElementById("welfare-tech-table-body");
+        const noteEl = document.getElementById("welfare-tech-note");
+        const chart = document.getElementById("welfare-tech-chart");
+        const legend = document.getElementById("welfare-tech-legend");
+        if (!resultsEl || !tableBody || !noteEl || !chart || !legend) return;
+
+        const inputValue = (id, fallback) => Math.max(0, parseSimulatorNumber(document.getElementById(id)?.value, fallback));
+        const cameraCount = inputValue("welfare-camera-count", 1);
+        const visitsPerCamera = inputValue("welfare-visits", 30);
+        const kmRoundTrip = inputValue("welfare-km", 8);
+        const monthlySalary = inputValue("welfare-salary", 27500);
+        const cameraMonthlyCost = inputValue("welfare-camera-cost", 500);
+        const annualWageGrowth = parseSimulatorNumber(document.getElementById("welfare-wage-growth")?.value, 3);
+
+        const assumptions = welfareTechAssumptions;
+        const monthlyStaffCost = monthlySalary * assumptions.payrollMultiplier;
+        const hourlyCost = monthlyStaffCost / assumptions.monthlyWorkHours;
+        const totalMonthlyVisits = cameraCount * visitsPerCamera;
+        const physicalMinutesPerVisit = (kmRoundTrip * assumptions.minutesPerKm) + assumptions.physicalVisitMinutes;
+        const digitalMinutesPerVisit = assumptions.digitalVisitMinutes;
+        const physicalHoursMonthly = (totalMonthlyVisits * physicalMinutesPerVisit) / 60;
+        const digitalHoursMonthly = (totalMonthlyVisits * digitalMinutesPerVisit) / 60;
+        const traditionalMonthlyCost = physicalHoursMonthly * hourlyCost;
+        const digitalStaffMonthlyCost = digitalHoursMonthly * hourlyCost;
+        const digitalCameraMonthlyCost = cameraCount * cameraMonthlyCost;
+        const digitalMonthlyCost = digitalStaffMonthlyCost + digitalCameraMonthlyCost;
+        const monthlySaving = traditionalMonthlyCost - digitalMonthlyCost;
+        const savedHoursMonthly = physicalHoursMonthly - digitalHoursMonthly;
+        const perVisitStaffSaving = ((physicalMinutesPerVisit - digitalMinutesPerVisit) / 60) * hourlyCost;
+        const breakEvenVisits = perVisitStaffSaving > 0 ? cameraMonthlyCost / perVisitStaffSaving : null;
+        const projections = welfareTechProjection({
+            physicalHoursMonthly,
+            digitalHoursMonthly,
+            hourlyCost,
+            digitalCameraMonthlyCost,
+            annualWageGrowth
+        });
+        const yearOne = projections[0];
+        const yearFive = projections[4];
+        const savingTone = monthlySaving >= 0 ? "is-saving" : "is-cost";
+
+        resultsEl.innerHTML = [
+            simulatorMetric("Tillsyner per månad", `${formatValue(totalMonthlyVisits, "number")} st`, `${formatValue(cameraCount, "number")} kameror x ${formatValue(visitsPerCamera, "number")} tillsyner`),
+            simulatorMetric("Traditionell tillsyn", formatValue(traditionalMonthlyCost, "currency"), `${formatValue(physicalHoursMonthly, "number")} timmar per månad`, null, "is-cost"),
+            simulatorMetric("Digital tillsyn", formatValue(digitalMonthlyCost, "currency"), `${formatValue(digitalHoursMonthly, "number")} timmar + kamerakostnad`, null, "is-saving"),
+            simulatorMetric("Besparing per månad", formatSignedCurrency(monthlySaving), "Traditionell minus digital", null, savingTone),
+            simulatorMetric("Besparing per år", formatSignedCurrency(yearOne.saving), `År ${yearOne.year}`, null, yearOne.saving >= 0 ? "is-saving" : "is-cost"),
+            simulatorMetric("Sparad tid", `${formatValue(savedHoursMonthly, "number")} tim/mån`, `${formatValue(physicalMinutesPerVisit, "number")} min fysisk, ${formatValue(digitalMinutesPerVisit, "number")} min digital`),
+            simulatorMetric("Sparad tid per år", `${formatValue(savedHoursMonthly * 12, "number")} tim/år`, `${formatValue(savedHoursMonthly, "number")} timmar per månad`),
+            simulatorMetric("Brytpunkt", breakEvenVisits === null ? "-" : formatValue(breakEvenVisits, "number"), "tillsyner/kamera och månad för att täcka kamerakostnad"),
+            simulatorMetric("Ack. 5 år", formatSignedCurrency(yearFive.cumulativeSaving), `${formatPercent(annualWageGrowth)} årlig löneökning`, null, yearFive.cumulativeSaving >= 0 ? "is-saving" : "is-cost")
+        ].join("");
+
+        legend.innerHTML = `
+            <span class="legend-item"><span class="legend-color" style="background:#c04f15"></span>Traditionell tillsyn</span>
+            <span class="legend-item"><span class="legend-color" style="background:#2a7f62"></span>Digital tillsyn</span>
+        `;
+
+        drawLineChart(chart, [
+            { id: "traditional", title: "Traditionell tillsyn", color: "#c04f15", values: projections.map(item => ({ period: item.year, value: item.traditionalAnnualCost })) },
+            { id: "digital", title: "Digital tillsyn", color: "#2a7f62", values: projections.map(item => ({ period: item.year, value: item.digitalAnnualCost })) }
+        ], "currency", true);
+
+        tableBody.innerHTML = projections.map((item, index) => `
+            <tr class="${index === 0 ? "is-highlighted" : ""}">
+                <td>${item.year}</td>
+                <td>${formatValue(item.traditionalAnnualCost, "currency")}</td>
+                <td>${formatValue(item.digitalAnnualCost, "currency")}</td>
+                <td>${formatSignedCurrency(item.saving)}</td>
+                <td>${formatSignedCurrency(item.cumulativeSaving)}</td>
+            </tr>
+        `).join("");
+
+        noteEl.textContent = `Restid räknas som ${assumptions.minutesPerKm} minuter per km tur/retur. Fysisk tillsyn tar ${assumptions.physicalVisitMinutes} minuter, digital tillsyn tar ${assumptions.digitalVisitMinutes} minut. Personalkostnad räknas som månadslön x ${assumptions.payrollMultiplier.toLocaleString("sv-SE")} / ${assumptions.monthlyWorkHours} timmar.`;
+    }
+
+    function renderMedicineRobotSimulator() {
+        const resultsEl = document.getElementById("medicine-robot-results");
+        const tableBody = document.getElementById("medicine-robot-table-body");
+        const noteEl = document.getElementById("medicine-robot-note");
+        const chart = document.getElementById("medicine-robot-chart");
+        const legend = document.getElementById("medicine-robot-legend");
+        if (!resultsEl || !tableBody || !noteEl || !chart || !legend) return;
+
+        const inputValue = (id, fallback) => Math.max(0, parseSimulatorNumber(document.getElementById(id)?.value, fallback));
+        const robotCount = inputValue("medicine-robot-count", 1);
+        const handoversPerRobot = inputValue("medicine-handover-count", 60);
+        const kmRoundTrip = inputValue("medicine-km", 8);
+        const monthlySalary = inputValue("medicine-salary", 27500);
+        const robotMonthlyCost = inputValue("medicine-robot-cost", 1500);
+        const annualWageGrowth = parseSimulatorNumber(document.getElementById("medicine-wage-growth")?.value, 3);
+
+        const assumptions = welfareTechAssumptions;
+        const monthlyStaffCost = monthlySalary * assumptions.payrollMultiplier;
+        const hourlyCost = monthlyStaffCost / assumptions.monthlyWorkHours;
+        const totalMonthlyHandovers = robotCount * handoversPerRobot;
+        const traditionalMinutesPerHandover = (kmRoundTrip * assumptions.minutesPerKm) + assumptions.medicationVisitMinutes;
+        const traditionalHoursMonthly = (totalMonthlyHandovers * traditionalMinutesPerHandover) / 60;
+        const robotHoursMonthly = 0;
+        const traditionalMonthlyCost = traditionalHoursMonthly * hourlyCost;
+        const robotTotalMonthlyCost = robotCount * robotMonthlyCost;
+        const monthlySaving = traditionalMonthlyCost - robotTotalMonthlyCost;
+        const perHandoverStaffSaving = (traditionalMinutesPerHandover / 60) * hourlyCost;
+        const breakEvenHandovers = perHandoverStaffSaving > 0 ? robotMonthlyCost / perHandoverStaffSaving : null;
+        const projections = welfareTechProjection({
+            physicalHoursMonthly: traditionalHoursMonthly,
+            digitalHoursMonthly: robotHoursMonthly,
+            hourlyCost,
+            digitalCameraMonthlyCost: robotTotalMonthlyCost,
+            annualWageGrowth
+        });
+        const yearOne = projections[0];
+        const yearFive = projections[4];
+        const savingTone = monthlySaving >= 0 ? "is-saving" : "is-cost";
+
+        resultsEl.innerHTML = [
+            simulatorMetric("Överlämningar per månad", `${formatValue(totalMonthlyHandovers, "number")} st`, `${formatValue(robotCount, "number")} robotar x ${formatValue(handoversPerRobot, "number")} överlämningar`),
+            simulatorMetric("Traditionell överlämning", formatValue(traditionalMonthlyCost, "currency"), `${formatValue(traditionalHoursMonthly, "number")} timmar per månad`, null, "is-cost"),
+            simulatorMetric("Läkemedelsrobot", formatValue(robotTotalMonthlyCost, "currency"), `${formatValue(robotCount, "number")} robotar x ${formatValue(robotMonthlyCost, "currency")}`, null, "is-saving"),
+            simulatorMetric("Besparing per månad", formatSignedCurrency(monthlySaving), "Traditionell minus robot", null, savingTone),
+            simulatorMetric("Besparing per år", formatSignedCurrency(yearOne.saving), `År ${yearOne.year}`, null, yearOne.saving >= 0 ? "is-saving" : "is-cost"),
+            simulatorMetric("Sparad tid", `${formatValue(traditionalHoursMonthly, "number")} tim/mån`, `${formatValue(traditionalMinutesPerHandover, "number")} min per traditionell överlämning`),
+            simulatorMetric("Sparad tid per år", `${formatValue(traditionalHoursMonthly * 12, "number")} tim/år`, `${formatValue(traditionalHoursMonthly, "number")} timmar per månad`),
+            simulatorMetric("Brytpunkt", breakEvenHandovers === null ? "-" : formatValue(breakEvenHandovers, "number"), "överlämningar/robot och månad för att täcka automatkostnad"),
+            simulatorMetric("Ack. 5 år", formatSignedCurrency(yearFive.cumulativeSaving), `${formatPercent(annualWageGrowth)} årlig löneökning`, null, yearFive.cumulativeSaving >= 0 ? "is-saving" : "is-cost")
+        ].join("");
+
+        legend.innerHTML = `
+            <span class="legend-item"><span class="legend-color" style="background:#c04f15"></span>Traditionell överlämning</span>
+            <span class="legend-item"><span class="legend-color" style="background:#2a7f62"></span>Läkemedelsrobot</span>
+        `;
+
+        drawLineChart(chart, [
+            { id: "traditional", title: "Traditionell överlämning", color: "#c04f15", values: projections.map(item => ({ period: item.year, value: item.traditionalAnnualCost })) },
+            { id: "robot", title: "Läkemedelsrobot", color: "#2a7f62", values: projections.map(item => ({ period: item.year, value: item.digitalAnnualCost })) }
+        ], "currency", true);
+
+        tableBody.innerHTML = projections.map((item, index) => `
+            <tr class="${index === 0 ? "is-highlighted" : ""}">
+                <td>${item.year}</td>
+                <td>${formatValue(item.traditionalAnnualCost, "currency")}</td>
+                <td>${formatValue(item.digitalAnnualCost, "currency")}</td>
+                <td>${formatSignedCurrency(item.saving)}</td>
+                <td>${formatSignedCurrency(item.cumulativeSaving)}</td>
+            </tr>
+        `).join("");
+
+        noteEl.textContent = `Restid räknas som ${assumptions.minutesPerKm} minuter per km tur/retur. Traditionell läkemedelsöverlämning tar ${assumptions.medicationVisitMinutes} minuter på plats. Personalkostnad räknas som månadslön x ${assumptions.payrollMultiplier.toLocaleString("sv-SE")} / ${assumptions.monthlyWorkHours} timmar. Robotkostnaden räknas som antal robotar x kostnad automat/månad. (Siffrorna tar inte hänsyn till byte av dospåsar.)`;
+    }
+
+    function renderDigitalVisitSimulator() {
+        const resultsEl = document.getElementById("digital-visit-results");
+        const tableBody = document.getElementById("digital-visit-table-body");
+        const noteEl = document.getElementById("digital-visit-note");
+        const chart = document.getElementById("digital-visit-chart");
+        const legend = document.getElementById("digital-visit-legend");
+        if (!resultsEl || !tableBody || !noteEl || !chart || !legend) return;
+
+        const inputValue = (id, fallback) => Math.max(0, parseSimulatorNumber(document.getElementById(id)?.value, fallback));
+        const visitCount = inputValue("digital-visit-count", 30);
+        const kmRoundTrip = inputValue("digital-visit-km", 8);
+        const monthlySalary = inputValue("digital-visit-salary", 27500);
+        const digitalMonthlyCost = inputValue("digital-visit-cost", 0);
+        const annualWageGrowth = parseSimulatorNumber(document.getElementById("digital-visit-wage-growth")?.value, 3);
+
+        const assumptions = welfareTechAssumptions;
+        const monthlyStaffCost = monthlySalary * assumptions.payrollMultiplier;
+        const hourlyCost = monthlyStaffCost / assumptions.monthlyWorkHours;
+        const travelMinutesPerVisit = kmRoundTrip * assumptions.minutesPerKm;
+        const travelHoursMonthly = (visitCount * travelMinutesPerVisit) / 60;
+        const traditionalMonthlyCost = travelHoursMonthly * hourlyCost;
+        const monthlySaving = traditionalMonthlyCost - digitalMonthlyCost;
+        const perVisitTravelSaving = (travelMinutesPerVisit / 60) * hourlyCost;
+        const breakEvenVisits = digitalMonthlyCost > 0 && perVisitTravelSaving > 0 ? digitalMonthlyCost / perVisitTravelSaving : null;
+        const projections = welfareTechProjection({
+            physicalHoursMonthly: travelHoursMonthly,
+            digitalHoursMonthly: 0,
+            hourlyCost,
+            digitalCameraMonthlyCost: digitalMonthlyCost,
+            annualWageGrowth
+        });
+        const yearOne = projections[0];
+        const yearFive = projections[4];
+        const savingTone = monthlySaving >= 0 ? "is-saving" : "is-cost";
+
+        resultsEl.innerHTML = [
+            simulatorMetric("Hembesök per månad", `${formatValue(visitCount, "number")} st`, "Hembesök som ersätts av digitala hembesök"),
+            simulatorMetric("Traditionella resor", formatValue(traditionalMonthlyCost, "currency"), `${formatValue(travelHoursMonthly, "number")} timmar restid per månad`, null, "is-cost"),
+            simulatorMetric("Digital kostnad", formatValue(digitalMonthlyCost, "currency"), "Manuell kostnad per månad", null, "is-saving"),
+            simulatorMetric("Besparing per månad", formatSignedCurrency(monthlySaving), "Reskostnad minus digital kostnad", null, savingTone),
+            simulatorMetric("Besparing per år", formatSignedCurrency(yearOne.saving), `År ${yearOne.year}`, null, yearOne.saving >= 0 ? "is-saving" : "is-cost"),
+            simulatorMetric("Sparad restid", `${formatValue(travelHoursMonthly, "number")} tim/mån`, `${formatValue(travelMinutesPerVisit, "number")} min resa per hembesök`),
+            simulatorMetric("Sparad restid per år", `${formatValue(travelHoursMonthly * 12, "number")} tim/år`, `${formatValue(travelHoursMonthly, "number")} timmar per månad`),
+            simulatorMetric("Brytpunkt", breakEvenVisits === null ? "-" : formatValue(breakEvenVisits, "number"), digitalMonthlyCost > 0 ? "hembesök/månad för att täcka digital kostnad" : "ingen digital månadskostnad angiven"),
+            simulatorMetric("Ack. 5 år", formatSignedCurrency(yearFive.cumulativeSaving), `${formatPercent(annualWageGrowth)} årlig löneökning`, null, yearFive.cumulativeSaving >= 0 ? "is-saving" : "is-cost")
+        ].join("");
+
+        legend.innerHTML = `
+            <span class="legend-item"><span class="legend-color" style="background:#c04f15"></span>Traditionella resor</span>
+            <span class="legend-item"><span class="legend-color" style="background:#2a7f62"></span>Digital kostnad</span>
+        `;
+
+        drawLineChart(chart, [
+            { id: "traditional", title: "Traditionella resor", color: "#c04f15", values: projections.map(item => ({ period: item.year, value: item.traditionalAnnualCost })) },
+            { id: "digital", title: "Digital kostnad", color: "#2a7f62", values: projections.map(item => ({ period: item.year, value: item.digitalAnnualCost })) }
+        ], "currency", true);
+
+        tableBody.innerHTML = projections.map((item, index) => `
+            <tr class="${index === 0 ? "is-highlighted" : ""}">
+                <td>${item.year}</td>
+                <td>${formatValue(item.traditionalAnnualCost, "currency")}</td>
+                <td>${formatValue(item.digitalAnnualCost, "currency")}</td>
+                <td>${formatSignedCurrency(item.saving)}</td>
+                <td>${formatSignedCurrency(item.cumulativeSaving)}</td>
+            </tr>
+        `).join("");
+
+        noteEl.textContent = `Restid räknas som ${assumptions.minutesPerKm} minuter per km tur/retur. Personalkostnad räknas som månadslön x ${assumptions.payrollMultiplier.toLocaleString("sv-SE")} / ${assumptions.monthlyWorkHours} timmar. Själva tiden för insatsen kvittas, siffror avser endast resor till och från.`;
+    }
+
+    async function simulatorBasis(scenario) {
+        if (scenario.kind === "koladaPair") {
+            const [volumePoint, unitCostPoint] = await Promise.all([
+                latestKpiPoint(scenario.volumeKpi),
+                latestKpiPoint(scenario.unitCostKpi)
+            ]);
+            return {
+                volume: volumePoint?.value ?? null,
+                unitCost: unitCostPoint?.value ?? null,
+                volumePeriod: volumePoint?.period ?? "",
+                unitCostPeriod: unitCostPoint?.period ?? ""
+            };
+        }
+
+        if (scenario.kind === "socialstyrelsenElderWithKoladaCost") {
+            const regionId = currentSocialstyrelsenRegionId();
+            const volume = socialstyrelsenComparisonValue(scenario.indicatorId, "1", "3", "3", "2025", regionId);
+            const unitCostPoint = await latestKpiPoint(scenario.unitCostKpi);
+            return {
+                volume,
+                unitCost: unitCostPoint?.value ?? null,
+                volumePeriod: 2025,
+                unitCostPeriod: unitCostPoint?.period ?? ""
+            };
+        }
+
+        if (scenario.kind === "sosEconomicAssistance") {
+            const regionId = currentSocialstyrelsenRegionId();
+            const config = sosSourceConfigs["sos-ekb"];
+            const paidKsek = sosSourceValue(config, { id: "paid-excl" }, "2025", regionId);
+            const recipients = sosSourceValue(config, { id: "recipients" }, "2025", regionId);
+            if (!Number.isFinite(paidKsek) || !Number.isFinite(recipients) || recipients <= 0) return null;
+            return {
+                volume: recipients,
+                unitCost: (paidKsek * 1000) / recipients,
+                volumePeriod: 2025,
+                unitCostPeriod: 2025
+            };
+        }
+
+        return null;
+    }
+
+    function simulatorChangedVolume(baselineVolume, mode, change) {
+        const next = mode === "fixed"
+            ? baselineVolume + change
+            : baselineVolume * (1 + change / 100);
+        return Math.max(0, next);
+    }
+
+    function simulatorProjection(basis, yearOneVolume, annualGrowth) {
+        const baseYear = Math.max(Number(basis.volumePeriod) || 2025, Number(basis.unitCostPeriod) || 2025);
+        const baselineCost = basis.volume * basis.unitCost;
+        return Array.from({ length: 6 }, (_, index) => {
+            const volume = index === 0
+                ? basis.volume
+                : yearOneVolume * Math.pow(1 + annualGrowth / 100, index - 1);
+            const cost = volume * basis.unitCost;
+            return {
+                year: baseYear + index,
+                volume,
+                cost,
+                delta: cost - baselineCost
+            };
+        });
+    }
+
+    function welfareTechProjection({ physicalHoursMonthly, digitalHoursMonthly, hourlyCost, digitalCameraMonthlyCost, annualWageGrowth }) {
+        let cumulativeSaving = 0;
+        return Array.from({ length: 5 }, (_, index) => {
+            const year = welfareTechAssumptions.baseYear + index;
+            const wageFactor = Math.pow(1 + annualWageGrowth / 100, index);
+            const adjustedHourlyCost = hourlyCost * wageFactor;
+            const traditionalAnnualCost = physicalHoursMonthly * adjustedHourlyCost * 12;
+            const digitalAnnualCost = ((digitalHoursMonthly * adjustedHourlyCost) + digitalCameraMonthlyCost) * 12;
+            const saving = traditionalAnnualCost - digitalAnnualCost;
+            cumulativeSaving += saving;
+            return {
+                year,
+                traditionalAnnualCost,
+                digitalAnnualCost,
+                saving,
+                cumulativeSaving
+            };
+        });
+    }
+
+    function simulatorMetric(title, value, note, delta = null, tone = "") {
+        const valueClass = tone ? ` ${tone}` : delta === null ? "" : delta >= 0 ? " is-cost" : " is-saving";
+        return `
+            <div class="simulator-metric">
+                <div class="simulator-metric-title">${escapeHtml(title)}</div>
+                <div class="simulator-metric-value${valueClass}">${escapeHtml(value)}</div>
+                <div class="simulator-metric-note">${escapeHtml(note || "")}</div>
+            </div>
+        `;
+    }
+
+    function parseSimulatorNumber(value, fallback) {
+        const parsed = Number(String(value ?? "").replace(",", "."));
+        return Number.isFinite(parsed) ? parsed : fallback;
+    }
+
+    function formatSignedNumber(value) {
+        if (value > 0) return `+${formatValue(value, "number")}`;
+        if (value < 0) return `−${formatValue(Math.abs(value), "number")}`;
+        return "0";
+    }
+
+    function formatSignedCurrency(value) {
+        if (value > 0) return `+${formatValue(value, "currency")}`;
+        if (value < 0) return `−${formatValue(Math.abs(value), "currency")}`;
+        return "0 kr";
     }
 
     function renderAllCards() {
@@ -4271,6 +5319,7 @@
                 titleId: `${panelId}-title`,
                 chartId: `${panelId}-chart`,
                 legendId: `${panelId}-legend`,
+                tableHeadId: `${panelId}-table-head`,
                 tableBodyId: `${panelId}-table-body`,
                 kpis
             });
@@ -4406,8 +5455,92 @@
         await Promise.all([
             renderPopulationDrivers(),
             renderAgeGroups(),
-            renderPopulationPyramid()
+            renderDependencyRatio(),
+            renderPopulationPyramid(),
+            renderPopulationShares()
         ]);
+    }
+
+    async function renderPopulationShares() {
+        const yearEl = document.getElementById("population-share-year");
+        const tbody = document.getElementById("population-share-table-body");
+        const noteEl = document.getElementById("population-share-note");
+        if (!tbody) return;
+
+        try {
+            const highlandMunicipalities = getComparisonMunicipalities();
+            const allMunicipalityIds = [...new Set([
+                ...highlandMunicipalities.map(municipality => municipality.id),
+                ...jonkopingCountyMunicipalities.map(municipality => municipality.id)
+            ])];
+            const populationById = new Map(await Promise.all(allMunicipalityIds.map(async municipalityId => {
+                const data = await fetchJson(`${API_BASE}/data/municipality/${municipalityId}/kpi/N01951`);
+                const latest = latestValidValue(valuesByYear(data.values || [], "T"));
+                return [municipalityId, latest];
+            })));
+            const countryPoint = { period: "maj 2026", value: 10608128 };
+
+            const highlandRows = highlandMunicipalities.map(municipality => ({
+                ...municipality,
+                population: populationById.get(municipality.id)?.value ?? null,
+                period: populationById.get(municipality.id)?.period ?? null
+            }));
+            const countyRows = jonkopingCountyMunicipalities.map(municipality => ({
+                ...municipality,
+                population: populationById.get(municipality.id)?.value ?? null
+            }));
+            const highlandPopulation = highlandRows.reduce((sum, row) => sum + (row.population || 0), 0);
+            const countyPopulation = countyRows.reduce((sum, row) => sum + (row.population || 0), 0);
+            const countryPopulation = countryPoint?.value ?? null;
+            const period = highlandRows.find(row => Number.isFinite(row.period))?.period || "";
+
+            const share = (part, whole) => Number.isFinite(part) && Number.isFinite(whole) && whole > 0
+                ? formatPercent((part / whole) * 100)
+                : "-";
+            const number = value => Number.isFinite(value) ? formatValue(value, "number") : "-";
+            const rows = [
+                ...highlandRows.map(row => ({
+                    title: row.title,
+                    population: row.population,
+                    highlandShare: share(row.population, highlandPopulation),
+                    countyShare: share(row.population, countyPopulation),
+                    countryShare: share(row.population, countryPopulation),
+                    highlight: row.id === selectedMunicipalityId
+                })),
+                {
+                    title: "Höglandet totalt",
+                    population: highlandPopulation,
+                    highlandShare: "100%",
+                    countyShare: share(highlandPopulation, countyPopulation),
+                    countryShare: share(highlandPopulation, countryPopulation),
+                    total: true
+                },
+                {
+                    title: "Jönköpings län totalt",
+                    population: countyPopulation,
+                    highlandShare: "-",
+                    countyShare: "-",
+                    countryShare: share(countyPopulation, countryPopulation),
+                    total: true
+                }
+            ];
+
+            yearEl.textContent = period ? `Kommun/län: ${period}. Riket: maj 2026.` : "Riket: maj 2026.";
+            tbody.innerHTML = rows.map(row => `
+                <tr class="${row.highlight ? "is-highlighted" : row.total ? "summary-row" : ""}">
+                    <td>${row.title}</td>
+                    <td>${number(row.population)}</td>
+                    <td>${row.highlandShare}</td>
+                    <td>${row.countyShare}</td>
+                    <td>${row.countryShare}</td>
+                </tr>
+            `).join("");
+            noteEl.textContent = "Kommun- och länsbefolkning: SCB via Kolada, KPI N01951. Riket: SCB:s senaste nyckeltal för maj 2026, 10 608 128 invånare.";
+        } catch (error) {
+            yearEl.textContent = "";
+            tbody.innerHTML = `<tr><td colspan="5">Kunde inte hämta befolkningsandelar från Kolada.</td></tr>`;
+            noteEl.textContent = "Källa: SCB via Kolada, KPI N01951.";
+        }
     }
 
     async function renderJobsDashboard() {
@@ -5017,6 +6150,74 @@
         }
     }
 
+    async function renderDependencyRatio() {
+        const valueEl = document.getElementById("dependency-ratio-value");
+        const yearEl = document.getElementById("dependency-ratio-year");
+        const tbody = document.getElementById("dependency-ratio-table-body");
+        if (!valueEl || !yearEl || !tbody) return;
+
+        const kpis = ["N01919", "N01955", "N01938"];
+        const highlandMunicipalities = getComparisonMunicipalities();
+        const allMunicipalityIds = [...new Set([
+            selectedMunicipalityId,
+            ...highlandMunicipalities.map(municipality => municipality.id),
+            ...jonkopingCountyMunicipalities.map(municipality => municipality.id)
+        ])];
+
+        try {
+            const pointByKey = new Map(await Promise.all(allMunicipalityIds.flatMap(municipalityId =>
+                kpis.map(async kpiId => {
+                    const data = await fetchJson(`${API_BASE}/data/municipality/${municipalityId}/kpi/${kpiId}`);
+                    const point = latestValidValue(valuesByYear(data.values || [], "T"));
+                    return [`${municipalityId}:${kpiId}`, point];
+                })
+            )));
+
+            const buildRow = (title, municipalityIds, highlight = false) => {
+                const sums = municipalityIds.reduce((acc, municipalityId) => {
+                    const young = pointByKey.get(`${municipalityId}:N01919`);
+                    const working = pointByKey.get(`${municipalityId}:N01955`);
+                    const older = pointByKey.get(`${municipalityId}:N01938`);
+                    if (!young || !working || !older) return acc;
+                    acc.young += young.value;
+                    acc.working += working.value;
+                    acc.older += older.value;
+                    acc.periods.push(young.period, working.period, older.period);
+                    return acc;
+                }, { young: 0, working: 0, older: 0, periods: [] });
+
+                const dependents = sums.young + sums.older;
+                const ratio = sums.working > 0 ? (dependents / sums.working) * 100 : null;
+                const period = sums.periods.length ? Math.min(...sums.periods) : null;
+                return { title, dependents, working: sums.working, ratio, period, highlight };
+            };
+
+            const selectedRow = buildRow(currentMunicipalityName(), [selectedMunicipalityId], true);
+            const rows = [
+                selectedRow,
+                buildRow("Höglandet", highlandMunicipalities.map(municipality => municipality.id)),
+                buildRow("Jönköpings län", jonkopingCountyMunicipalities.map(municipality => municipality.id))
+            ];
+
+            if (!Number.isFinite(selectedRow.ratio)) throw new Error("Saknar försörjningskvot");
+
+            valueEl.textContent = `${formatValue(selectedRow.ratio, "number")} per 100`;
+            yearEl.textContent = `Mätår: ${selectedRow.period || "-"}`;
+            tbody.innerHTML = rows.map(row => `
+                <tr class="${row.highlight ? "is-highlighted" : ""}">
+                    <td>${escapeHtml(row.title)}</td>
+                    <td>${Number.isFinite(row.ratio) ? `${formatValue(row.ratio, "number")} per 100` : "-"}</td>
+                    <td>${formatValue(row.dependents, "number")}</td>
+                    <td>${formatValue(row.working, "number")}</td>
+                </tr>
+            `).join("");
+        } catch (error) {
+            valueEl.textContent = "Kunde inte hämta";
+            yearEl.textContent = "";
+            tbody.innerHTML = `<tr><td colspan="4">Kolada-data för försörjningskvot kunde inte hämtas.</td></tr>`;
+        }
+    }
+
     async function renderPopulationPyramid() {
         const chartEl = document.getElementById("population-pyramid");
         const yearEl = document.getElementById("population-pyramid-year");
@@ -5210,7 +6411,8 @@
         const tbody = document.getElementById(panel.tableBodyId);
         const title = document.getElementById(panel.titleId);
         title.textContent = kpi.title;
-        tbody.innerHTML = `<tr><td colspan="4">Laddar...</td></tr>`;
+        renderComparisonTableHead(panel, kpi);
+        tbody.innerHTML = `<tr><td colspan="${kpi.shareOfTotal ? 5 : 4}">Laddar...</td></tr>`;
 
         try {
             const municipalities = getComparisonMunicipalities();
@@ -5222,14 +6424,26 @@
                 const data = await fetchJson(`${API_BASE}/data/municipality/${municipalityId}/kpi/${kpi.id}`);
                 return [municipalityId, valuesByYear(data.values || [], kpi.gender || "T")];
             })));
+            const totalSeriesByMunicipality = kpi.shareOfTotal
+                ? new Map(await Promise.all(allMunicipalityIds.map(async municipalityId => {
+                    const data = await fetchJson(`${API_BASE}/data/municipality/${municipalityId}/kpi/N01951`);
+                    return [municipalityId, valuesByYear(data.values || [], "T")];
+                })))
+                : new Map();
             const rows = municipalities.map(municipality => ({
                 ...municipality,
-                values: seriesByMunicipality.get(municipality.id) || []
+                values: seriesByMunicipality.get(municipality.id) || [],
+                totalValues: totalSeriesByMunicipality.get(municipality.id) || []
             }));
             const countyRows = jonkopingCountyMunicipalities.map(municipality => ({
                 ...municipality,
-                values: seriesByMunicipality.get(municipality.id) || []
+                values: seriesByMunicipality.get(municipality.id) || [],
+                totalValues: totalSeriesByMunicipality.get(municipality.id) || []
             }));
+            if (kpi.shareOfTotal) {
+                rows.forEach(row => row.shareValues = shareSeries(row.values, row.totalValues));
+                countyRows.forEach(row => row.shareValues = shareSeries(row.values, row.totalValues));
+            }
             const rowsWithAverages = [
                 ...rows,
                 averageSeries(rows, "average-six", "Snitt Höglandet", "#222222", [8, 5]),
@@ -5237,6 +6451,7 @@
             ];
 
             panel.rows = rowsWithAverages;
+            panel.kpi = kpi;
             panel.format = kpi.format;
             drawLineChart(document.getElementById(panel.chartId), rowsWithAverages, kpi.format, true, selectedMunicipalityByPanel.get(panelId));
             renderComparisonLegend(panelId, rowsWithAverages);
@@ -5244,8 +6459,20 @@
         } catch (error) {
             clearCanvas(document.getElementById(panel.chartId));
             document.getElementById(panel.legendId).innerHTML = "";
-            tbody.innerHTML = `<tr><td colspan="4">Kunde inte hämta jämförelsedata från Kolada.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="${kpi.shareOfTotal ? 5 : 4}">Kunde inte hämta jämförelsedata från Kolada.</td></tr>`;
         }
+    }
+
+    function renderComparisonTableHead(panel, kpi) {
+        const head = document.getElementById(panel.tableHeadId);
+        if (!head) return;
+        head.innerHTML = `
+            <th>Kommun</th>
+            <th>Senaste värde</th>
+            ${kpi.shareOfTotal ? "<th>Andel av befolkningen</th>" : ""}
+            <th>Mätår</th>
+            <th>Förändring från året innan</th>
+        `;
     }
 
     function averageSeries(rows, id, title, color, dash) {
@@ -5264,7 +6491,32 @@
             };
         }).filter(Boolean);
 
-        return { id, title, color, dash, values };
+        const shareValues = years.map(year => {
+            const yearValues = rows
+                .map(row => (row.shareValues || []).find(point => point.period === year))
+                .filter(Boolean)
+                .map(point => point.value);
+
+            if (!yearValues.length) return null;
+
+            return {
+                period: year,
+                value: yearValues.reduce((sum, value) => sum + value, 0) / yearValues.length
+            };
+        }).filter(Boolean);
+
+        return { id, title, color, dash, values, shareValues };
+    }
+
+    function shareSeries(values, totalValues) {
+        return values.map(point => {
+            const total = totalValues.find(totalPoint => totalPoint.period === point.period);
+            if (!total || !Number.isFinite(total.value) || total.value <= 0) return null;
+            return {
+                period: point.period,
+                value: (point.value / total.value) * 100
+            };
+        }).filter(Boolean);
     }
 
     function renderComparisonLegend(panelId, rows) {
@@ -5286,6 +6538,7 @@
         const panel = comparisonPanels.get(panelId);
         const selected = selectedMunicipalityByPanel.get(panelId);
         const format = kpi.format;
+        const showShare = Boolean(kpi.shareOfTotal);
         document.getElementById(panel.tableBodyId).innerHTML = rows.map(row => {
             const first = row.values[0];
             const latest = row.values[row.values.length - 1];
@@ -5294,7 +6547,7 @@
             const nameButton = `<button type="button" data-panel="${panelId}" data-municipality="${row.id}">${row.title}</button>`;
 
             if (!latest) {
-                return `<tr class="${rowClass}"><td>${nameButton}</td><td>Ingen data</td><td></td><td></td></tr>`;
+                return `<tr class="${rowClass}"><td>${nameButton}</td><td>Ingen data</td>${showShare ? "<td></td>" : ""}<td></td><td></td></tr>`;
             }
 
             const change = previous && previous.period !== latest.period
@@ -5303,11 +6556,15 @@
             const changeText = change === null
                 ? ""
                 : `${change > 0 ? "+" : ""}${formatComparisonValue(change, kpi)}`;
+            const sharePoint = showShare
+                ? (row.shareValues || []).find(point => point.period === latest.period)
+                : null;
 
             return `
                 <tr class="${rowClass}">
                     <td>${nameButton}</td>
                     <td>${formatComparisonValue(latest.value, kpi)}</td>
+                    ${showShare ? `<td>${sharePoint ? formatPercent(sharePoint.value) : "-"}</td>` : ""}
                     <td>${latest.period}</td>
                     <td>${changeText}</td>
                 </tr>
@@ -5333,6 +6590,7 @@
 
         const panel = comparisonPanels.get(panelId);
         if (!panel || !panel.rows) return;
+        const kpi = panel.kpi || panel.kpis[0];
 
         drawLineChart(
             document.getElementById(panel.chartId),
@@ -5342,7 +6600,7 @@
             selectedMunicipalityByPanel.get(panelId)
         );
         renderComparisonLegend(panelId, panel.rows);
-        renderComparisonTable(panelId, panel.rows, panel.format);
+        renderComparisonTable(panelId, panel.rows, kpi);
     }
 
     function drawLineChart(canvas, series, format, showAxes, highlightedId = "", showMiniYears = false) {
@@ -5350,7 +6608,8 @@
         const ctx = canvas.getContext("2d");
         const width = canvas.width;
         const height = canvas.height;
-        const padding = showAxes ? 48 : 10;
+        const topPadding = showAxes ? 48 : 10;
+        let leftPadding = showAxes ? 48 : 10;
         const rightPadding = showAxes ? 18 : 10;
         const bottomPadding = showAxes ? 42 : showMiniYears ? 24 : 10;
         const allPoints = series.flatMap(item => item.values);
@@ -5365,15 +6624,22 @@
         const rawMinValue = Math.min(...allPoints.map(point => point.value));
         const rawMaxValue = Math.max(...allPoints.map(point => point.value));
         const yTicks = getYAxisTicks(rawMinValue, rawMaxValue, format);
+        if (showAxes) {
+            ctx.font = "12px Segoe UI, Arial";
+            const widestAxisLabel = yTicks.reduce((max, tick) => {
+                return Math.max(max, ctx.measureText(formatAxisValue(tick, format)).width);
+            }, 0);
+            leftPadding = Math.max(leftPadding, Math.min(140, Math.ceil(widestAxisLabel) + 16));
+        }
         const minValue = yTicks[0];
         const maxValue = yTicks[yTicks.length - 1];
         const valueSpan = maxValue - minValue || 1;
         const yearSpan = maxYear - minYear || 1;
-        const chartWidth = width - padding - rightPadding;
-        const chartHeight = height - padding - bottomPadding;
+        const chartWidth = width - leftPadding - rightPadding;
+        const chartHeight = height - topPadding - bottomPadding;
 
-        const xFor = year => padding + ((year - minYear) / yearSpan) * chartWidth;
-        const yFor = value => padding + chartHeight - ((value - minValue) / valueSpan) * chartHeight;
+        const xFor = year => leftPadding + ((year - minYear) / yearSpan) * chartWidth;
+        const yFor = value => topPadding + chartHeight - ((value - minValue) / valueSpan) * chartHeight;
 
         if (showAxes) {
             ctx.font = "12px Segoe UI, Arial";
@@ -5384,13 +6650,13 @@
                 ctx.strokeStyle = "#e4e8ed";
                 ctx.lineWidth = 1;
                 ctx.beginPath();
-                ctx.moveTo(padding, y);
-                ctx.lineTo(padding + chartWidth, y);
+                ctx.moveTo(leftPadding, y);
+                ctx.lineTo(leftPadding + chartWidth, y);
                 ctx.stroke();
 
                 ctx.fillStyle = "#666";
                 ctx.textAlign = "right";
-                ctx.fillText(formatAxisValue(tick, format), padding - 8, y);
+                ctx.fillText(formatAxisValue(tick, format), leftPadding - 8, y);
             });
 
             ctx.textAlign = "center";
@@ -5400,27 +6666,27 @@
                 ctx.strokeStyle = "#eef1f4";
                 ctx.lineWidth = 1;
                 ctx.beginPath();
-                ctx.moveTo(x, padding);
-                ctx.lineTo(x, padding + chartHeight);
+                ctx.moveTo(x, topPadding);
+                ctx.lineTo(x, topPadding + chartHeight);
                 ctx.stroke();
 
                 ctx.fillStyle = "#666";
-                ctx.fillText(String(year), x, padding + chartHeight + 12);
+                ctx.fillText(String(year), x, topPadding + chartHeight + 12);
             }
 
             ctx.strokeStyle = "#d5d5d5";
             ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.moveTo(padding, padding);
-            ctx.lineTo(padding, padding + chartHeight);
-            ctx.lineTo(padding + chartWidth, padding + chartHeight);
+            ctx.moveTo(leftPadding, topPadding);
+            ctx.lineTo(leftPadding, topPadding + chartHeight);
+            ctx.lineTo(leftPadding + chartWidth, topPadding + chartHeight);
             ctx.stroke();
         } else if (showMiniYears) {
             ctx.strokeStyle = "#e4e8ed";
             ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.moveTo(padding, padding + chartHeight);
-            ctx.lineTo(padding + chartWidth, padding + chartHeight);
+            ctx.moveTo(leftPadding, topPadding + chartHeight);
+            ctx.lineTo(leftPadding + chartWidth, topPadding + chartHeight);
             ctx.stroke();
 
             ctx.font = "11px Segoe UI, Arial";
@@ -5434,7 +6700,7 @@
 
                 const label = `-${String(year).slice(-2)}`;
                 const x = Math.min(Math.max(xFor(year), 14), width - 14);
-                ctx.fillText(label, x, padding + chartHeight + 6);
+                ctx.fillText(label, x, topPadding + chartHeight + 6);
             }
         }
 
@@ -5450,7 +6716,7 @@
             ctx.lineWidth = highlightedId && item.id === highlightedId ? 4 : showAxes ? 2.5 : 2.5;
 
             if (showMiniYears && !showAxes) {
-                const gradient = ctx.createLinearGradient(0, padding, 0, padding + chartHeight);
+                const gradient = ctx.createLinearGradient(0, topPadding, 0, topPadding + chartHeight);
                 gradient.addColorStop(0, `${item.color}26`);
                 gradient.addColorStop(1, `${item.color}00`);
                 ctx.fillStyle = gradient;
@@ -5463,8 +6729,8 @@
                 });
                 const lastPoint = item.values[item.values.length - 1];
                 const firstPoint = item.values[0];
-                ctx.lineTo(xFor(lastPoint.period), padding + chartHeight);
-                ctx.lineTo(xFor(firstPoint.period), padding + chartHeight);
+                ctx.lineTo(xFor(lastPoint.period), topPadding + chartHeight);
+                ctx.lineTo(xFor(firstPoint.period), topPadding + chartHeight);
                 ctx.closePath();
                 ctx.fill();
             }
@@ -5509,7 +6775,16 @@
     }
 
     function formatAxisValue(value, format) {
-        if (format === "currency") return `${Math.round(value).toLocaleString("sv-SE")} kr`;
+        if (format === "currency") {
+            const absolute = Math.abs(value);
+            if (absolute >= 1000000) {
+                return `${(value / 1000000).toLocaleString("sv-SE", { maximumFractionDigits: absolute >= 10000000 ? 0 : 1 })} mnkr`;
+            }
+            if (absolute >= 1000) {
+                return `${(value / 1000).toLocaleString("sv-SE", { maximumFractionDigits: 0 })} tkr`;
+            }
+            return `${Math.round(value).toLocaleString("sv-SE")} kr`;
+        }
         if (format === "percent") return `${value.toLocaleString("sv-SE", { maximumFractionDigits: 0 })}%`;
         return value.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
     }
