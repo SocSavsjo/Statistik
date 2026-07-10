@@ -2649,13 +2649,24 @@
     const sosLssComparisonData = {"persons":{"2025":{"county":2920,"604":53,"617":66,"642":57,"643":70,"662":217,"665":115,"680":1086,"682":284,"683":285,"684":103,"685":221,"686":169,"687":194},"2024":{"county":2902,"604":51,"617":55,"642":52,"643":70,"662":230,"665":117,"680":1082,"682":275,"683":283,"684":96,"685":231,"686":176,"687":184}},"daily":{"2025":{"county":1617,"604":32,"617":37,"642":28,"643":26,"662":114,"665":73,"680":542,"682":175,"683":156,"684":64,"685":138,"686":104,"687":128},"2024":{"county":1532,"604":33,"617":31,"642":25,"643":25,"662":114,"665":65,"680":517,"682":162,"683":135,"684":62,"685":138,"686":110,"687":115}},"adultHousing":{"2025":{"county":1169,"604":21,"617":33,"642":17,"643":21,"662":88,"665":40,"680":472,"682":125,"683":131,"684":32,"685":68,"686":62,"687":59},"2024":{"county":1160,"604":20,"617":25,"642":16,"643":17,"662":89,"665":45,"680":474,"682":122,"683":123,"684":31,"685":69,"686":71,"687":58}},"contact":{"2025":{"county":444,"604":10,"617":4,"642":20,"643":14,"662":40,"665":12,"680":144,"682":50,"683":64,"684":26,"685":38,"686":9,"687":13},"2024":{"county":482,"604":8,"617":5,"642":18,"643":16,"662":46,"665":13,"680":152,"682":47,"683":69,"684":25,"685":48,"686":12,"687":23}}};
 
     const comparisonMunicipalities = [
+        { id: "0604", title: "Aneby", color: "#a35c00" },
+        { id: "0617", title: "Gnosjö", color: "#00856f" },
+        { id: "0642", title: "Mullsjö", color: "#6f4e9b" },
+        { id: "0643", title: "Habo", color: "#9a6a00" },
+        { id: "0662", title: "Gislaved", color: "#006d77" },
+        { id: "0665", title: "Vaggeryd", color: "#8f4f2f" },
+        { id: "0680", title: "Jönköping", color: "#4062bb" },
+        { id: "0682", title: "Nässjö", color: "#7a4cb0" },
+        { id: "0683", title: "Värnamo", color: "#b23a48" },
         { id: "0684", title: "Sävsjö", color: "#005a9c" },
         { id: "0685", title: "Vetlanda", color: "#2a7f62" },
-        { id: "0604", title: "Aneby", color: "#a35c00" },
-        { id: "0682", title: "Nässjö", color: "#7a4cb0" },
         { id: "0686", title: "Eksjö", color: "#b23a48" },
         { id: "0687", title: "Tranås", color: "#4f6f8f" }
     ];
+
+    const highlandMunicipalities = comparisonMunicipalities.filter(municipality =>
+        ["0684", "0604", "0685", "0686", "0682", "0687"].includes(municipality.id)
+    );
 
     const jonkopingCountyMunicipalities = [
         { id: "0604", title: "Aneby" },
@@ -2725,7 +2736,7 @@
 
     function getJobAreas() {
         const selected = currentMunicipality();
-        const highlandJobMunicipalities = comparisonMunicipalities
+        const highlandJobMunicipalities = highlandMunicipalities
             .map(municipality => jobMunicipalities.find(jobMunicipality => jobMunicipality.id === municipality.id))
             .filter(Boolean);
         return [
@@ -5936,8 +5947,9 @@
         if (!tbody) return;
 
         try {
-            const highlandMunicipalities = getComparisonMunicipalities();
+            const comparisonRowsSource = getComparisonMunicipalities();
             const allMunicipalityIds = [...new Set([
+                ...comparisonRowsSource.map(municipality => municipality.id),
                 ...highlandMunicipalities.map(municipality => municipality.id),
                 ...jonkopingCountyMunicipalities.map(municipality => municipality.id)
             ])];
@@ -5948,6 +5960,11 @@
             })));
             const countryPoint = { period: "maj 2026", value: 10608128 };
 
+            const comparisonRows = comparisonRowsSource.map(municipality => ({
+                ...municipality,
+                population: populationById.get(municipality.id)?.value ?? null,
+                period: populationById.get(municipality.id)?.period ?? null
+            }));
             const highlandRows = highlandMunicipalities.map(municipality => ({
                 ...municipality,
                 population: populationById.get(municipality.id)?.value ?? null,
@@ -5960,14 +5977,14 @@
             const highlandPopulation = highlandRows.reduce((sum, row) => sum + (row.population || 0), 0);
             const countyPopulation = countyRows.reduce((sum, row) => sum + (row.population || 0), 0);
             const countryPopulation = countryPoint?.value ?? null;
-            const period = highlandRows.find(row => Number.isFinite(row.period))?.period || "";
+            const period = comparisonRows.find(row => Number.isFinite(row.period))?.period || "";
 
             const share = (part, whole) => Number.isFinite(part) && Number.isFinite(whole) && whole > 0
                 ? formatPercent((part / whole) * 100)
                 : "-";
             const number = value => Number.isFinite(value) ? formatValue(value, "number") : "-";
             const rows = [
-                ...highlandRows.map(row => ({
+                ...comparisonRows.map(row => ({
                     title: row.title,
                     population: row.population,
                     highlandShare: share(row.population, highlandPopulation),
@@ -6625,9 +6642,10 @@
         if (!valueEl || !yearEl || !tbody) return;
 
         const kpis = ["N01919", "N01955", "N01938"];
-        const highlandMunicipalities = getComparisonMunicipalities();
+        const comparisonRowsSource = getComparisonMunicipalities();
         const allMunicipalityIds = [...new Set([
             selectedMunicipalityId,
+            ...comparisonRowsSource.map(municipality => municipality.id),
             ...highlandMunicipalities.map(municipality => municipality.id),
             ...jonkopingCountyMunicipalities.map(municipality => municipality.id)
         ])];
@@ -6903,6 +6921,11 @@
                 values: seriesByMunicipality.get(municipality.id) || [],
                 totalValues: totalSeriesByMunicipality.get(municipality.id) || []
             }));
+            const highlandRows = highlandMunicipalities.map(municipality => ({
+                ...municipality,
+                values: seriesByMunicipality.get(municipality.id) || [],
+                totalValues: totalSeriesByMunicipality.get(municipality.id) || []
+            }));
             const countyRows = jonkopingCountyMunicipalities.map(municipality => ({
                 ...municipality,
                 values: seriesByMunicipality.get(municipality.id) || [],
@@ -6910,11 +6933,12 @@
             }));
             if (kpi.shareOfTotal) {
                 rows.forEach(row => row.shareValues = shareSeries(row.values, row.totalValues));
+                highlandRows.forEach(row => row.shareValues = shareSeries(row.values, row.totalValues));
                 countyRows.forEach(row => row.shareValues = shareSeries(row.values, row.totalValues));
             }
             const rowsWithAverages = [
                 ...rows,
-                averageSeries(rows, "average-six", "Snitt Höglandet", "#222222", [8, 5]),
+                averageSeries(highlandRows, "average-six", "Snitt Höglandet", "#222222", [8, 5]),
                 averageSeries(countyRows, "average-county", "Snitt Jönköpings län", "#c04f15", [3, 4])
             ];
 
