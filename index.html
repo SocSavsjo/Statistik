@@ -2054,7 +2054,7 @@
                 </div>
                 <div class="welfare-tech-assumptions">
                     <span class="welfare-tech-pill">3 min per km</span>
-                    <span class="welfare-tech-pill">Insatstid kvittas</span>
+                    <span class="welfare-tech-pill">3 min fast per besök</span>
                     <span class="welfare-tech-pill">Lön x 1,4</span>
                 </div>
                 <div class="simulator-results" id="digital-visit-results">
@@ -3358,6 +3358,7 @@
         physicalVisitMinutes: 8,
         medicationVisitMinutes: 15,
         digitalVisitMinutes: 1,
+        digitalVisitAccessMinutes: 3,
         payrollMultiplier: 1.4,
         monthlyWorkHours: 160
     };
@@ -4441,7 +4442,7 @@
         const assumptions = welfareTechAssumptions;
         const monthlyStaffCost = monthlySalary * assumptions.payrollMultiplier;
         const hourlyCost = monthlyStaffCost / assumptions.monthlyWorkHours;
-        const travelMinutesPerVisit = kmRoundTrip * assumptions.minutesPerKm;
+        const travelMinutesPerVisit = (kmRoundTrip * assumptions.minutesPerKm) + assumptions.digitalVisitAccessMinutes;
         const travelHoursMonthly = (visitCount * travelMinutesPerVisit) / 60;
         const traditionalMonthlyCost = travelHoursMonthly * hourlyCost;
         const monthlySaving = traditionalMonthlyCost - digitalMonthlyCost;
@@ -4464,8 +4465,8 @@
             simulatorMetric("Digital kostnad", formatValue(digitalMonthlyCost, "currency"), "Manuell kostnad per månad", null, "is-saving"),
             simulatorMetric("Besparing per månad", formatSignedCurrency(monthlySaving), "Reskostnad minus digital kostnad", null, savingTone),
             simulatorMetric("Besparing per år", formatSignedCurrency(yearOne.saving), `År ${yearOne.year}`, null, yearOne.saving >= 0 ? "is-saving" : "is-cost"),
-            simulatorMetric("Sparad restid", `${formatValue(travelHoursMonthly, "number")} tim/mån`, `${formatValue(travelMinutesPerVisit, "number")} min resa per hembesök`),
-            simulatorMetric("Sparad restid per år", `${formatValue(travelHoursMonthly * 12, "number")} tim/år`, `${formatValue(travelHoursMonthly, "number")} timmar per månad`),
+            simulatorMetric("Sparad tid", `${formatValue(travelHoursMonthly, "number")} tim/mån`, `${formatValue(travelMinutesPerVisit, "number")} min resa och fast tid per hembesök`),
+            simulatorMetric("Sparad tid per år", `${formatValue(travelHoursMonthly * 12, "number")} tim/år`, `${formatValue(travelHoursMonthly, "number")} timmar per månad`),
             simulatorMetric("Brytpunkt", breakEvenVisits === null ? "-" : formatValue(breakEvenVisits, "number"), digitalMonthlyCost > 0 ? "hembesök/månad för att täcka digital kostnad" : "ingen digital månadskostnad angiven"),
             simulatorMetric("Ack. 5 år", formatSignedCurrency(yearFive.cumulativeSaving), `${formatPercent(annualWageGrowth)} årlig löneökning`, null, yearFive.cumulativeSaving >= 0 ? "is-saving" : "is-cost")
         ].join("");
@@ -4490,7 +4491,7 @@
             </tr>
         `).join("");
 
-        noteEl.textContent = `Restid räknas som ${assumptions.minutesPerKm} minuter per km tur/retur. Personalkostnad räknas som månadslön x ${assumptions.payrollMultiplier.toLocaleString("sv-SE")} / ${assumptions.monthlyWorkHours} timmar. Själva tiden för insatsen kvittas, siffror avser endast resor till och från.`;
+        noteEl.textContent = `Restid räknas som ${assumptions.minutesPerKm} minuter per km tur/retur. Varje traditionellt hembesök får dessutom ${assumptions.digitalVisitAccessMinutes} minuter fast tid för parkering samt tid till och från bostad. Själva tiden för insatsen kvittas. Personalkostnad räknas som månadslön x ${assumptions.payrollMultiplier.toLocaleString("sv-SE")} / ${assumptions.monthlyWorkHours} timmar.`;
     }
 
     async function simulatorBasis(scenario) {
