@@ -1948,8 +1948,8 @@
                     </label>
                 </div>
                 <div class="welfare-tech-assumptions">
-                    <span class="welfare-tech-pill">5 min per km</span>
-                    <span class="welfare-tech-pill">5 min fysisk tillsyn</span>
+                    <span class="welfare-tech-pill">3 min per km</span>
+                    <span class="welfare-tech-pill">8 min fast per tillsyn</span>
                     <span class="welfare-tech-pill">1 min digital tillsyn</span>
                     <span class="welfare-tech-pill">Lön x 1,4</span>
                 </div>
@@ -2003,7 +2003,7 @@
                     </label>
                 </div>
                 <div class="welfare-tech-assumptions">
-                    <span class="welfare-tech-pill">5 min per km</span>
+                    <span class="welfare-tech-pill">3 min per km</span>
                     <span class="welfare-tech-pill">15 min besök</span>
                     <span class="welfare-tech-pill">Lön x 1,4</span>
                 </div>
@@ -2053,7 +2053,7 @@
                     </label>
                 </div>
                 <div class="welfare-tech-assumptions">
-                    <span class="welfare-tech-pill">5 min per km</span>
+                    <span class="welfare-tech-pill">3 min per km</span>
                     <span class="welfare-tech-pill">Insatstid kvittas</span>
                     <span class="welfare-tech-pill">Lön x 1,4</span>
                 </div>
@@ -3354,8 +3354,8 @@
     ];
     const welfareTechAssumptions = {
         baseYear: 2026,
-        minutesPerKm: 5,
-        physicalVisitMinutes: 5,
+        minutesPerKm: 3,
+        physicalVisitMinutes: 8,
         medicationVisitMinutes: 15,
         digitalVisitMinutes: 1,
         payrollMultiplier: 1.4,
@@ -4346,7 +4346,7 @@
             </tr>
         `).join("");
 
-        noteEl.textContent = `Restid räknas som ${assumptions.minutesPerKm} minuter per km tur/retur. Fysisk tillsyn tar ${assumptions.physicalVisitMinutes} minuter, digital tillsyn tar ${assumptions.digitalVisitMinutes} minut. Personalkostnad räknas som månadslön x ${assumptions.payrollMultiplier.toLocaleString("sv-SE")} / ${assumptions.monthlyWorkHours} timmar.`;
+        noteEl.textContent = `Restid räknas som ${assumptions.minutesPerKm} minuter per km tur/retur. Fast tid för traditionell tillsyn är ${assumptions.physicalVisitMinutes} minuter per tillsyn. Avser parkering, tid till och från bostad samt tillsyn. Digital tillsyn tar ${assumptions.digitalVisitMinutes} minut. Personalkostnad räknas som månadslön x ${assumptions.payrollMultiplier.toLocaleString("sv-SE")} / ${assumptions.monthlyWorkHours} timmar.`;
     }
 
     function renderMedicineRobotSimulator() {
