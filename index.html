@@ -2316,6 +2316,7 @@
                         <input id="simulator-growth" type="number" value="5" step="0.1" inputmode="decimal">
                     </label>
                 </div>
+                <div class="insight-note">Ändring avser en engångsförändring, till exempel om antalet platser ska utökas. Årlig volymökning avser en kontinuerlig uppräkning varje år.</div>
                 <div class="simulator-results" id="simulator-results">
                     <div class="status">Välj fliken för att ladda beräkningen.</div>
                 </div>
@@ -2579,6 +2580,13 @@
         { id: "686", title: "Eksjö", color: "#b23a48" },
         { id: "682", title: "Nässjö", color: "#7a4cb0" },
         { id: "687", title: "Tranås", color: "#4f6f8f" },
+        { id: "617", title: "Gnosjö", color: "#00856f" },
+        { id: "642", title: "Mullsjö", color: "#6f4e9b" },
+        { id: "643", title: "Habo", color: "#9a6a00" },
+        { id: "662", title: "Gislaved", color: "#006d77" },
+        { id: "665", title: "Vaggeryd", color: "#8f4f2f" },
+        { id: "680", title: "Jönköping", color: "#4062bb" },
+        { id: "683", title: "Värnamo", color: "#b23a48" },
         { id: "highland", title: "Höglandet", color: "#222222" },
         { id: "county", title: "Jönköpings län", color: "#c04f15" }
     ];
@@ -2664,11 +2672,18 @@
 
     const jobMunicipalities = [
         { id: "0604", title: "Aneby", concept: "y9HE_XD7_WaD" },
-        { id: "0686", title: "Eksjö", concept: "VacK_WF6_XVg" },
+        { id: "0617", title: "Gnosjö", concept: "91VR_Hxi_GN4" },
+        { id: "0642", title: "Mullsjö", concept: "smXg_BXp_jTW" },
+        { id: "0643", title: "Habo", concept: "9zQB_3vU_BQA" },
+        { id: "0662", title: "Gislaved", concept: "cNQx_Yqi_83Q" },
+        { id: "0665", title: "Vaggeryd", concept: "zFup_umX_LVv" },
+        { id: "0680", title: "Jönköping", concept: "KURg_KJF_Lwc" },
         { id: "0682", title: "Nässjö", concept: "KfXT_ySA_do2" },
+        { id: "0683", title: "Värnamo", concept: "6bS8_fzf_xpW" },
         { id: "0684", title: "Sävsjö", concept: "L1cX_MjM_y8W" },
-        { id: "0687", title: "Tranås", concept: "Namm_SpC_RPG" },
-        { id: "0685", title: "Vetlanda", concept: "xJqx_SLC_415" }
+        { id: "0685", title: "Vetlanda", concept: "xJqx_SLC_415" },
+        { id: "0686", title: "Eksjö", concept: "VacK_WF6_XVg" },
+        { id: "0687", title: "Tranås", concept: "Namm_SpC_RPG" }
     ];
 
     function currentMunicipality() {
@@ -2702,6 +2717,9 @@
 
     function getJobAreas() {
         const selected = currentMunicipality();
+        const highlandJobMunicipalities = comparisonMunicipalities
+            .map(municipality => jobMunicipalities.find(jobMunicipality => jobMunicipality.id === municipality.id))
+            .filter(Boolean);
         return [
             {
                 id: "main",
@@ -2714,8 +2732,8 @@
                 id: "highland",
                 title: "Höglandet",
                 color: "#222222",
-                filters: jobMunicipalities.map(municipality => ({ type: "municipality", value: municipality.concept })),
-                historicalParams: jobMunicipalities.map(municipality => ({ key: "municipality", value: municipality.id }))
+                filters: highlandJobMunicipalities.map(municipality => ({ type: "municipality", value: municipality.concept })),
+                historicalParams: highlandJobMunicipalities.map(municipality => ({ key: "municipality", value: municipality.id }))
             },
             {
                 id: "county",
@@ -2765,7 +2783,7 @@
 
     function renderBmeHousingDashboard() {
         const rows = bmeHousingData.municipalities;
-        const main = rows.find(row => row.id === selectedMunicipalityId) || rows.find(row => row.id === DEFAULT_MUNICIPALITY_ID);
+        const main = rows.find(row => row.id === selectedMunicipalityId) || {};
         const number = value => Number.isFinite(value) ? formatValue(value, "number") : "-";
         const textValue = value => value || "-";
         const highlandSabo = rows.reduce((sum, row) => sum + (row.saboMunicipal || 0) + (row.saboPurchased || 0), 0);
@@ -2775,7 +2793,7 @@
         const seniorCount = rows.filter(row => row.seniorHousing === "Ja").length;
 
         document.getElementById("bme-main-sabo").textContent = number((main.saboMunicipal || 0) + (main.saboPurchased || 0));
-        document.getElementById("bme-main-sabo-note").textContent = `${number(main.shortTerm)} korttidsplatser. SÄBO-läge: ${main.saboStatus}.`;
+        document.getElementById("bme-main-sabo-note").textContent = `${number(main.shortTerm)} korttidsplatser. SÄBO-läge: ${textValue(main.saboStatus)}.`;
         document.getElementById("bme-main-units").textContent = Number.isFinite(main.saboUnits) ? number(main.saboUnits) : "-";
         document.getElementById("bme-main-units-note").textContent = Number.isFinite(main.saboUnits) && main.saboUnits > 0
             ? `${formatValue(((main.saboMunicipal || 0) + (main.saboPurchased || 0)) / main.saboUnits, "decimal")} platser per boende i snitt`
@@ -3016,8 +3034,8 @@
             ? `${((part / whole) * 100).toLocaleString("sv-SE", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`
             : "-";
         const amount = value => Number.isFinite(value) ? `${formatValue(value, "number")} tkr` : "-";
-        const mainVab = fkData.vab.municipalities.find(item => item.key === selectedMunicipalityId) || fkData.vab.savsjo;
-        const mainSa = fkData.sicknessActivity.municipalities.find(item => item.key === selectedMunicipalityId) || fkData.sicknessActivity.savsjo;
+        const mainVab = fkData.vab.municipalities.find(item => item.key === selectedMunicipalityId) || {};
+        const mainSa = fkData.sicknessActivity.municipalities.find(item => item.key === selectedMunicipalityId) || {};
 
         document.getElementById("fk-savsjo-total").textContent = number(mainVab.netDays);
         document.getElementById("fk-highland-total").textContent = number(fkData.vab.highland.netDays);
@@ -3099,12 +3117,11 @@
         const migrationTableValue = value => value === null ? ".." : number(value);
         const selectedMigrationValue = row => Object.prototype.hasOwnProperty.call(row.municipalities || {}, selectedMunicipalityId)
             ? row.municipalities[selectedMunicipalityId]
-            : row.savsjo;
+            : null;
         const share = (part, whole) => Number.isFinite(part) && Number.isFinite(whole) && whole > 0
             ? `${((part / whole) * 100).toLocaleString("sv-SE", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`
             : "-";
         const mainMigration = migrationData.municipalities.find(item => item.label === currentMunicipalityName())
-            || migrationData.municipalities.find(item => item.label === "Sävsjö")
             || { total: null, protected: null, resident: null };
 
         document.getElementById("migration-savsjo-total").textContent = number(mainMigration.total);
@@ -3191,8 +3208,8 @@
         const share = (part, whole) => Number.isFinite(part) && Number.isFinite(whole) && whole > 0
             ? `${((part / whole) * 100).toLocaleString("sv-SE", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`
             : "-";
-        const mainTotal = braCrimeData.municipalities.find(item => item.label === currentMunicipalityName())?.total ?? braCrimeData.areas.savsjo.total;
-        const crimeValue = row => row.municipalities.find(item => item.label === currentMunicipalityName())?.value ?? row.savsjo;
+        const mainTotal = braCrimeData.municipalities.find(item => item.label === currentMunicipalityName())?.total ?? null;
+        const crimeValue = row => row.municipalities.find(item => item.label === currentMunicipalityName())?.value ?? null;
 
         document.getElementById("bra-savsjo-total").textContent = number(mainTotal);
         document.getElementById("bra-highland-total").textContent = number(braCrimeData.areas.highland.total);
@@ -6367,7 +6384,7 @@
     }
 
     function renderFohmItem(indicator) {
-        const point = fohmValueForRegion(indicator, selectedMunicipalityId) || fohmValueForRegion(indicator, DEFAULT_MUNICIPALITY_ID);
+        const point = fohmValueForRegion(indicator, selectedMunicipalityId);
         if (!point || point.value === null) {
             return `
                 <div class="economy-result-item">
